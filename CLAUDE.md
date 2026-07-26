@@ -18,7 +18,9 @@ api/subscribe.js    # 이메일 알림신청 처리 (Vercel 서버리스 함수)
 api/order.js        # 주문 생성 — 결제 금액을 서버가 계산
 api/confirm.js      # 토스페이먼츠 결제 승인
 supabase/schema.sql # subscribers · orders 테이블 정의 (Supabase SQL Editor에서 실행)
+supabase/schema-app.sql # 앱 연동 스키마 (회원·이용권한·검사기록 + RLS)
 docs/setup-supabase.md # Supabase 연결 순서 (이메일 수집 켜기)
+docs/app-integration.md # 모바일 앱 연동 (같은 Supabase 프로젝트 공유)
 docs/commerce-plan.md  # 판매 개시 준비 (결제·환불·회원 정책 설계)
 .vercelignore       # 배포에서 제외할 내부 문서 목록
 robots.txt
@@ -120,6 +122,22 @@ sitemap.xml
 소스 보기로 노출됩니다. 키는 Vercel 환경변수에만 둡니다.
 특히 `SUPABASE_SERVICE_ROLE_KEY`는 RLS를 통째로 우회하므로, 노출되면
 신청자 명단 전체를 읽고 지울 수 있습니다. 서버 코드 밖으로 절대 내보내지 마세요.
+
+## 모바일 앱과 같은 Supabase 프로젝트를 씁니다
+회원 계정·구매 이력·검사기록을 한 DB에서 관리합니다. 상세는 [docs/app-integration.md](docs/app-integration.md).
+
+**보안 모델이 테이블마다 다릅니다. 이걸 헷갈리면 명단이 통째로 새어나갑니다.**
+
+| 테이블 | RLS 정책 | 접근 |
+|---|---|---|
+| `subscribers` | **없음 (절대 만들지 말 것)** | 서버 service_role 전용 |
+| `orders` | 본인 이메일 SELECT 하나만 | 앱은 `my_orders` 뷰로 조회 |
+| `profiles`·`entitlements`·`assessment_results` | `auth.uid()` 기준 | 앱이 anon 키로 직접 접근 |
+
+- **모바일 앱에는 anon 키만.** service_role 키를 앱에 넣으면 바이너리에서 추출됩니다.
+- 🚨 **Authentication → Confirm email 을 반드시 켜세요.** 구매자와 회원을 이메일로 매칭하는
+  구조라, 확인이 꺼져 있으면 남의 이메일로 가입해 구매 권한을 가로챌 수 있습니다.
+- 구매↔가입 순서가 어느 쪽이든 DB 트리거가 `entitlements`를 자동으로 채웁니다.
 
 ## 결제 (토스페이먼츠)
 
