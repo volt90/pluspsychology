@@ -63,8 +63,7 @@
   .care{background:#EAF6F1;border:1.5px solid #54B491;border-radius:12px;padding:14px 16px;margin:14px 0}
   .care p{color:#1F6B50;margin-bottom:0;font-size:13px}
 
-  .todo{display:inline-block;background:#FDECEA;border:1.5px dashed var(--coral);color:#B4432F;
-        border-radius:6px;padding:0 7px;font-weight:700;font-size:.92em;white-space:nowrap}
+  [hidden]{display:none!important}
 
   footer{margin-top:34px;text-align:center;padding-top:22px;border-top:1.5px solid var(--line)}
   .flinks{font-size:12.5px;margin-bottom:10px}
@@ -95,7 +94,7 @@
     <p class="lead" data-en="This policy explains what we collect through www.pluspsychology.ai, why, how long we keep it, and what rights you have.">본 방침은 www.pluspsychology.ai에서 수집하는 정보의 항목과 목적, 보유 기간, 이용자의 권리를 안내합니다.</p>
 
     <div class="note">
-      <p data-en="<strong>Draft &mdash; review before publishing.</strong> Items marked in red must be filled in with the operator&rsquo;s actual registration details. This document was prepared as a working draft and is not legal advice; please have a qualified professional review it before it goes live."><strong>초안입니다 — 게시 전 검토가 필요합니다.</strong> 붉게 표시된 항목은 운영자의 실제 사업자 정보로 채워야 합니다. 본 문서는 실무 초안이며 법률 자문이 아닙니다. 게시 전 전문가 검토를 권장합니다.</p>
+      <p data-en="<strong>The workbook is not yet on sale.</strong> This policy covers the launch-notification service currently offered. When selling begins we will add the items collected for orders and payment, and announce the change in advance."><strong>워크북은 아직 판매 전입니다.</strong> 본 방침은 현재 제공 중인 출시 알림 신청에 관한 내용입니다. 판매를 시작하면 주문·결제에 필요한 수집 항목이 추가되며, 변경 사항은 사전에 공지합니다.</p>
     </div>
 
     <h2 data-en="1. What we collect">1. 수집하는 개인정보 항목</h2>
@@ -183,7 +182,7 @@
         <tbody>
           <tr>
             <td>Supabase, Inc.</td>
-            <td data-en="United States (data centre region: <span class='todo'>[fill in]</span>)">미국 (데이터센터 리전: <span class="todo">［선택 리전 기입］</span>)</td>
+            <td data-en="United States">미국</td>
             <td data-en="Email, consent record, IP, browser info">이메일, 동의 증적, IP, 브라우저 정보</td>
             <td data-en="Storing the subscriber list">명단 저장</td>
           </tr>
@@ -244,9 +243,9 @@
     <div class="tw">
       <table>
         <tbody>
-          <tr><th data-en="Officer">개인정보 보호책임자</th><td><span class="todo">［성명 기입］</span></td></tr>
+          <tr><th data-en="Officer">개인정보 보호책임자</th><td id="bizOfficer" data-en="Representative">대표자</td></tr>
           <tr><th data-en="Email">이메일</th><td><a href="mailto:pluspsychology@gmail.com">pluspsychology@gmail.com</a></td></tr>
-          <tr><th data-en="Phone">연락처</th><td><span class="todo">［전화번호 기입］</span></td></tr>
+          <tr id="bizPhoneRow" hidden><th data-en="Phone">연락처</th><td id="bizPhone"></td></tr>
         </tbody>
       </table>
     </div>
@@ -277,6 +276,27 @@
 </div>
 
 <script>
+// ── 사업자 정보 ──────────────────────────────────────────────
+//  사업 개시 전에는 active:false 로 두어 화면에 나오지 않습니다.
+//  실제 판매를 시작할 때 값을 채우고 active를 true로 바꾸세요.
+//  ※ terms.html에도 같은 블록이 있습니다. 두 파일을 함께 고치세요.
+var BUSINESS = {
+  active: false,
+  representative: '',   // 대표자 성명
+  phone: ''             // 대표 연락처
+};
+
+(function(){
+  if (!BUSINESS.active) return;   // 기본값: 대표자 표기 + 이메일만 노출
+  if (BUSINESS.representative) {
+    document.getElementById('bizOfficer').textContent = BUSINESS.representative;
+  }
+  if (BUSINESS.phone) {
+    document.getElementById('bizPhone').textContent = BUSINESS.phone;
+    document.getElementById('bizPhoneRow').hidden = false;
+  }
+})();
+
 (function(){
   var TITLE = {ko:'개인정보처리방침 · 김심리월드', en:'Privacy Policy · Kim Simri World'};
   var nodes = Array.prototype.slice.call(document.querySelectorAll('[data-en]'));
