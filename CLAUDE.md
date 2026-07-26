@@ -14,9 +14,16 @@ privacy.html        # 개인정보처리방침 (한/영)
 terms.html          # 이용약관 (한/영)
 api/subscribe.js    # 이메일 알림신청 처리 (Vercel 서버리스 함수)
 supabase/schema.sql # 신청자 명단 테이블 정의 (Supabase SQL Editor에서 실행)
+docs/commerce-plan.md  # 판매 개시 준비 (결제·환불·회원 정책 설계)
+.vercelignore       # 배포에서 제외할 내부 문서 목록
 robots.txt
 sitemap.xml
 ```
+
+### ⚠️ 저장소 파일은 그대로 URL로 공개됩니다
+정적 배포라 루트의 파일이 확장자와 무관하게 서비스됩니다.
+실제로 `/CLAUDE.md`가 공개된 적이 있습니다 (2026-07-26, `.vercelignore`로 차단).
+**내부 문서·스키마·메모를 추가할 때는 반드시 `.vercelignore`에 함께 등록하세요.**
 > `privacy.html` / `terms.html`은 index.html과 **별도 파일이며 자체 완결형**입니다.
 > 디자인 토큰(색·폰트·`.page`·`.langsw`)을 각 파일에 복사해 두었으므로,
 > index.html의 색이나 폰트를 바꾸면 두 파일도 함께 고쳐야 합니다.
@@ -140,8 +147,10 @@ sitemap.xml
       (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) — 이것만 해도 이메일 수집이 동작합니다
 - [ ] **privacy.html·terms.html의 `.todo` 자리 채우기** (보호책임자·사업자 정보 등)
       → 채우기 전까지는 붉은 박스가 그대로 노출되므로 공개 전 필수
-- [ ] 워크북 판매 개시 전: 통신판매업 신고 + 결제·환불 조건을 담은 구매 페이지 게시
-      (약관 제10조가 "구매 페이지에 별도 고지"로 넘겨둔 상태)
+- [ ] 워크북 판매 개시 전: [docs/commerce-plan.md](docs/commerce-plan.md)의 **1장 네 가지 결정**부터
+      (워크북 형태 / 회원제 여부 / 결제수단 / 판매범위 — 나머지가 전부 여기에 달려 있음)
+- [ ] 디지털 판매라면 **샘플 PDF 무료 제공**이 환불 제한의 법적 전제조건
+      (전자상거래법 제17조 제6항 — 없으면 "다운로드 후 환불 불가" 조항이 무효)
 - [ ] Resend 도메인 인증(pluspsychology.ai) + 환경변수 4개 설정
 - [ ] **Search Console 인증 파일 `googlee928fd2a17217f2b.html`이 저장소에 없음** →
       루트에 추가해야 소유권 확인 가능 (내용 한 줄: `google-site-verification: googlee928fd2a17217f2b.html`)

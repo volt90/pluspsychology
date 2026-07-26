@@ -1,0 +1,9 @@
+# Vercel 배포에서 제외할 파일
+#
+# ⚠️ 이 저장소는 정적 배포입니다. 루트에 있는 파일은 확장자와 무관하게
+#    그대로 URL로 공개됩니다. (예: /CLAUDE.md, /supabase/schema.sql)
+#    내부 문서·스키마·메모를 추가할 때는 반드시 여기에 함께 등록하세요.
+
+CLAUDE.md
+docs/
+supabase/
