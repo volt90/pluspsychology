@@ -126,6 +126,15 @@ sitemap.xml
 ## 모바일 앱과 같은 Supabase 프로젝트를 씁니다
 회원 계정·구매 이력·검사기록을 한 DB에서 관리합니다. 상세는 [docs/app-integration.md](docs/app-integration.md).
 
+**프로젝트: `syxwnbqsozdgmogeidtq`** — 빈 프로젝트가 아니라 **앱이 이미 쓰고 있습니다.**
+2026-07-26 확인: `profiles`·`entries`·`consents`·`analytics_events`가 이미 있고,
+랜딩 쪽 `subscribers`·`orders`는 아직 없습니다(스키마 미실행).
+
+- `profiles`는 **앱 소유**입니다. `schema-app.sql`은 이 테이블을 만들지도, 정책을 걸지도 않습니다.
+- 가입 트리거 이름은 `on_auth_user_created_grant_entitlements`입니다.
+  흔한 이름인 `on_auth_user_created`로 만들면 **앱의 기존 가입 트리거를 덮어써 가입이 깨집니다.**
+- `assessment_results`는 앱의 `entries`와 역할이 겹칠 수 있어 보류 상태입니다.
+
 **보안 모델이 테이블마다 다릅니다. 이걸 헷갈리면 명단이 통째로 새어나갑니다.**
 
 | 테이블 | RLS 정책 | 접근 |
@@ -234,7 +243,10 @@ var BUSINESS = {
 - [ ] Meta 픽셀 ID 발급 후 `YOUR_PIXEL_ID` 교체
 - [ ] 네이버 전환추적 신청 → 네이버공통키 발급 후 `YOUR_NAVER_KEY` / `YOUR_DOMAIN` 교체
       (새 광고주센터: 도구 → 전환 추적 관리. 비즈채널 등록·검수 선행 필요)
+- [ ] 🚨 **service_role 키 재발급** — 채팅으로 전달된 이력이 있어 신뢰할 수 없음.
+      재발급 방법과 주의사항은 [docs/app-integration.md](docs/app-integration.md) "설정 순서"
 - [ ] **Supabase 연결 → 이메일 수집 켜기** — 순서는 [docs/setup-supabase.md](docs/setup-supabase.md)
+      (앱이 쓰는 기존 프로젝트이므로 위 "모바일 앱" 절의 충돌 주의사항을 먼저 읽으세요)
       (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) — 이것만 해도 이메일 수집이 동작합니다
 - [ ] 사업 시작 시점에 두 파일의 `BUSINESS.active`를 true로 전환 (위 "법적 문서" 참고)
 - [ ] 🚨 **해외 매출을 주식(증권)계좌로 받을 수 없음** → 사업자 외화 은행계좌 개설 가능 여부와

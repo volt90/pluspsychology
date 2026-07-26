@@ -13,23 +13,22 @@
 -- ============================================================
 
 
--- ── 1) 회원 프로필 ───────────────────────────────────────────
---  Supabase Auth의 auth.users를 확장합니다.
-create table if not exists public.profiles (
-  id                  uuid primary key references auth.users(id) on delete cascade,
-  email               text        not null,
-  display_name        text,
-
-  -- 만 14세 미만 가입 시 법정대리인 동의 (개인정보보호법 제22조의2)
-  birth_date          date,
-  guardian_consent    boolean     not null default false,
-  guardian_consent_at timestamptz,
-
-  created_at          timestamptz not null default now(),
-  updated_at          timestamptz not null default now()
-);
-
-create index if not exists profiles_email_idx on public.profiles (lower(email));
+-- ── 1) 회원 프로필 — 이 파일에서 만들지 않습니다 ─────────────
+--
+--  ⚠️ 이 Supabase 프로젝트에는 앱이 만든 public.profiles가 **이미 있습니다.**
+--     (2026-07-26 확인: profiles, entries, consents, analytics_events 존재)
+--
+--  여기서 profiles를 다시 만들면 `if not exists` 때문에 조용히 건너뛰고,
+--  아래 트리거가 기대하는 컬럼이 없어 가입이 깨질 수 있습니다.
+--  → 프로필은 **앱 저장소의 스키마를 원본으로 삼습니다.**
+--
+--  만 14세 미만 법정대리인 동의(개인정보보호법 제22조의2)를 기록할 컬럼이
+--  앱의 profiles에 없다면, 앱 쪽 스키마에 아래를 추가하세요.
+--
+--    alter table public.profiles
+--      add column if not exists birth_date date,
+--      add column if not exists guardian_consent boolean not null default false,
+--      add column if not exists guardian_consent_at timestamptz;
 
 
 -- ── 2) 앱 이용 권한 ──────────────────────────────────────────
@@ -54,6 +53,9 @@ create index if not exists entitlements_user_idx on public.entitlements (user_id
 
 
 -- ── 3) 심리검사 결과·기록 ────────────────────────────────────
+--  ⚠️ 앱에 이미 `public.entries`가 있습니다. 그것이 검사 기록 역할을 한다면
+--     이 테이블을 만들지 말고 entries를 그대로 쓰세요. 같은 데이터를 두 곳에
+--     두면 반드시 어긋납니다. 역할이 다를 때만 아래를 실행하세요.
 create table if not exists public.assessment_results (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid        not null references auth.users(id) on delete cascade,
@@ -71,10 +73,7 @@ create index if not exists assessment_results_user_idx
 
 -- ── 4) updated_at 트리거 ─────────────────────────────────────
 --  public.set_updated_at()은 schema.sql에서 이미 정의했습니다.
-drop trigger if exists profiles_set_updated_at on public.profiles;
-create trigger profiles_set_updated_at before update on public.profiles
-  for each row execute function public.set_updated_at();
-
+--  (profiles는 앱이 소유하므로 여기서 트리거를 걸지 않습니다)
 drop trigger if exists entitlements_set_updated_at on public.entitlements;
 create trigger entitlements_set_updated_at before update on public.entitlements
   for each row execute function public.set_updated_at();
@@ -84,19 +83,21 @@ create trigger assessment_results_set_updated_at before update on public.assessm
   for each row execute function public.set_updated_at();
 
 
--- ── 5) 가입 시: 프로필 생성 + 기존 구매분 권한 부여 ──────────
+-- ── 5) 가입 시: 기존 구매분 권한 부여 ────────────────────────
 --  구매를 먼저 하고 나중에 가입한 경우를 처리합니다.
-create or replace function public.handle_new_user()
+--
+--  🚨 트리거 이름을 일부러 길게 지었습니다.
+--     Supabase 예제와 앱이 흔히 쓰는 이름은 `on_auth_user_created`이고,
+--     같은 이름으로 만들면 **앱의 기존 가입 트리거를 덮어써서 가입이 깨집니다.**
+--     한 테이블에 트리거 여러 개가 공존할 수 있으니 이름만 겹치지 않으면 됩니다.
+--     프로필 생성은 앱 트리거가 이미 하고 있으므로 여기서 건드리지 않습니다.
+create or replace function public.grant_entitlements_on_signup()
 returns trigger
 language plpgsql
 security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, email)
-  values (new.id, new.email)
-  on conflict (id) do nothing;
-
   -- 같은 이메일로 결제 완료된 주문이 있으면 이용 권한을 붙입니다
   insert into public.entitlements (user_id, product_code, source, order_id)
   select new.id, o.product_code, 'order', o.order_id
@@ -109,10 +110,10 @@ begin
 end;
 $$;
 
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
+drop trigger if exists on_auth_user_created_grant_entitlements on auth.users;
+create trigger on_auth_user_created_grant_entitlements
   after insert on auth.users
-  for each row execute function public.handle_new_user();
+  for each row execute function public.grant_entitlements_on_signup();
 
 
 -- ── 6) 결제 완료 시: 이미 가입한 회원이면 즉시 권한 부여 ─────
@@ -148,18 +149,10 @@ create trigger orders_grant_entitlement
 --     정책 하나만 열려도 알림 신청 명단 전체가 공개됩니다.
 -- ============================================================
 
-alter table public.profiles           enable row level security;
+--  profiles는 앱이 소유하므로 여기서 RLS·정책을 건드리지 않습니다.
+--  (이미 걸린 정책을 덮어쓰면 앱의 접근 권한이 바뀝니다)
 alter table public.entitlements       enable row level security;
 alter table public.assessment_results enable row level security;
-
--- 프로필: 본인 것만 조회·수정
-drop policy if exists "profiles_select_own" on public.profiles;
-create policy "profiles_select_own" on public.profiles
-  for select to authenticated using (id = auth.uid());
-
-drop policy if exists "profiles_update_own" on public.profiles;
-create policy "profiles_update_own" on public.profiles
-  for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
 
 -- 이용권한: 본인 것만 조회. 부여·회수는 서버(service_role)만 — insert/update 정책 없음
 drop policy if exists "entitlements_select_own" on public.entitlements;
