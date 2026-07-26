@@ -63,3 +63,69 @@ alter table public.subscribers enable row level security;
 
 comment on table public.subscribers is
   '워크북 출시 알림 신청자 명단. 서버(service_role)에서만 접근. 프런트엔드 직접 접근 금지.';
+
+
+-- ============================================================
+--  주문 (토스페이먼츠 결제)
+-- ============================================================
+
+create table if not exists public.orders (
+  id                uuid primary key default gen_random_uuid(),
+
+  -- 주문번호 (토스에 전달하는 값). 서버가 발급합니다.
+  order_id          text        not null unique,
+  status            text        not null default 'pending'
+                                check (status in ('pending','paid','failed','canceled','refunded')),
+
+  -- 상품 (가격은 주문 시점 값을 그대로 남깁니다 — 나중에 가격이 바뀌어도 주문 기록은 불변)
+  product_code      text        not null,
+  product_name      text        not null,
+  quantity          int         not null check (quantity >= 1),
+  unit_price        int         not null check (unit_price >= 0),
+  shipping_fee      int         not null default 0 check (shipping_fee >= 0),
+  amount            int         not null check (amount >= 0),   -- 실제 결제 금액 (서버 계산값)
+  currency          text        not null default 'KRW',
+
+  -- 구매자
+  buyer_name        text        not null,
+  buyer_email       text        not null,
+  buyer_phone       text,
+
+  -- 배송지
+  ship_country      text        not null default 'KR',
+  ship_postcode     text,
+  ship_address1     text,
+  ship_address2     text,
+  ship_memo         text,
+
+  -- 동의 증적 (전자상거래법·민법 대응 — 삭제 금지)
+  agree_terms       boolean     not null default false,  -- 구매조건 확인 및 결제진행 동의
+  agree_minor       boolean     not null default false,  -- 만 19세 미만 법정대리인 동의 확인
+  agreed_at         timestamptz,
+  agree_ip          text,
+
+  -- 결제 결과
+  payment_key       text,
+  payment_method    text,
+  approved_at       timestamptz,
+  fail_code         text,
+  fail_message      text,
+
+  created_at        timestamptz not null default now(),
+  updated_at        timestamptz not null default now()
+);
+
+create index if not exists orders_status_idx     on public.orders (status);
+create index if not exists orders_created_at_idx on public.orders (created_at desc);
+create index if not exists orders_buyer_email_idx on public.orders (lower(buyer_email));
+
+drop trigger if exists orders_set_updated_at on public.orders;
+create trigger orders_set_updated_at
+  before update on public.orders
+  for each row execute function public.set_updated_at();
+
+-- subscribers와 동일하게 RLS만 켜고 정책은 만들지 않습니다 (서버 전용)
+alter table public.orders enable row level security;
+
+comment on table public.orders is
+  '워크북 주문·결제 기록. 서버(service_role)에서만 접근. 전자상거래법상 5년 보존 대상.';

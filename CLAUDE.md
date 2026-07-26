@@ -12,8 +12,12 @@
 index.html          # 랜딩페이지 전체 (CSS·JS·이미지 base64 모두 인라인, 약 400KB)
 privacy.html        # 개인정보처리방침 (한/영)
 terms.html          # 이용약관 (한/영)
+checkout.html       # 주문/결제 페이지 (noindex)
+checkout-result.html # 결제 성공·실패 화면 (토스 리다이렉트 목적지, noindex)
 api/subscribe.js    # 이메일 알림신청 처리 (Vercel 서버리스 함수)
-supabase/schema.sql # 신청자 명단 테이블 정의 (Supabase SQL Editor에서 실행)
+api/order.js        # 주문 생성 — 결제 금액을 서버가 계산
+api/confirm.js      # 토스페이먼츠 결제 승인
+supabase/schema.sql # subscribers · orders 테이블 정의 (Supabase SQL Editor에서 실행)
 docs/commerce-plan.md  # 판매 개시 준비 (결제·환불·회원 정책 설계)
 .vercelignore       # 배포에서 제외할 내부 문서 목록
 robots.txt
@@ -116,6 +120,44 @@ sitemap.xml
 특히 `SUPABASE_SERVICE_ROLE_KEY`는 RLS를 통째로 우회하므로, 노출되면
 신청자 명단 전체를 읽고 지울 수 있습니다. 서버 코드 밖으로 절대 내보내지 마세요.
 
+## 결제 (토스페이먼츠)
+
+### 🔒 기본은 꺼져 있습니다
+`PAYMENTS_ENABLED` 환경변수가 `'true'`일 때만 `/api/order`와 `/api/confirm`이 동작합니다.
+그 전에는 503을 돌려주고, checkout.html은 "아직 판매를 시작하지 않았습니다" 안내로 바뀝니다.
+**키만 넣는다고 결제가 열리지 않습니다.** 실수로 실결제가 열리는 것을 막기 위한 장치입니다.
+
+### 흐름
+```
+checkout.html
+  → POST /api/order      서버가 금액 계산 · orders 행 생성(pending) · clientKey 반환
+  → 토스 결제창 (SDK v2)
+  → checkout-result.html  ?paymentKey&orderId&amount 로 리다이렉트
+  → POST /api/confirm    금액 대조 후 토스 승인 API 호출 · orders 행 paid로 갱신
+```
+
+### 반드시 지킬 것
+- **금액은 클라이언트에서 받지 않습니다.** `api/order.js`의 `PRODUCT.unitPrice`와
+  `SHIPPING_FEE`로 서버가 계산해 DB에 저장하고, 승인 시 그 값과 대조합니다.
+  화면의 금액 표시는 안내용일 뿐입니다.
+- **`TOSS_SECRET_KEY`는 `api/confirm.js`에만** 둡니다. `api/order.js`는 클라이언트 키만 다룹니다.
+- 리다이렉트 도착 시점에는 **아직 결제가 안 끝난 상태**입니다. `/api/confirm`이 성공해야 확정입니다.
+- 이미 `paid`인 주문은 200 + `alreadyConfirmed`를 돌려줍니다 (새로고침 중복 승인 방지).
+
+### 환경변수
+| 변수 | 용도 |
+|---|---|
+| `PAYMENTS_ENABLED` | `'true'`여야 결제 동작 (안전장치) |
+| `TOSS_CLIENT_KEY` | 클라이언트 키 (공개용 — 프런트로 내려감) |
+| `TOSS_SECRET_KEY` | 시크릿 키 — **서버 전용, 절대 노출 금지** |
+
+### 아직 안 된 것
+- 토스페이먼츠 **상점 계약·심사** (사업자등록증 필요) → 지금은 테스트 키로만 연동 확인 가능
+- 주문 확인 메일 발송 (Resend 연동 예정)
+- 환불·취소 처리 (현재는 토스 관리자 화면에서 수동)
+- 해외 배송 (`SHIPPING_FEE`에 KR만 있음 — 국가 추가 시 자동으로 열림)
+- 가격 ₩16,900은 임시값
+
 ## 법적 문서 (privacy.html · terms.html)
 현재는 **사업 개시 전(아이디어 반응 검증) 모드**입니다.
 사업자 정보는 화면에 나오지 않고, 상호와 이메일만 표시됩니다.
@@ -180,6 +222,11 @@ var BUSINESS = {
       사업용계좌 신고 방법을 은행·세무사에 확인. 이게 안 풀리면 해외 결제 설계가 막힘
       (소득세법 제160조의5 — 사업용계좌는 은행 계좌여야 함)
 - [ ] 실물 해외 배송 경제성 검토 — ₩16,900 책 1권 국제배송비가 상품가에 육박
+      (`api/order.js`의 `SHIPPING_FEE`에 국가를 추가하면 해당 국가 배송이 열립니다)
+- [ ] 토스페이먼츠 상점 계약·심사 (사업자등록증 필요) → 테스트 키 검증 후 라이브 키 전환
+- [ ] 통신판매업 신고 + 약관 제10조 채우기 (현재 "구매 페이지에 별도 고지"로 위임)
+- [ ] 주문 확인 메일 발송 연동 (Resend) — 현재 주문 후 메일이 나가지 않음
+- [ ] 환불·취소 처리 절차 (현재는 토스 관리자 화면에서 수동)
 - [ ] 판매 준비 전반은 [docs/commerce-plan.md](docs/commerce-plan.md) 참고
 - [ ] Resend 도메인 인증(pluspsychology.ai) + 환경변수 4개 설정
 - [ ] **Search Console 인증 파일 `googlee928fd2a17217f2b.html`이 저장소에 없음** →
