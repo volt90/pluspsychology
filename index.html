@@ -636,7 +636,7 @@
         fetch(SUBSCRIBE_ENDPOINT, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({email: email, lang: currentLang, source: 'workbook_landing'})
+          body: JSON.stringify({email: email, lang: currentLang, source: 'workbook_landing', consent: subAgree.checked})
         })
         .then(function(res){
           return res.json().catch(function(){ return {}; }).then(function(data){

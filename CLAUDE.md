@@ -11,6 +11,7 @@
 ```
 index.html          # 랜딩페이지 전체 (CSS·JS·이미지 base64 모두 인라인, 약 400KB)
 api/subscribe.js    # 이메일 알림신청 처리 (Vercel 서버리스 함수)
+supabase/schema.sql # 신청자 명단 테이블 정의 (Supabase SQL Editor에서 실행)
 robots.txt
 sitemap.xml
 ```
@@ -55,19 +56,46 @@ sitemap.xml
 > ⚠️ 네이버는 **신 스크립트(`wcs.trans`) 전용**입니다.
 > 구 스크립트(`wcs.cnv`)를 절대 함께 넣지 마세요 — 전환이 영구 필터링됩니다.
 
-## 이메일 수집 (Resend)
-- 프론트: CTA의 `#subForm` → `POST /api/subscribe` (JSON: email, lang, source)
-- 백엔드: `api/subscribe.js` — Resend Audience에 연락처 저장 + 확인메일 발송
-- **필요한 Vercel 환경변수** (Settings → Environment Variables)
-  - `RESEND_API_KEY`      — Resend API 키 (re_로 시작)
-  - `RESEND_AUDIENCE_ID`  — Resend Audiences에서 만든 명단 ID
-  - `FROM_EMAIL`          — 예: `김심리월드 <hello@pluspsychology.ai>`
-  - `NOTIFY_EMAIL`        — 신청 알림 받을 주소 (선택)
+## 이메일 수집 (Supabase 저장 + Resend 발송)
+**저장은 Supabase, 발송은 Resend**로 역할이 나뉘어 있습니다.
+둘 중 하나만 설정돼 있어도 동작하며, 어디에도 저장되지 않으면 502로 실패시킵니다
+(신청자에게 거짓 성공을 보여주지 않기 위함).
+
+- 프론트: CTA의 `#subForm` → `POST /api/subscribe`
+  (JSON: `email`, `lang`, `source`, `consent`)
+- 백엔드: `api/subscribe.js`
+  1. Supabase `subscribers` 테이블에 저장 (원본 명단 · 중복이면 409)
+  2. Resend Audience에 연락처 추가
+  3. 신청자에게 확인메일 발송 → 결과를 `status` 컬럼에 반영
+- Supabase 접근은 **PostgREST REST API를 fetch로 직접 호출**합니다.
+  `@supabase/supabase-js` 의존성이 없으므로 `package.json`도 필요 없습니다.
+
+### 필요한 Vercel 환경변수 (Settings → Environment Variables)
+| 변수 | 용도 |
+|---|---|
+| `SUPABASE_URL` | 프로젝트 URL (`https://xxxx.supabase.co`) |
+| `SUPABASE_SERVICE_ROLE_KEY` | service_role 키 — **서버 전용** |
+| `RESEND_API_KEY` | Resend API 키 (re_로 시작) |
+| `RESEND_AUDIENCE_ID` | Resend Audiences에서 만든 명단 ID |
+| `FROM_EMAIL` | 예: `김심리월드 <hello@pluspsychology.ai>` |
+| `NOTIFY_EMAIL` | 신청 알림 받을 주소 (선택) |
+
 - 출시 발송은 Resend **Broadcasts**에서 해당 Audience에 일괄 전송.
+- 명단 백업/확인은 Supabase 대시보드 → Table Editor → `subscribers`.
+
+### Supabase 테이블 (`supabase/schema.sql`)
+- `subscribers` — 이메일 · 언어 · 유입경로 · **동의 증적**(consent / consented_at /
+  consent_ip / consent_user_agent) · 발송상태 · 수신거부 여부
+- `lower(email)` 유니크 인덱스로 중복 신청 차단 (위반 시 409 → 프론트가 "이미 신청됨" 표시)
+- **RLS를 켜고 정책은 하나도 만들지 않았습니다.** anon 키로는 읽기·쓰기가 전부 막히고,
+  서버의 service_role 키만 RLS를 우회합니다. → 프런트엔드에 Supabase 키를 넣을 일이 없습니다.
+- 스키마를 바꿀 때도 **정책을 추가하지 마세요.** 정책 하나만 열려도 명단 전체가 공개됩니다.
 
 ### 🔒 보안 원칙 (반드시 지킬 것)
 **API 키·시크릿을 index.html이나 프론트엔드 코드에 절대 넣지 마세요.**
 소스 보기로 노출됩니다. 키는 Vercel 환경변수에만 둡니다.
+특히 `SUPABASE_SERVICE_ROLE_KEY`는 RLS를 통째로 우회하므로, 노출되면
+신청자 명단 전체를 읽고 지울 수 있습니다. 서버 코드 밖으로 절대 내보내지 마세요.
 
 ### ⚖️ 한국 법규 (정보통신망법)
 광고성 이메일이므로 아래는 제거하면 안 됩니다:
@@ -83,6 +111,10 @@ sitemap.xml
 - [ ] Meta 픽셀 ID 발급 후 `YOUR_PIXEL_ID` 교체
 - [ ] 네이버 전환추적 신청 → 네이버공통키 발급 후 `YOUR_NAVER_KEY` / `YOUR_DOMAIN` 교체
       (새 광고주센터: 도구 → 전환 추적 관리. 비즈채널 등록·검수 선행 필요)
+- [ ] **Supabase 프로젝트 생성 → `supabase/schema.sql` 실행 → 환경변수 2개 설정**
+      (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) — 이것만 해도 이메일 수집이 동작합니다
+- [ ] 개인정보처리방침에 수집항목(이메일·동의시점 IP·User-Agent)과 보유기간 명시
+      → 동의 IP를 저장하므로 방침 없이 운영하면 개인정보보호법 위반 소지
 - [ ] Resend 도메인 인증(pluspsychology.ai) + 환경변수 4개 설정
 - [ ] **Search Console 인증 파일 `googlee928fd2a17217f2b.html`이 저장소에 없음** →
       루트에 추가해야 소유권 확인 가능 (내용 한 줄: `google-site-verification: googlee928fd2a17217f2b.html`)
