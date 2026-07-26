@@ -8,17 +8,14 @@
 
 ---
 
-## 1단계 — Supabase 프로젝트 만들기
+## 1단계 — 프로젝트: 새로 만들지 않습니다 ✅
 
-1. [supabase.com](https://supabase.com) 접속 → 로그인 (GitHub 계정으로 가능)
-2. **New project** 클릭
-3. 입력값
-   | 항목 | 값 |
-   |---|---|
-   | Name | `pluspsychology` (자유) |
-   | Database Password | 강한 비밀번호 — **비밀번호 관리자에 저장하세요.** 분실 시 재설정만 가능 |
-   | Region | **Northeast Asia (Seoul)** — 국내 방문자 응답속도 |
-4. **Create new project** → 준비까지 1~2분 걸립니다
+**이미 있습니다.** 앱이 쓰는 Supabase 프로젝트 `syxwnbqsozdgmogeidtq`를 그대로 씁니다.
+회원과 구매 이력을 한 DB에서 이어야 하므로 새로 만들면 안 됩니다.
+
+이 단계에서 할 일은 **service_role 키 재발급** 하나입니다.
+채팅으로 전달된 이력이 있어 그 키는 신뢰할 수 없습니다.
+방법은 [app-integration.md](app-integration.md)의 "service_role 키 재발급" 참고.
 
 ---
 
@@ -31,6 +28,15 @@
 
 > 여러 번 실행해도 안전합니다 (전부 `if not exists` / `or replace`).
 > 나중에 스키마를 고칠 때도 같은 방법으로 다시 실행하면 됩니다.
+
+### 이 파일은 앱과 겹치지 않습니다
+`schema.sql`은 `subscribers`와 `orders`만 새로 만듭니다. 둘 다 앱에 없는 테이블이고,
+앱이 쓰는 `profiles`·`entries`·`consents`·`analytics_events`는 건드리지 않습니다.
+**앱 스키마를 확인하지 않아도 지금 바로 실행해도 안전합니다.**
+
+> ⚠️ 반면 [`schema-app.sql`](../supabase/schema-app.sql)은 `auth.users`에 트리거를 걸어서
+> 앱 가입 흐름과 맞물립니다. **그 파일은 앱 스키마를 확인한 뒤에 실행하세요.**
+> (자세한 내용은 [app-integration.md](app-integration.md))
 
 ---
 
