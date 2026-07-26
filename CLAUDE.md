@@ -18,6 +18,7 @@ api/subscribe.js    # 이메일 알림신청 처리 (Vercel 서버리스 함수)
 api/order.js        # 주문 생성 — 결제 금액을 서버가 계산
 api/confirm.js      # 토스페이먼츠 결제 승인
 supabase/schema.sql # subscribers · orders 테이블 정의 (Supabase SQL Editor에서 실행)
+docs/setup-supabase.md # Supabase 연결 순서 (이메일 수집 켜기)
 docs/commerce-plan.md  # 판매 개시 준비 (결제·환불·회원 정책 설계)
 .vercelignore       # 배포에서 제외할 내부 문서 목록
 robots.txt
@@ -215,7 +216,7 @@ var BUSINESS = {
 - [ ] Meta 픽셀 ID 발급 후 `YOUR_PIXEL_ID` 교체
 - [ ] 네이버 전환추적 신청 → 네이버공통키 발급 후 `YOUR_NAVER_KEY` / `YOUR_DOMAIN` 교체
       (새 광고주센터: 도구 → 전환 추적 관리. 비즈채널 등록·검수 선행 필요)
-- [ ] **Supabase 프로젝트 생성 → `supabase/schema.sql` 실행 → 환경변수 2개 설정**
+- [ ] **Supabase 연결 → 이메일 수집 켜기** — 순서는 [docs/setup-supabase.md](docs/setup-supabase.md)
       (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) — 이것만 해도 이메일 수집이 동작합니다
 - [ ] 사업 시작 시점에 두 파일의 `BUSINESS.active`를 true로 전환 (위 "법적 문서" 참고)
 - [ ] 🚨 **해외 매출을 주식(증권)계좌로 받을 수 없음** → 사업자 외화 은행계좌 개설 가능 여부와
