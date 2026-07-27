@@ -47,20 +47,24 @@ Supabase 프로젝트: `syxwnbqsozdgmogeidtq` — **앱이 이미 쓰고 있는 
 
 ---
 
-## 🚨 지금 안 맞는 것 두 개
+## 상품 매핑
 
-| | 랜딩 | 앱 |
-|---|---|---|
-| 상품 코드 | `workbook-mind-manual` | `self-criticism` 외 4종 |
-| 가격 | ₩16,900 | ₩12,000 |
+랜딩의 〈마음 사용 설명서〉는 앱 5종과 **별개인 6번째 상품**입니다.
 
-**랜딩이 파는 실물 워크북이 앱의 5종 중 무엇인지 정해야 합니다.**
-정해지면 `api/order.js`의 `PRODUCT.code`를 그 slug로 바꾸세요.
-안 맞으면 결제는 되지만 앱 권한이 안 붙습니다 (트리거가 조용히 no-op).
+| | 값 |
+|---|---|
+| slug | `mind-manual` |
+| 랜딩 `api/order.js` | `PRODUCT.code = 'mind-manual'` |
+| 앱 `workbooks` | `schema-app.sql`이 삽입 (`is_active = false`) |
 
-5종: `self-criticism` · `shaky-relationships` · `burnout-rest` · `facing-anxiety` · `caring-boundaries`
+`is_active = false`인 이유: `workbooks`의 RLS가 `using (authenticated and is_active)`라
+false면 **앱 목록에 아예 안 뜹니다.** 실물 전용이라 `workbook_steps`가 없어서 앱에 보이면 안 됩니다.
+트리거는 security definer라 RLS를 우회해 정상 매칭됩니다.
 
-별개 상품이라면 `workbooks`에 행을 추가하고 그 slug를 쓰면 됩니다.
+> 나중에 앱에서도 풀게 하려면 `is_active`를 true로 바꾸고 `workbook_steps`를 채우세요.
+
+가격 ₩16,900은 여전히 임시값입니다. 확정 시 `api/order.js`, `index.html` 표시가격,
+`workbooks.price_krw` 세 곳을 함께 맞추세요.
 
 ---
 

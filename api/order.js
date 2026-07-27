@@ -15,16 +15,14 @@
 // ============================================================
 
 // ── 판매 상품 설정 ───────────────────────────────────────────
-//  ⚠️ code는 앱의 workbooks.slug와 **정확히 같아야** 합니다.
-//     다르면 결제돼도 앱에 이용권한이 안 붙습니다 (트리거가 조용히 no-op).
-//     현재 앱 slug: self-criticism / shaky-relationships / burnout-rest
-//                   facing-anxiety / caring-boundaries
-//     아래 값은 어느 것과도 매칭되지 않는 임시값입니다.
+//  code는 앱 workbooks.slug와 같아야 결제 후 이용권한이 붙습니다.
+//  'mind-manual'은 schema-app.sql이 등록하는 6번째 상품(실물 전용)입니다.
+//  바꿀 때는 workbooks 행의 slug도 함께 바꾸세요.
 //
-//  ⚠️ unitPrice도 임시값입니다 (앱 workbooks.price_krw는 12000).
-//     index.html 표시 가격과 추적 코드 value도 함께 맞추세요.
+//  ⚠️ unitPrice는 임시값입니다. 확정 시 index.html 표시 가격,
+//     추적 코드 value, workbooks.price_krw 세 곳을 함께 맞추세요.
 const PRODUCT = {
-  code: 'workbook-mind-manual',
+  code: 'mind-manual',
   name: '마음 사용 설명서',
   unitPrice: 16900,
   maxQty: 5

@@ -136,8 +136,9 @@ sitemap.xml
 - 이용권한은 앱의 **`workbook_purchases`** 를 씁니다 (별도 entitlements 만들지 않음)
 - 청소년 처리도 앱이 이미 함 — `profiles.role='teen'`, `consents.teen_payment`
 - 가입 트리거는 `auth.users`가 아니라 **`profiles`에 겁니다** (FK가 profiles를 참조)
-- 🚨 `orders.product_code`가 `workbooks.slug`와 **달라서 현재 연결 안 됨** —
-  랜딩 `workbook-mind-manual` vs 앱 `self-criticism` 외 4종. 어떤 워크북인지 확정 필요
+- 랜딩 상품은 앱 5종과 별개인 **6번째 상품 `mind-manual`** (실물 전용).
+  `schema-app.sql`이 `workbooks`에 `is_active=false`로 넣어 앱 목록에는 안 보입니다
+  (RLS가 `using (authenticated and is_active)`). 트리거는 security definer라 매칭됨
 
 **보안 모델이 테이블마다 다릅니다. 이걸 헷갈리면 명단이 통째로 새어나갑니다.**
 

@@ -18,6 +18,22 @@
 -- ============================================================
 
 
+-- ── 0) 랜딩 실물 워크북을 6번째 상품으로 등록 ────────────────
+--  앱의 5종(self-criticism 외)과 별개인 실물 전용 상품입니다.
+--
+--  is_active = false 인 이유:
+--    workbooks의 RLS가 `using (authenticated and is_active)` 라서
+--    false면 앱에 아예 보이지 않습니다. 실물 전용이라 앱 안에서
+--    풀 단계(workbook_steps)가 없으므로 목록에 뜨면 안 됩니다.
+--    아래 트리거는 security definer라 RLS를 우회해 정상 매칭됩니다.
+--
+--  나중에 앱에서도 노출하려면 is_active를 true로 바꾸고
+--  workbook_steps를 채우세요.
+insert into public.workbooks (slug, title, subtitle, price_krw, sort_order, is_active)
+values ('mind-manual', '마음 사용 설명서', '실물 워크북', 16900, 6, false)
+on conflict (slug) do nothing;
+
+
 -- ── 1) 주문이 결제 완료되면 → 이미 가입한 회원에게 권한 부여 ──
 create or replace function public.link_order_to_workbook_purchase()
 returns trigger
