@@ -1,124 +1,25 @@
 -- ============================================================
---  앱 연동 스키마 — 회원 · 이용권한 · 검사기록
+--  랜딩 ↔ 앱 연결 — 새 테이블 없음. 트리거 2개뿐.
 --
---  실행: Supabase 대시보드 → SQL Editor → 붙여넣고 Run
---        (schema.sql을 먼저 실행한 뒤에 이 파일을 실행하세요)
+--  실행: schema.sql 실행 후, Supabase SQL Editor에서 Run
 --
---  ⚠️ 보안 모델이 schema.sql과 다릅니다.
---     · schema.sql의 테이블 → 서버(service_role) 전용, 정책 없음
---     · 이 파일의 테이블   → 모바일 앱이 anon 키로 직접 접근, RLS 정책으로 제어
+--  앱(BioHealthFinalDev)이 이미 다 갖고 있어서 새로 만들 게 없습니다.
+--    profiles            — 회원 (birth_year, role: member/teen/admin)
+--    consents            — 동의 (teen_payment 포함)
+--    workbooks           — 워크북 5종 (slug, price_krw)
+--    workbook_purchases  — 구매·이용권한 (digital/physical, paid/refunded)
+--    assessments         — 검사 기록
 --
---  모바일 앱에는 **anon 키만** 넣습니다. service_role 키를 앱에 넣으면
---  앱을 뜯어본 사람이 명단 전체를 읽고 지울 수 있습니다.
+--  랜딩이 추가하는 것은 subscribers·orders(schema.sql)뿐이고,
+--  이 파일은 "랜딩에서 결제된 주문"을 앱의 workbook_purchases에 꽂아줍니다.
+--
+--  매칭 규칙:  orders.product_code  ==  workbooks.slug
+--             orders.buyer_email    ==  auth.users.email
 -- ============================================================
 
 
--- ── 1) 회원 프로필 — 이 파일에서 만들지 않습니다 ─────────────
---
---  ⚠️ 이 Supabase 프로젝트에는 앱이 만든 public.profiles가 **이미 있습니다.**
---     (2026-07-26 확인: profiles, entries, consents, analytics_events 존재)
---
---  여기서 profiles를 다시 만들면 `if not exists` 때문에 조용히 건너뛰고,
---  아래 트리거가 기대하는 컬럼이 없어 가입이 깨질 수 있습니다.
---  → 프로필은 **앱 저장소의 스키마를 원본으로 삼습니다.**
---
---  만 14세 미만 법정대리인 동의(개인정보보호법 제22조의2)를 기록할 컬럼이
---  앱의 profiles에 없다면, 앱 쪽 스키마에 아래를 추가하세요.
---
---    alter table public.profiles
---      add column if not exists birth_date date,
---      add column if not exists guardian_consent boolean not null default false,
---      add column if not exists guardian_consent_at timestamptz;
-
-
--- ── 2) 앱 이용 권한 ──────────────────────────────────────────
---  "워크북을 산 사람에게 앱 프로그램을 열어준다"를 표현합니다.
-create table if not exists public.entitlements (
-  id           uuid primary key default gen_random_uuid(),
-  user_id      uuid        not null references auth.users(id) on delete cascade,
-  product_code text        not null,
-  source       text        not null default 'order'
-                           check (source in ('order','manual','promo')),
-  order_id     text        references public.orders(order_id),
-  granted_at   timestamptz not null default now(),
-  expires_at   timestamptz,              -- null이면 기간 제한 없음
-  revoked      boolean     not null default false,
-  created_at   timestamptz not null default now(),
-  updated_at   timestamptz not null default now(),
-
-  unique (user_id, product_code)
-);
-
-create index if not exists entitlements_user_idx on public.entitlements (user_id);
-
-
--- ── 3) 심리검사 결과·기록 ────────────────────────────────────
---  ⚠️ 앱에 이미 `public.entries`가 있습니다. 그것이 검사 기록 역할을 한다면
---     이 테이블을 만들지 말고 entries를 그대로 쓰세요. 같은 데이터를 두 곳에
---     두면 반드시 어긋납니다. 역할이 다를 때만 아래를 실행하세요.
-create table if not exists public.assessment_results (
-  id              uuid primary key default gen_random_uuid(),
-  user_id         uuid        not null references auth.users(id) on delete cascade,
-  assessment_code text        not null,      -- 예: 'mind-battery'
-  answers         jsonb,                     -- 원자료
-  scores          jsonb,                     -- 채점 결과
-  completed_at    timestamptz,
-  created_at      timestamptz not null default now(),
-  updated_at      timestamptz not null default now()
-);
-
-create index if not exists assessment_results_user_idx
-  on public.assessment_results (user_id, assessment_code, created_at desc);
-
-
--- ── 4) updated_at 트리거 ─────────────────────────────────────
---  public.set_updated_at()은 schema.sql에서 이미 정의했습니다.
---  (profiles는 앱이 소유하므로 여기서 트리거를 걸지 않습니다)
-drop trigger if exists entitlements_set_updated_at on public.entitlements;
-create trigger entitlements_set_updated_at before update on public.entitlements
-  for each row execute function public.set_updated_at();
-
-drop trigger if exists assessment_results_set_updated_at on public.assessment_results;
-create trigger assessment_results_set_updated_at before update on public.assessment_results
-  for each row execute function public.set_updated_at();
-
-
--- ── 5) 가입 시: 기존 구매분 권한 부여 ────────────────────────
---  구매를 먼저 하고 나중에 가입한 경우를 처리합니다.
---
---  🚨 트리거 이름을 일부러 길게 지었습니다.
---     Supabase 예제와 앱이 흔히 쓰는 이름은 `on_auth_user_created`이고,
---     같은 이름으로 만들면 **앱의 기존 가입 트리거를 덮어써서 가입이 깨집니다.**
---     한 테이블에 트리거 여러 개가 공존할 수 있으니 이름만 겹치지 않으면 됩니다.
---     프로필 생성은 앱 트리거가 이미 하고 있으므로 여기서 건드리지 않습니다.
-create or replace function public.grant_entitlements_on_signup()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  -- 같은 이메일로 결제 완료된 주문이 있으면 이용 권한을 붙입니다
-  insert into public.entitlements (user_id, product_code, source, order_id)
-  select new.id, o.product_code, 'order', o.order_id
-    from public.orders o
-   where lower(o.buyer_email) = lower(new.email)
-     and o.status = 'paid'
-  on conflict (user_id, product_code) do nothing;
-
-  return new;
-end;
-$$;
-
-drop trigger if exists on_auth_user_created_grant_entitlements on auth.users;
-create trigger on_auth_user_created_grant_entitlements
-  after insert on auth.users
-  for each row execute function public.grant_entitlements_on_signup();
-
-
--- ── 6) 결제 완료 시: 이미 가입한 회원이면 즉시 권한 부여 ─────
---  가입을 먼저 하고 나중에 구매한 경우를 처리합니다.
-create or replace function public.grant_entitlement_on_paid()
+-- ── 1) 주문이 결제 완료되면 → 이미 가입한 회원에게 권한 부여 ──
+create or replace function public.link_order_to_workbook_purchase()
 returns trigger
 language plpgsql
 security definer
@@ -126,70 +27,66 @@ set search_path = public
 as $$
 begin
   if new.status = 'paid' and (old.status is distinct from 'paid') then
-    insert into public.entitlements (user_id, product_code, source, order_id)
-    select u.id, new.product_code, 'order', new.order_id
+    insert into public.workbook_purchases (user_id, workbook_id, purchase_type, status)
+    select p.id, w.id, 'physical', 'paid'
       from auth.users u
+      join public.profiles p on p.id = u.id
+      join public.workbooks w on w.slug = new.product_code
      where lower(u.email) = lower(new.buyer_email)
-    on conflict (user_id, product_code) do nothing;
+    on conflict (user_id, workbook_id, purchase_type) do nothing;
   end if;
   return new;
 end;
 $$;
 
-drop trigger if exists orders_grant_entitlement on public.orders;
-create trigger orders_grant_entitlement
+drop trigger if exists orders_link_workbook_purchase on public.orders;
+create trigger orders_link_workbook_purchase
   after update on public.orders
-  for each row execute function public.grant_entitlement_on_paid();
+  for each row execute function public.link_order_to_workbook_purchase();
+
+
+-- ── 2) 가입하면 → 이미 결제한 주문이 있으면 권한 부여 ─────────
+--  트리거를 auth.users가 아니라 profiles에 겁니다.
+--  workbook_purchases.user_id가 profiles(id)를 참조하므로,
+--  auth.users에 걸면 profiles가 아직 없어 FK 위반이 납니다.
+create or replace function public.claim_orders_on_profile_create()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.workbook_purchases (user_id, workbook_id, purchase_type, status)
+  select new.id, w.id, 'physical', 'paid'
+    from public.orders o
+    join public.workbooks w on w.slug = o.product_code
+    join auth.users u on u.id = new.id
+   where lower(o.buyer_email) = lower(u.email)
+     and o.status = 'paid'
+  on conflict (user_id, workbook_id, purchase_type) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists profiles_claim_orders on public.profiles;
+create trigger profiles_claim_orders
+  after insert on public.profiles
+  for each row execute function public.claim_orders_on_profile_create();
 
 
 -- ============================================================
---  RLS — 앱이 anon 키로 접근하는 테이블에만 정책을 답니다
+--  RLS는 건드리지 않습니다.
+--    · subscribers / orders — 정책 없음 유지 (랜딩 서버 전용)
+--    · 앱 테이블 전부       — 앱 마이그레이션의 정책 그대로
 --
---  ⚠️ public.subscribers 에는 절대 정책을 만들지 마세요.
---     정책 하나만 열려도 알림 신청 명단 전체가 공개됩니다.
+--  앱은 이용권한을 workbook_purchases에서 읽습니다 (기존 정책 그대로).
+--  랜딩의 orders를 앱이 직접 읽을 이유는 없습니다.
 -- ============================================================
 
---  profiles는 앱이 소유하므로 여기서 RLS·정책을 건드리지 않습니다.
---  (이미 걸린 정책을 덮어쓰면 앱의 접근 권한이 바뀝니다)
-alter table public.entitlements       enable row level security;
-alter table public.assessment_results enable row level security;
 
--- 이용권한: 본인 것만 조회. 부여·회수는 서버(service_role)만 — insert/update 정책 없음
-drop policy if exists "entitlements_select_own" on public.entitlements;
-create policy "entitlements_select_own" on public.entitlements
-  for select to authenticated using (user_id = auth.uid());
-
--- 검사기록: 본인 것만 조회·생성·수정
-drop policy if exists "assessment_select_own" on public.assessment_results;
-create policy "assessment_select_own" on public.assessment_results
-  for select to authenticated using (user_id = auth.uid());
-
-drop policy if exists "assessment_insert_own" on public.assessment_results;
-create policy "assessment_insert_own" on public.assessment_results
-  for insert to authenticated with check (user_id = auth.uid());
-
-drop policy if exists "assessment_update_own" on public.assessment_results;
-create policy "assessment_update_own" on public.assessment_results
-  for update to authenticated
-  using (user_id = auth.uid()) with check (user_id = auth.uid());
-
-
--- ── 주문 내역 조회 (앱의 "내 구매내역") ──────────────────────
---  orders에 딱 하나, 본인 이메일 주문만 읽는 SELECT 정책을 답니다.
+-- ── 확인용 ───────────────────────────────────────────────────
+--  실행 후 아래로 트리거 2개가 붙었는지 확인:
 --
---  🚨 이 정책은 **이메일 확인(Email Confirmation)이 켜져 있어야만 안전합니다.**
---     확인 없이 가입을 허용하면 남의 이메일로 가입해 그 사람의 주문과
---     이용 권한을 가로챌 수 있습니다.
---     Supabase → Authentication → Sign In / Providers → Confirm email: ON
-drop policy if exists "orders_select_own" on public.orders;
-create policy "orders_select_own" on public.orders
-  for select to authenticated
-  using (lower(buyer_email) = lower(auth.jwt() ->> 'email'));
-
---  주소·IP까지 앱에 내려보낼 이유는 없으므로, 앱은 이 뷰를 읽게 합니다.
-create or replace view public.my_orders with (security_invoker = on) as
-  select order_id, status, product_name, quantity, amount, created_at, approved_at
-    from public.orders;
-
-comment on view public.my_orders is
-  '앱에서 읽는 내 주문 내역. security_invoker라 orders의 RLS가 그대로 적용됩니다.';
+--    select tgname, relname from pg_trigger t
+--      join pg_class c on c.oid = t.tgrelid
+--     where tgname in ('orders_link_workbook_purchase', 'profiles_claim_orders');

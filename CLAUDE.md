@@ -126,14 +126,18 @@ sitemap.xml
 ## 모바일 앱과 같은 Supabase 프로젝트를 씁니다
 회원 계정·구매 이력·검사기록을 한 DB에서 관리합니다. 상세는 [docs/app-integration.md](docs/app-integration.md).
 
-**프로젝트: `syxwnbqsozdgmogeidtq`** — 빈 프로젝트가 아니라 **앱이 이미 쓰고 있습니다.**
-2026-07-26 확인: `profiles`·`entries`·`consents`·`analytics_events`가 이미 있고,
-랜딩 쪽 `subscribers`·`orders`는 아직 없습니다(스키마 미실행).
+**앱 저장소: `G:\내 드라이브\BioHealthFinalDev` (Flutter)**
+**Supabase 프로젝트 `syxwnbqsozdgmogeidtq`** — 앱이 이미 쓰는 DB를 공유합니다.
 
-- `profiles`는 **앱 소유**입니다. `schema-app.sql`은 이 테이블을 만들지도, 정책을 걸지도 않습니다.
-- 가입 트리거 이름은 `on_auth_user_created_grant_entitlements`입니다.
-  흔한 이름인 `on_auth_user_created`로 만들면 **앱의 기존 가입 트리거를 덮어써 가입이 깨집니다.**
-- `assessment_results`는 앱의 `entries`와 역할이 겹칠 수 있어 보류 상태입니다.
+앱이 `profiles`·`consents`·`workbooks`·`workbook_purchases`·`assessments` 등 22개 테이블을
+이미 갖고 있습니다. **랜딩이 추가하는 건 `subscribers`·`orders` 둘뿐**이고,
+`schema-app.sql`은 새 테이블 없이 **트리거 2개**로 둘을 잇습니다.
+
+- 이용권한은 앱의 **`workbook_purchases`** 를 씁니다 (별도 entitlements 만들지 않음)
+- 청소년 처리도 앱이 이미 함 — `profiles.role='teen'`, `consents.teen_payment`
+- 가입 트리거는 `auth.users`가 아니라 **`profiles`에 겁니다** (FK가 profiles를 참조)
+- 🚨 `orders.product_code`가 `workbooks.slug`와 **달라서 현재 연결 안 됨** —
+  랜딩 `workbook-mind-manual` vs 앱 `self-criticism` 외 4종. 어떤 워크북인지 확정 필요
 
 **보안 모델이 테이블마다 다릅니다. 이걸 헷갈리면 명단이 통째로 새어나갑니다.**
 

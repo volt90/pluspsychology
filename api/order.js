@@ -15,8 +15,14 @@
 // ============================================================
 
 // ── 판매 상품 설정 ───────────────────────────────────────────
-//  ⚠️ unitPrice는 임시값입니다. 실제 판매가 확정 시 수정하세요.
-//     index.html의 표시 가격, 추적 코드의 value도 함께 맞춰야 합니다.
+//  ⚠️ code는 앱의 workbooks.slug와 **정확히 같아야** 합니다.
+//     다르면 결제돼도 앱에 이용권한이 안 붙습니다 (트리거가 조용히 no-op).
+//     현재 앱 slug: self-criticism / shaky-relationships / burnout-rest
+//                   facing-anxiety / caring-boundaries
+//     아래 값은 어느 것과도 매칭되지 않는 임시값입니다.
+//
+//  ⚠️ unitPrice도 임시값입니다 (앱 workbooks.price_krw는 12000).
+//     index.html 표시 가격과 추적 코드 value도 함께 맞추세요.
 const PRODUCT = {
   code: 'workbook-mind-manual',
   name: '마음 사용 설명서',
