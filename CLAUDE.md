@@ -9,12 +9,15 @@
 
 ## 파일 구조
 ```
-index.html          # 랜딩페이지 전체 (CSS·JS·이미지 base64 모두 인라인, 약 400KB)
+index.html          # Home 탭 — 랜딩페이지 전체 (CSS·JS·이미지 base64 모두 인라인, 약 400KB)
+about.html          # About 탭 — 김심리월드 브랜드 소개 (자체 완결형)
+contact.html        # Contact 탭 — 문의 폼 (자체 완결형)
 privacy.html        # 개인정보처리방침 (한/영)
 terms.html          # 이용약관 (한/영)
 checkout.html       # 주문/결제 페이지 (noindex)
 checkout-result.html # 결제 성공·실패 화면 (토스 리다이렉트 목적지, noindex)
 api/subscribe.js    # 이메일 알림신청 처리 (Vercel 서버리스 함수)
+api/contact.js      # 문의 폼 접수 → Resend로 메일 전달 (첨부 지원)
 api/order.js        # 주문 생성 — 결제 금액을 서버가 계산
 api/confirm.js      # 토스페이먼츠 결제 승인
 supabase/schema.sql # subscribers · orders 테이블 정의 (Supabase SQL Editor에서 실행)
@@ -44,7 +47,24 @@ sitemap.xml
 - ⚠️ 실물과 디지털은 **쓸 수 있는 결제사가 다릅니다** (Paddle·Lemon Squeezy는 디지털 전용)
 - ⚠️ 연령 기준이 둘: **가입 14세**(개인정보보호법) / **결제 19세**(민법). 헷갈리기 쉬움
 
-## 페이지 구성 (순서 고정)
+## 페이지 구성
+
+### 상단 탭 (Home / About / Contact)
+세 페이지가 같은 상단바 + 탭 내비게이션을 공유합니다 (`.topbar` → `nav.tabs`).
+
+| 탭 | 파일 | 내용 |
+|---|---|---|
+| Home | `index.html` | 워크북 랜딩 (기존 페이지 그대로) |
+| About | `about.html` | 김심리월드 브랜드 소개 |
+| Contact | `contact.html` | 문의 폼 |
+
+> ⚠️ **탭 이름은 한국어 화면에서도 영어(Home/About/Contact)로 고정입니다.**
+> 그래서 `nav.tabs`의 `<a>`에는 **`data-en`을 붙이지 않았습니다.** 붙이는 순간
+> 언어 전환 JS가 문구를 바꿔치기하므로, 번역을 추가하지 마세요.
+> 활성 탭에는 `class="on"` + `aria-current="page"` 를 둡니다.
+> 탭은 세 파일에 각각 복사돼 있으므로 **항목을 추가·변경하면 세 파일을 함께** 고치세요.
+
+### Home(index.html) 섹션 순서 (고정)
 히어로 → 문제 정의 → 해결 방법(3단계) → 가격 → 증거 → CTA(이메일 수집 + 문의)
 
 ## 디자인 규칙
@@ -52,6 +72,11 @@ sitemap.xml
 - 폰트: 제목·본문 `Noto Sans KR`, 포인트만 `Jua`(주아체)
 - 시그니처 모티프: **마음 배터리** — 히어로 1%(빨강) → 3단계 33/66/100% → CTA 만충(초록)
 - 톤: 담백하고 신뢰감 있게. 과장 광고 표현 금지.
+- 캐릭터 4종(`.frow`)은 **김심리·루비·세루만 `.fr-lg`로 1.5배**(74px→111px),
+  아르는 기본 크기입니다. `.fimg` 칸 높이를 가장 큰 쪽(111px)에 맞춰 두었기 때문에
+  크기가 달라도 이름·설명 줄이 나란히 맞습니다. 칸 높이를 줄이면 정렬이 깨집니다.
+  휴대폰(≤440px)에서는 4칸을 유지하면 폭이 모자라 1.5배가 잘리므로 **2×2로 접힙니다.**
+  같은 규칙이 `index.html`과 `about.html` 양쪽에 있습니다 — 함께 고치세요.
 
 ## 다국어 (한/영 토글)
 - 상단 우측 `한국어 | EN` 버튼. JS가 아래 속성을 바꿔치기합니다.
@@ -61,14 +86,20 @@ sitemap.xml
   - `data-en-ph`   : input placeholder
   - `data-en-aria` : aria-label
 - **문구를 고칠 때는 한글 원문과 `data-en` 값을 반드시 함께 수정**하세요.
+- **예외: 상단 탭(Home/About/Contact)은 일부러 `data-en`이 없습니다.** 한국어 화면에서도
+  영어 이름 그대로 두기 위한 것이니 번역을 추가하지 마세요.
 - 한국어 원문은 페이지 로드 시 JS가 `data-ko`에 자동 보관합니다 (HTML에 직접 쓰지 않음).
 
 ## 설치된 추적 코드 (`<head>`)
 | 도구 | 상태 | 값 |
 |---|---|---|
 | GA4 | ✅ 완료 | `G-7HK4CQK6ZW` |
-| Meta Pixel | ⏳ 미완 | `YOUR_PIXEL_ID` 2곳 교체 필요 |
-| 네이버 전환추적 | ⏳ 미완 | `YOUR_NAVER_KEY`, `YOUR_DOMAIN` 교체 필요 |
+| Meta Pixel | ⏳ 미완 | `YOUR_PIXEL_ID` 교체 필요 — **index.html 2곳 + contact.html 2곳** |
+| 네이버 전환추적 | ⏳ 미완 | `YOUR_NAVER_KEY`, `YOUR_DOMAIN` 교체 필요 — **index.html + contact.html** |
+
+> 추적 스크립트가 들어간 페이지: `index.html`(GA4+Meta+네이버) ·
+> `contact.html`(GA4+Meta+네이버 — 핵심 전환인 문의 접수가 여기서 일어나므로) ·
+> `about.html`(GA4만). 나머지 페이지에는 넣지 않았습니다.
 
 ### 이벤트는 퍼널 역할별로 분리되어 있음 (뭉치지 말 것)
 | 시점 | GA4 | Meta | 네이버 |
@@ -122,6 +153,41 @@ sitemap.xml
 소스 보기로 노출됩니다. 키는 Vercel 환경변수에만 둡니다.
 특히 `SUPABASE_SERVICE_ROLE_KEY`는 RLS를 통째로 우회하므로, 노출되면
 신청자 명단 전체를 읽고 지울 수 있습니다. 서버 코드 밖으로 절대 내보내지 마세요.
+
+## 문의 폼 (contact.html → api/contact.js → Resend)
+
+Contact 탭의 폼이 `POST /api/contact`로 보내고, 서버가 **Resend로 내 메일함에 전달**합니다.
+**DB에 저장하지 않습니다** (문의는 명단이 아니므로). 받은 메일에 그대로 '회신'하면
+문의자에게 바로 갑니다 — `reply_to`에 문의자 주소를 넣기 때문입니다.
+
+| 항목 | 필수 | 비고 |
+|---|---|---|
+| 문의 유형 | ✅ | 5종 고정값. 서버가 화이트리스트로 검증 |
+| 이름 (기관명) | ✅ | |
+| 이메일 | ✅ | 답변받을 주소 |
+| 연락처 | — | 전화 답변을 원할 때만 |
+| 문의 제목 | ✅ | |
+| 문의 내용 | ✅ | |
+| 첨부파일 | — | 최대 3개 · 합계 3MB |
+| 개인정보 수집·이용 동의 | ✅ | 개인정보보호법상 필수 (삭제 금지) |
+
+### 필요한 Vercel 환경변수
+| 변수 | 용도 |
+|---|---|
+| `RESEND_API_KEY` | 이메일 수집과 공용 |
+| `FROM_EMAIL` | 이메일 수집과 공용 |
+| `CONTACT_TO_EMAIL` | 문의를 받을 주소 (선택 — 없으면 `NOTIFY_EMAIL`, 그것도 없으면 `pluspsychology@gmail.com`) |
+
+### 반드시 지킬 것
+- **설정이 없으면 503을 돌려줍니다.** 그러면 화면이 "이메일로 보내주세요" 안내로 바뀝니다.
+  접수되지 않았는데 성공했다고 보여주지 않기 위한 장치입니다. 200으로 바꾸지 마세요.
+- 첨부 제한은 **`contact.html`의 `MAX_FILES`/`MAX_TOTAL`과 `api/contact.js`의
+  `MAX_FILES`/`MAX_TOTAL_BYTES`가 같은 값**이어야 합니다. 한쪽만 올리면 조용히 잘립니다.
+  3MB를 넘기지 마세요 — base64로 부풀면 Vercel 요청 본문 한도(4.5MB)에 걸립니다.
+- 확장자는 **화이트리스트**입니다 (`ALLOWED_EXT`). 실행파일(.exe 등)은 차단됩니다.
+- 폼에 **봇 함정(honeypot) `#website` 칸**이 있습니다. 화면 밖으로 숨긴 칸이라
+  사람은 채울 수 없고, 채워져 오면 서버가 조용히 버립니다. 지우지 마세요.
+- 메일 본문의 사용자 입력은 전부 `escapeHtml`을 거칩니다.
 
 ## 모바일 앱과 같은 Supabase 프로젝트를 씁니다
 회원 계정·구매 이력·검사기록을 한 DB에서 관리합니다. 상세는 [docs/app-integration.md](docs/app-integration.md).
@@ -245,8 +311,15 @@ var BUSINESS = {
 - [ ] **후기 3개가 지어낸 예시임** — 실제 후기로 교체 전까지 공개 시 표시광고법 위반 소지.
       실제 후기가 없으면 `.revs` 블록을 임시 제거 권장.
 - [ ] **가격 ₩16,900은 임시값** — 실제 판매가 확인 후 수정 (`.amount` 및 추적 코드의 `value:16900`)
-- [ ] Meta 픽셀 ID 발급 후 `YOUR_PIXEL_ID` 교체
+- [ ] 🚨 **About 탭 내용 교체** — 현재 `about.html`은 index.html에 이미 있던 문구
+      (김심리 소개 · 지키는 것 4가지 · 캐릭터)를 옮겨 담은 **임시 구성**입니다.
+      원본 `김심리월드.html`의 내용으로 재배치해야 합니다.
+- [ ] **문의 폼 켜기** — `RESEND_API_KEY` · `FROM_EMAIL` · `CONTACT_TO_EMAIL` 설정.
+      그 전까지 `/api/contact`는 503을 돌려주고 화면은 "이메일로 보내주세요" 안내가 뜹니다
+      (Resend 도메인 인증이 선행되어야 합니다)
+- [ ] Meta 픽셀 ID 발급 후 `YOUR_PIXEL_ID` 교체 (**index.html·contact.html 두 파일**)
 - [ ] 네이버 전환추적 신청 → 네이버공통키 발급 후 `YOUR_NAVER_KEY` / `YOUR_DOMAIN` 교체
+      (**index.html·contact.html 두 파일**)
       (새 광고주센터: 도구 → 전환 추적 관리. 비즈채널 등록·검수 선행 필요)
 - [ ] 🚨 **service_role 키 재발급** — 채팅으로 전달된 이력이 있어 신뢰할 수 없음.
       재발급 방법과 주의사항은 [docs/app-integration.md](docs/app-integration.md) "설정 순서"
@@ -267,7 +340,7 @@ var BUSINESS = {
 - [ ] Resend 도메인 인증(pluspsychology.ai) + 환경변수 4개 설정
 - [ ] **Search Console 인증 파일 `googlee928fd2a17217f2b.html`이 저장소에 없음** →
       루트에 추가해야 소유권 확인 가능 (내용 한 줄: `google-site-verification: googlee928fd2a17217f2b.html`)
-- [ ] sitemap.xml이 현재 페이지 상태와 맞는지 확인
+- [ ] sitemap.xml이 현재 페이지 상태와 맞는지 확인 (about/contact는 추가해 두었습니다)
 
 ## 주의사항
 - 광고 연결 URL에 `#`(앵커)를 넣지 마세요. 네이버 NaPm 파라미터가 무시되어 전환추적이 깨집니다.
