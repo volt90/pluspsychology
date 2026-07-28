@@ -1,0 +1,12 @@
+<!-- 사진이 들어올 자리. 실제 이미지를 받으면 각 <img> 의 src 만 바꾸면 됩니다. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="">
+  <rect width="400" height="300" fill="#FFFDF7"/>
+  <rect x="1" y="1" width="398" height="298" fill="none" stroke="#ECE2CD" stroke-width="2" stroke-dasharray="9 7"/>
+  <g fill="none" stroke="#D9CDB4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="152" y="118" width="96" height="72" rx="8"/>
+    <circle cx="176" cy="142" r="8"/>
+    <path d="M156 178l26-24 20 18 16-13 26 24"/>
+  </g>
+  <text x="200" y="216" text-anchor="middle" font-family="'Noto Sans KR',sans-serif"
+        font-size="15" fill="#A79E8E">사진 준비 중</text>
+</svg>
