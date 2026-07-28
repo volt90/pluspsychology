@@ -43,6 +43,11 @@
 
   var actx = null, gainNode = null, buffer = null, node = null;
   var playing = false, loading = false, failed = false;
+  // pending = 켜기로 돼 있지만 브라우저 자동재생 정책 때문에 아직 소리가
+  // 나기 전인 상태. 버튼은 이때도 '켜짐'으로 보여야 합니다 — 꺼져 있는 게
+  // 아니라 사용자의 첫 조작을 기다리는 중이기 때문입니다.
+  var pending = false;
+  var detachArm = function () {};
   var startedAt = 0, startedFrom = 0;   // 현재 재생 위치 계산용
 
   // ── 버튼 ───────────────────────────────────────────────
@@ -70,9 +75,13 @@
     { attributes: true, attributeFilter: ['lang'] });
   document.body.appendChild(btn);
 
+  function paint() {
+    btn.setAttribute('aria-pressed', (playing || pending) ? 'true' : 'false');
+  }
   function setState(on) {
     playing = on;
-    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (on) pending = false;
+    paint();
   }
 
   // ── 오디오 ─────────────────────────────────────────────
@@ -184,6 +193,7 @@
       // 파일을 못 불러오면 조용히 버튼을 비활성화합니다 (페이지는 그대로 동작)
       failed = true;
       btn.disabled = true;
+      pending = false;
       setState(false);
     });
   }
@@ -203,6 +213,14 @@
 
   btn.addEventListener('click', function () {
     if (loading || failed) return;
+    if (pending) {                     // 아직 소리가 안 난 상태에서 끄기를 누른 경우
+      pending = false;
+      detachArm();
+      setState(false);
+      try { localStorage.setItem(KEY_ON, '0'); } catch (e) {}
+      if (typeof gtag === 'function') gtag('event', 'bgm_toggle', { state: 'off' });
+      return;
+    }
     if (playing) bgmOff(); else bgmOn();
   });
 
@@ -233,17 +251,22 @@
 
   if (wanted) {
     ensureCtx();
-    if (actx.state === 'running') bgmOn();   // 자동재생이 허용된 상태 → 바로 시작
+    if (actx.state === 'running') {
+      bgmOn();                 // 자동재생이 허용된 상태 → 바로 시작
+    } else {
+      pending = true;          // 막혀 있음 → 첫 조작까지 '켜짐'으로 두고 기다립니다
+      paint();
+    }
 
     var EVTS = ['pointerdown', 'keydown', 'touchstart'];
-    var detach = function () {
-      EVTS.forEach(function (t) { document.removeEventListener(t, arm, true); });
-    };
     var arm = function (e) {
-      detach();
+      detachArm();
       // 버튼 자체를 누른 경우엔 위의 click 핸들러가 처리하도록 비켜줍니다
       if (e && e.target && e.target.closest && e.target.closest('#bgm')) return;
       bgmOn();   // 이미 재생 중이거나 불러오는 중이면 내부에서 무시됩니다
+    };
+    detachArm = function () {
+      EVTS.forEach(function (t) { document.removeEventListener(t, arm, true); });
     };
     EVTS.forEach(function (t) { document.addEventListener(t, arm, true); });
   }
