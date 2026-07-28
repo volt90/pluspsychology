@@ -163,6 +163,13 @@
   .filelist .sz{flex:0 0 auto;color:var(--ink-faint);font-size:11.5px}
   .filelist button{flex:0 0 auto;border:0;background:transparent;color:var(--ink-faint);cursor:pointer;font-size:15px;line-height:1;padding:2px 4px;border-radius:6px}
   .filelist button:hover{color:var(--coral)}
+  /* 첨부 합계 — 지금 몇 MB를 썼는지 한도와 나란히 보여줍니다 */
+  .ftotal{display:flex;align-items:center;gap:10px;margin-top:9px}
+  .ftotal[hidden]{display:none}
+  .fbar{flex:1 1 auto;height:5px;background:var(--line);border-radius:999px;overflow:hidden}
+  .fbar span{display:block;height:100%;width:0;background:var(--blue);border-radius:999px;transition:width .22s}
+  .ftxt{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .ftotal.near .fbar span{background:var(--gold)}
 
   /* 동의 */
   .consent{display:flex;align-items:flex-start;gap:9px;margin-top:4px;text-align:left}
@@ -198,7 +205,7 @@
 
   @media (prefers-reduced-motion: reduce){
     *{scroll-behavior:auto!important}
-    .sbtn,.cline,.tabs a,.filebtn{transition:none!important}
+    .sbtn,.cline,.tabs a,.filebtn,.fbar span{transition:none!important}
   }
 </style>
 </head>
@@ -226,7 +233,7 @@
     <div class="head">
       <span class="eyebrow" data-en="Contact">문의하기</span>
       <h1 data-en="Tell us what you need —<br>we&#39;ll get back to you.">궁금한 점을 남겨주시면,<br>확인 후 답변드릴게요.</h1>
-      <p class="lede" data-en="Purchases, bulk adoption for schools and organizations, talks and partnerships, press — anything is welcome. We usually reply within 2–3 business days.">구매 문의부터 학교·기관 도입, 강연·협업 제안, 언론 문의까지 모두 환영합니다. 보통 영업일 기준 2~3일 안에 답변드립니다.</p>
+      <p class="lede" data-en="Purchases, bulk adoption for schools and organizations, talks and partnerships, press — anything is welcome.<br>We usually reply within 2–3 business days.">구매 문의부터 학교·기관 도입, 강연·협업 제안, 언론 문의까지 모두 환영합니다.<br>보통 영업일 기준 2~3일 안에 답변드립니다.</p>
     </div>
 
     <form class="formwrap panel" id="contactForm" novalidate>
@@ -275,7 +282,6 @@
         <input type="tel" id="cphone" name="phone" maxlength="40" autocomplete="tel"
                placeholder="예: 010-1234-5678" data-en-ph="e.g. +82 10-1234-5678"
                aria-label="연락처 (선택)" data-en-aria="Phone (optional)">
-        <p class="hint" data-en="Leave it only if you would rather be reached by phone. Email is our default.">전화 답변을 원하실 때만 남겨주세요. 기본은 이메일로 답변드립니다.</p>
       </div>
 
       <!-- 문의 제목 (필수) -->
@@ -306,6 +312,10 @@
           <span data-en="Choose files">파일 선택</span>
         </label>
         <ul class="filelist" id="fileList"></ul>
+        <div class="ftotal" id="fileTotal" hidden>
+          <div class="fbar"><span id="fileBar"></span></div>
+          <span class="ftxt" id="fileTotalTxt" role="status" aria-live="polite"></span>
+        </div>
         <p class="hint" data-en="Up to 3 files, 3 MB in total. PDF, Office, HWP, images and ZIP are supported.">최대 3개, 합계 3MB까지 첨부할 수 있어요. PDF·오피스·한글(HWP)·이미지·ZIP을 지원합니다.</p>
       </div>
 
@@ -398,8 +408,30 @@
     var MAX_TOTAL = 3 * 1024 * 1024;
     var picked = [];
 
-    var fileInput = document.getElementById('files');
-    var fileList  = document.getElementById('fileList');
+    var fileInput    = document.getElementById('files');
+    var fileList     = document.getElementById('fileList');
+    var fileTotal    = document.getElementById('fileTotal');
+    var fileBar      = document.getElementById('fileBar');
+    var fileTotalTxt = document.getElementById('fileTotalTxt');
+
+    function totalSize(){
+      return picked.reduce(function(a,f){ return a + f.size; }, 0);
+    }
+    // 합계는 한도(3MB)와 같은 단위로 보여줘야 비교가 됩니다.
+    // 그래서 파일 하나하나는 KB/MB를 섞어 쓰더라도 합계만은 항상 MB로 적습니다.
+    function renderTotal(){
+      if (!picked.length){ fileTotal.hidden = true; return; }
+      fileTotal.hidden = false;
+      var total = totalSize();
+      var pct = Math.min(100, total / MAX_TOTAL * 100);
+      fileBar.style.width = pct.toFixed(1) + '%';
+      // 용량이 거의 찼거나 개수를 다 썼으면 막대를 금색으로 — 더는 못 넣는다는 신호입니다
+      fileTotal.classList.toggle('near', pct >= 80 || picked.length >= MAX_FILES);
+      var mb = (total / 1024 / 1024).toFixed(2);
+      fileTotalTxt.textContent = (currentLang === 'en')
+        ? (mb + ' MB of 3 MB \u00B7 ' + picked.length + ' of ' + MAX_FILES + ' files')
+        : ('\uD569\uACC4 ' + mb + 'MB / 3MB \u00B7 ' + picked.length + '/' + MAX_FILES + '\uAC1C');
+    }
 
     function fmtSize(n){
       if (n < 1024) return n + ' B';
@@ -420,10 +452,11 @@
         li.appendChild(nm); li.appendChild(sz); li.appendChild(rm);
         fileList.appendChild(li);
       });
+      renderTotal();
     }
     fileInput.addEventListener('change', function(){
       var incoming = Array.prototype.slice.call(fileInput.files || []);
-      var total = picked.reduce(function(a,f){ return a + f.size; }, 0);
+      var total = totalSize();
       var rejected = false;
       incoming.forEach(function(f){
         if (picked.length >= MAX_FILES || total + f.size > MAX_TOTAL){ rejected = true; return; }
