@@ -1,0 +1,59 @@
+/* 배경음악 토글 — index / about / contact 가 함께 씁니다.
+   색은 각 페이지의 :root 에 정의된 값을 그대로 씁니다 (세 페이지 팔레트 동일).
+   ※ 수정은 이 파일 한 곳에서. 페이지별로 복사해 두지 마세요. */
+
+/* ---------- 배경음악 토글 (우측 하단 플로팅) ----------
+   스피커 아이콘 하나로 상태를 보여줍니다.
+     꺼짐 : 스피커 + ✕      켜짐 : 스피커 + 음파 2줄 (파란 배경)
+   글자는 넣지 않으므로 스크린리더용 이름은 aria-label,
+   켜짐/꺼짐 상태는 aria-pressed 가 전달합니다. */
+.bgm{
+  position:fixed; right:18px; bottom:18px; z-index:60;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:48px; height:48px; padding:0;
+  border:1.5px solid var(--line); border-radius:50%;
+  background:rgba(255,253,247,.94); color:var(--ink-soft);
+  cursor:pointer; box-shadow:0 4px 16px rgba(43,38,32,.10);
+  -webkit-tap-highlight-color:transparent;
+  transition:border-color .18s, color .18s, background .18s, box-shadow .18s, transform .18s;
+}
+@supports ((backdrop-filter:blur(6px)) or (-webkit-backdrop-filter:blur(6px))){
+  .bgm{-webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
+}
+.bgm:focus-visible{outline:3px solid var(--gold); outline-offset:2px}
+/* hover 반응은 진짜 포인터가 있는 기기에서만.
+   터치에서 :hover 를 허용하면 탭한 뒤에도 hover 상태가 남습니다. */
+@media (hover:hover){
+  .bgm:hover{border-color:var(--blue); color:var(--blue-deep);
+             box-shadow:0 6px 20px rgba(43,38,32,.16); transform:translateY(-1px)}
+}
+.bgm[aria-pressed="true"]{border-color:var(--blue); color:var(--blue-deep); background:var(--blue-soft)}
+.bgm[disabled]{opacity:.45; cursor:default; box-shadow:none; transform:none}
+.bgm[hidden]{display:none}   /* display:inline-flex 가 UA 기본 [hidden] 을 덮으므로 필요 */
+
+/* 스피커 아이콘 — 음파(.wv)와 ✕(.mut)를 상태에 따라 바꿔 보여줍니다 */
+.bgm svg{display:block; width:21px; height:21px}
+.bgm .wv{opacity:0; transform:translateX(-2px); transform-origin:11px 12px;
+         transition:opacity .2s, transform .2s}
+.bgm .mut{opacity:1; transition:opacity .2s}
+.bgm[aria-pressed="true"] .wv{opacity:1; transform:none}
+.bgm[aria-pressed="true"] .mut{opacity:0}
+/* 재생 중에는 음파가 은은하게 번집니다 */
+.bgm[aria-pressed="true"] .wv1{animation:wvpulse 1.8s ease-in-out infinite}
+.bgm[aria-pressed="true"] .wv2{animation:wvpulse 1.8s ease-in-out infinite; animation-delay:.28s}
+@keyframes wvpulse{0%,100%{opacity:1} 55%{opacity:.28}}
+/* 파일 불러오는 중 */
+.bgm.is-loading svg{animation:bgmload 1s ease-in-out infinite}
+@keyframes bgmload{0%,100%{opacity:.35} 50%{opacity:1}}
+
+@media(max-width:440px){
+  .bgm{right:12px; bottom:12px; width:44px; height:44px}
+  .bgm svg{width:20px; height:20px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  /* 음파 애니메이션은 멈추되, 아이콘 모양·색으로 상태는 그대로 구분됩니다 */
+  .bgm[aria-pressed="true"] .wv1,.bgm[aria-pressed="true"] .wv2{animation:none!important}
+  .bgm.is-loading svg{animation:none!important; opacity:.5}
+  .bgm,.bgm .wv,.bgm .mut{transition:none!important}
+}
