@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이메일 인증 완료 · 김심리월드</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EA; --surface:#FFFFFF;
+    --ink:#2B2620; --ink-soft:#6E6658; --ink-faint:#A79E8E;
+    --line:#ECE2CD;
+    --blue:#4C8CCB; --blue-deep:#2F6FA8;
+    --coral:#E86B5E; --green:#54B491;
+    --display:'Jua','Noto Sans KR',sans-serif;
+    --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;
+       -webkit-font-smoothing:antialiased;word-break:keep-all;
+       display:flex;flex-direction:column;align-items:center;justify-content:center;
+       min-height:100vh;padding:24px}
+  a{color:var(--blue-deep)}
+  [hidden]{display:none!important}
+
+  .card{background:var(--surface);border:1.5px solid var(--line);border-radius:20px;
+        padding:38px 26px;text-align:center;max-width:420px;width:100%}
+  .badge{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+         margin:0 auto 18px;font-size:29px}
+  .badge.ok{background:#EAF6F1;border:2px solid var(--green)}
+  .badge.err{background:#FDECEA;border:2px solid var(--coral)}
+  h1{font-family:var(--display);font-size:23px;font-weight:400;margin-bottom:12px}
+  p{font-size:14px;color:var(--ink-soft);margin-bottom:8px}
+  .hint{font-size:12.5px;color:var(--ink-faint);margin-top:18px;line-height:1.6}
+
+  .btn{display:inline-block;font-size:15px;font-weight:700;color:#fff;background:var(--blue);
+       border:0;border-radius:13px;padding:13px 26px;text-decoration:none;margin-top:20px}
+  .btn:hover{background:var(--blue-deep)}
+
+  .flinks{margin-top:22px;font-size:12px}
+  .flinks a{color:var(--ink-soft);text-decoration:none;padding:0 7px}
+  .flinks a:hover{color:var(--blue-deep);text-decoration:underline}
+</style>
+</head>
+<body>
+
+  <div class="card" id="ok" hidden>
+    <div class="badge ok">✓</div>
+    <h1>이메일 인증이 완료되었어요</h1>
+    <p>이제 앱에서 로그인하시면 됩니다.</p>
+    <p>마음 배터리를 채우는 시간, 함께 시작해요.</p>
+    <a class="btn" href="world.kimsimri.app://login-callback">앱으로 돌아가기</a>
+    <p class="hint">버튼이 열리지 않으면 홈 화면에서 <strong>김심리월드</strong> 앱을 직접 열어주세요.</p>
+  </div>
+
+  <div class="card" id="err" hidden>
+    <div class="badge err">!</div>
+    <h1>인증 링크를 사용할 수 없어요</h1>
+    <p id="errMsg">링크가 만료되었거나 이미 사용된 것 같아요.</p>
+    <p>앱에서 다시 가입하시면 새 인증 메일을 보내드릴게요.</p>
+    <a class="btn" href="mailto:pluspsychology@gmail.com?subject=%EC%9D%B4%EB%A9%94%EC%9D%BC%20%EC%9D%B8%EC%A6%9D%20%EB%AC%B8%EC%9D%98">문의하기</a>
+  </div>
+
+  <div class="flinks">
+    <a href="/">홈</a>·<a href="/privacy.html">개인정보처리방침</a>·<a href="/terms.html">이용약관</a>
+  </div>
+
+<script>
+(function(){
+  var q = new URLSearchParams(window.location.search);
+  // Supabase는 오류를 해시로 넘기기도 합니다
+  var h = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  var err = q.get('error_description') || q.get('error')
+         || h.get('error_description') || h.get('error');
+
+  if (err) {
+    document.getElementById('errMsg').textContent = decodeURIComponent(err.replace(/\+/g, ' '));
+    document.getElementById('err').hidden = false;
+  } else {
+    // code / access_token이 있으면 서버에서 이미 검증이 끝난 상태입니다
+    document.getElementById('ok').hidden = false;
+  }
+})();
+</script>
+</body>
+</html>
