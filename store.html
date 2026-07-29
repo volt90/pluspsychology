@@ -136,8 +136,11 @@
   .grid{list-style:none;display:grid;gap:14px 12px;margin-top:16px;
         grid-template-columns:repeat(3,1fr)}
   .gcard{margin:0}
-  .gcard img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;
-             background:var(--paper-2);border:1.5px solid var(--line);border-radius:14px}
+  /* 굿즈 사진은 세로가 많고(엽서·스티커·키링) 정사각도 섞여 있어(손거울·메모지),
+     cover 로 채우면 제품이 잘립니다. contain 으로 전체를 보여주고 남는 자리는 여백으로 둡니다. */
+  .gcard img{width:100%;aspect-ratio:3/4;object-fit:contain;display:block;
+             background:var(--paper-2);border:1.5px solid var(--line);border-radius:14px;
+             padding:6px}
   .gcard figcaption{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--ink-soft);
                     line-height:1.5;text-align:center}
   @media(max-width:560px){
