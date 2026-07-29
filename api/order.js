@@ -41,8 +41,15 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGIN || '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(204).end();
+
+  // 판매가 열려 있는지만 알려줍니다. 주문서 페이지가 열릴 때 호출해서,
+  // 손님이 배송지까지 다 적고 나서야 '아직 판매 전'을 보는 일을 막습니다.
+  if (req.method === 'GET') {
+    return res.status(200).json({ enabled: process.env.PAYMENTS_ENABLED === 'true' });
+  }
+
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   // --- 안전장치: 명시적으로 켜기 전까지는 결제가 열리지 않습니다 ---

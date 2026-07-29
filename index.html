@@ -762,12 +762,18 @@
       firePriceView();
     }
 
-    // 3) InitiateCheckout — 문의 버튼(파란 CTA) 클릭
+    // 3) CTA 클릭 — 파란 버튼(문의하기)
+    //    예전에는 여기서 InitiateCheckout 을 보냈습니다. 결제 페이지가 없던
+    //    시절의 임시 조치였는데, 이제 checkout.html 이 진짜 '결제 시작'을
+    //    보내므로 그대로 두면 문의 버튼 클릭이 결제 시작으로 섞여
+    //    집계가 부풀고 광고 최적화가 엉뚱한 사람을 찾게 됩니다.
+    //    그래서 표준 이벤트가 아닌 사용자 정의 이벤트로 내렸습니다.
+    //    (리타게팅 모수로는 그대로 쓸 수 있습니다.)
     Array.prototype.slice.call(document.querySelectorAll('.btn-primary')).forEach(function(b){
       b.addEventListener('click', function(){
         var label = b.textContent.trim();
         ga('cta_click', {cta_text: label});
-        meta('InitiateCheckout', {content_name:'마음 사용 설명서', cta_text: label, currency:'KRW', value:16900});
+        if (typeof fbq === 'function') fbq('trackCustom', 'CTAClick', {cta_text: label});
         naver('custom001');
       });
     });
@@ -783,11 +789,11 @@
     });
 
 
-    // ── 결제/가입 페이지를 만들면 그 페이지에서 아래처럼 따로 심으세요 ──
-    // [Meta]   결제 완료: fbq('track','Purchase',{currency:'KRW', value:16900});
-    //          회원가입:  fbq('track','CompleteRegistration');
-    // [네이버] 결제 완료: naver('purchase', 16900);  // 구매는 전환가치 필수
-    //          회원가입:  naver('sign_up');
+    // ── 결제 전환은 결제 페이지에서 보냅니다 ──
+    //  InitiateCheckout : checkout.html       (주문서 생성 후 결제창 직전)
+    //  Purchase         : checkout-result.html (서버가 결제를 확인한 뒤)
+    //  네이버 쪽은 아직 안 붙였습니다. 붙일 때 결제 완료 자리는
+    //  naver('purchase', 결제금액) 입니다 — 구매는 전환가치가 필수입니다.
   })();
 </script>
 <!-- 배경음악 — 세 페이지 공용. 페이지를 넘어가도 재생 위치가 이어집니다 -->

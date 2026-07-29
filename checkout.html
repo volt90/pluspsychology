@@ -233,6 +233,13 @@
   var form = $('orderForm'), msg = $('msg'), payBtn = $('payBtn');
   var qty = $('qty');
 
+  // 판매 전이면 주문서를 감추고 안내만 띄웁니다.
+  //  손님이 배송지까지 다 적은 뒤에야 '아직 판매 전'을 보게 되면 안 되니까요.
+  fetch('/api/order')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if (!d || !d.enabled) paymentsClosed(); })
+    .catch(function(){ /* 확인 실패 시엔 그대로 둡니다 — 제출 단계에서 다시 걸러집니다 */ });
+
   // ── 메타픽셀: 상품 조회 ──────────────────────────────────────
   //  이 페이지가 곧 '마음 사용 설명서'의 상품 페이지라, 진입을 조회로 봅니다.
   //  금액은 안내용 단가입니다 (실제 결제금액은 완료 페이지의 Purchase가 보냅니다).
