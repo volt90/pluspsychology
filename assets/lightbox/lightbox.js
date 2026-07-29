@@ -180,10 +180,28 @@
       if (leadImg.complete) settle();
 
       function go() { if (isReal(leadImg)) openDetail(list); }
-      leadImg.addEventListener('click', go);
-      leadImg.addEventListener('keydown', function (e) {
+      function onKeyGo(e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
-      });
+      }
+      leadImg.addEventListener('click', go);
+      leadImg.addEventListener('keydown', onKeyGo);
+
+      // 사진뿐 아니라 그 아래 '사진 3장 보기' 문구도 같은 곳으로 들어갑니다.
+      // 사진이 눌린다는 걸 모르고 문구를 누르는 사람이 더 많습니다.
+      var leadCap = list.querySelector('.lead figcaption');
+      if (leadCap) {
+        leadCap.addEventListener('click', go);
+        leadCap.addEventListener('keydown', onKeyGo);
+        var capSettle = function () {
+          var ok = isReal(leadImg);
+          leadCap.classList.toggle('lbd-cue', ok);
+          if (ok) { leadCap.setAttribute('tabindex', '0'); leadCap.setAttribute('role', 'button'); }
+          else { leadCap.removeAttribute('tabindex'); leadCap.removeAttribute('role'); }
+        };
+        leadImg.addEventListener('load', capSettle);
+        leadImg.addEventListener('error', function () { setTimeout(capSettle, 0); });
+        if (leadImg.complete) capSettle();
+      }
     });
   }
 

@@ -107,3 +107,11 @@
 .lbd-body > .lbd-pair{margin-top:18px}
 .lbd-pair figure + figure{margin-top:0}
 @media(max-width:560px){ .lbd-pair{gap:10px} }
+
+/* 목록의 '사진 3장 보기' 안내 문구 — 사진과 같은 곳으로 들어갑니다 */
+.lbd-cue{cursor:pointer; display:inline-block; border-radius:6px;
+         text-underline-offset:3px; transition:color .16s}
+@media (hover:hover){
+  .lbd-cue:hover{color:var(--blue); text-decoration:underline}
+}
+.lbd-cue:focus-visible{outline:3px solid var(--gold); outline-offset:3px}
