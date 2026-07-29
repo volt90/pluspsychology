@@ -157,6 +157,7 @@ function publicOrder(o) {
   return {
     orderId: o.order_id,
     status: o.status,
+    productCode: o.product_code,   // 완료 페이지의 Purchase 이벤트가 content_ids 로 씁니다
     productName: o.product_name,
     quantity: o.quantity,
     unitPrice: o.unit_price,

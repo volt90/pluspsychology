@@ -5,6 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- 메타(페이스북) 도메인 인증 — 픽셀·총 이벤트 측정에 필요합니다. 지우지 마세요. -->
 <meta name="facebook-domain-verification" content="4m1chvnhh6wm21d269e0a0fn6gaw41">
+
+<!-- ══════════════════════════════════════════════════════════════
+     Meta Pixel (인스타그램 · 페이스북 광고) — 픽셀 ID 2057112328550152
+     여기서는 PageView 만 보냅니다.
+     ViewContent · InitiateCheckout · Purchase 같은 페이지별 이벤트는
+     각 페이지 아래쪽 스크립트에서 따로 보냅니다.
+     ══════════════════════════════════════════════════════════════ -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '2057112328550152');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2057112328550152&ev=PageView&noscript=1" alt=""></noscript>
+<!-- ════════════════════ Meta Pixel 끝 ════════════════════ -->
 <title>주문 결과 · 마음 사용 설명서</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -116,6 +138,32 @@
     showOnly('failed');
   }
 
+  // ── 메타픽셀: 구매 완료 ──────────────────────────────────────
+  //  서버(/api/confirm)가 결제를 확인한 뒤에만 보냅니다.
+  //  금액도 화면에 뜬 값이 아니라 서버가 확인해 준 o.amount 를 씁니다.
+  //  새로고침·뒤로가기·다른 탭에서 다시 열어도 한 번만 잡히도록
+  //  주문번호를 localStorage에 남겨 중복을 막습니다.
+  //  (매출과 직결되는 숫자라 중복 집계는 ROAS를 그대로 부풀립니다.)
+  function trackPurchase(o){
+    if (typeof fbq !== 'function') return;
+    var id = o.orderId || orderId;
+    var key = 'fbq_purchase_' + id;
+    try {
+      if (localStorage.getItem(key)) return;
+      localStorage.setItem(key, '1');
+    } catch (e) {
+      // 시크릿 모드 등 localStorage를 못 쓰는 환경 — 중복 위험을 안고 보냅니다
+    }
+    fbq('track', 'Purchase', {
+      content_type: 'product',
+      content_ids: [o.productCode || 'mind-manual'],
+      content_name: o.productName || '마음 사용 설명서',
+      num_items: o.quantity || 1,
+      value: typeof o.amount === 'number' ? o.amount : Number(amount) || 0,
+      currency: 'KRW'
+    }, { eventID: id });   // 나중에 서버 전송(Conversions API)을 붙일 때 짝을 맞추는 키
+  }
+
   var paymentKey = q.get('paymentKey');
   var orderId = q.get('orderId');
   var amount = q.get('amount');
@@ -152,6 +200,7 @@
       $('receiptLink').href = r.data.receiptUrl;
       $('receiptLink').hidden = false;
     }
+    trackPurchase(o);
     showOnly('success');
   })
   .catch(function(){

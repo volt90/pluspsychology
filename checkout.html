@@ -5,6 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- 메타(페이스북) 도메인 인증 — 픽셀·총 이벤트 측정에 필요합니다. 지우지 마세요. -->
 <meta name="facebook-domain-verification" content="4m1chvnhh6wm21d269e0a0fn6gaw41">
+
+<!-- ══════════════════════════════════════════════════════════════
+     Meta Pixel (인스타그램 · 페이스북 광고) — 픽셀 ID 2057112328550152
+     여기서는 PageView 만 보냅니다.
+     ViewContent · InitiateCheckout · Purchase 같은 페이지별 이벤트는
+     각 페이지 아래쪽 스크립트에서 따로 보냅니다.
+     ══════════════════════════════════════════════════════════════ -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '2057112328550152');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2057112328550152&ev=PageView&noscript=1" alt=""></noscript>
+<!-- ════════════════════ Meta Pixel 끝 ════════════════════ -->
 <title>주문하기 · 마음 사용 설명서</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -211,6 +233,19 @@
   var form = $('orderForm'), msg = $('msg'), payBtn = $('payBtn');
   var qty = $('qty');
 
+  // ── 메타픽셀: 상품 조회 ──────────────────────────────────────
+  //  이 페이지가 곧 '마음 사용 설명서'의 상품 페이지라, 진입을 조회로 봅니다.
+  //  금액은 안내용 단가입니다 (실제 결제금액은 완료 페이지의 Purchase가 보냅니다).
+  if (typeof fbq === 'function') {
+    fbq('track', 'ViewContent', {
+      content_type: 'product',
+      content_ids: ['mind-manual'],
+      content_name: '마음 사용 설명서',
+      value: DISPLAY.unitPrice,
+      currency: 'KRW'
+    });
+  }
+
   function won(n){ return '₩' + n.toLocaleString('ko-KR'); }
 
   function currentQty(){
@@ -302,6 +337,21 @@
 
   function startPayment(order){
     show('결제창을 여는 중이에요…', '');
+
+    // ── 메타픽셀: 결제 시작 ────────────────────────────────────
+    //  주문서가 서버에서 만들어진 뒤(= 금액이 확정된 뒤) 결제창을 열기 직전에
+    //  보냅니다. 결제창을 닫아도 이 이벤트는 남습니다 — 그래야
+    //  '결제까지 갔는데 이탈한 사람'을 리타게팅할 수 있습니다.
+    if (typeof fbq === 'function') {
+      fbq('track', 'InitiateCheckout', {
+        content_type: 'product',
+        content_ids: ['mind-manual'],
+        content_name: order.orderName,
+        num_items: (order.breakdown && order.breakdown.quantity) || currentQty(),
+        value: order.amount,
+        currency: order.currency || 'KRW'
+      });
+    }
 
     var origin = window.location.origin;
     var toss = TossPayments(order.clientKey);

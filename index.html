@@ -25,9 +25,10 @@
 <!-- ════════════════════ GA4 끝 ════════════════════ -->
 
 <!-- ══════════════════════════════════════════════════════════════
-     Meta Pixel (인스타그램 · 페이스북 광고)
-     ▼ 아래 YOUR_PIXEL_ID 를 본인의 픽셀 ID(숫자 15~16자리)로 바꿔주세요.
-       확인 위치: 이벤트 관리자 → 데이터 소스 → 픽셀 이름 아래 ID
+     Meta Pixel (인스타그램 · 페이스북 광고) — 픽셀 ID 2057112328550152
+     여기서는 PageView 만 보냅니다.
+     ViewContent · InitiateCheckout · Purchase 같은 페이지별 이벤트는
+     각 페이지 아래쪽 스크립트에서 따로 보냅니다.
      ══════════════════════════════════════════════════════════════ -->
 <script>
   !function(f,b,e,v,n,t,s)
@@ -38,11 +39,11 @@
   t.src=v;s=b.getElementsByTagName(e)[0];
   s.parentNode.insertBefore(t,s)}(window,document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('init', '2057112328550152');
   fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1" alt=""></noscript>
+  src="https://www.facebook.com/tr?id=2057112328550152&ev=PageView&noscript=1" alt=""></noscript>
 <!-- ════════════════════ Meta Pixel 끝 ════════════════════ -->
 
 <!-- ══════════════════════════════════════════════════════════════

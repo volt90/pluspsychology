@@ -25,9 +25,10 @@
 </script>
 
 <!-- ══════════════════════════════════════════════════════════════
-     Meta Pixel — ▼ YOUR_PIXEL_ID 를 본인 픽셀 ID로 바꿔주세요.
-     ※ index.html에도 같은 자리가 있습니다. 함께 바꿔야 합니다.
-        문의 폼 제출이 '핵심 전환(Contact/lead)'이라 이 페이지에도 넣었습니다.
+     Meta Pixel (인스타그램 · 페이스북 광고) — 픽셀 ID 2057112328550152
+     여기서는 PageView 만 보냅니다.
+     ViewContent · InitiateCheckout · Purchase 같은 페이지별 이벤트는
+     각 페이지 아래쪽 스크립트에서 따로 보냅니다.
      ══════════════════════════════════════════════════════════════ -->
 <script>
   !function(f,b,e,v,n,t,s)
@@ -38,11 +39,11 @@
   t.src=v;s=b.getElementsByTagName(e)[0];
   s.parentNode.insertBefore(t,s)}(window,document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('init', '2057112328550152');
   fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1" alt=""></noscript>
+  src="https://www.facebook.com/tr?id=2057112328550152&ev=PageView&noscript=1" alt=""></noscript>
 
 <!-- ══════════════════════════════════════════════════════════════
      네이버 전환추적 (신 스크립트 wcs.trans)
@@ -576,7 +577,9 @@
             picked = []; renderFiles();
             // 핵심 전환 — 실제 문의 접수
             if (typeof gtag === 'function') gtag('event', 'contact_click', {method: 'form', inquiry_type: type});
-            if (typeof fbq  === 'function') fbq('track', 'Contact', {channel: 'form', content_name: '김심리월드 문의'});
+            // Contact 대신 Lead 로 보냅니다 — 메타의 '잠재 고객' 캠페인이
+            // 최적화 기준으로 삼는 표준 이벤트가 Lead 라서입니다.
+            if (typeof fbq  === 'function') fbq('track', 'Lead', {content_name: '김심리월드 문의', content_category: type});
             if (window.wcs && typeof wcs.trans === 'function') wcs.trans({type: 'lead'});
           } else if (res.status === 503){
             showMsg(msg('off'), 'err');
