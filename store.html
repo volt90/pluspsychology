@@ -81,7 +81,15 @@
 
   /* ---------- section tabs ----------
      탭 이름은 한국어 화면에서도 영어로 유지합니다 (data-en 없음). */
-  .tabs{display:flex;gap:5px;margin:0 0 16px;padding:5px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px}
+  /* 스크롤해도 탭이 따라오도록 고정합니다.
+     알약을 감싼 띠가 종이색이라 아래 내용이 알약 모서리 바깥으로 비쳐 보이지 않습니다.
+     (.page 의 좌우 여백 20px 까지 덮으려고 음수 마진을 씁니다.
+      위쪽 음수 마진은 padding 만큼 되돌려, 스크롤 전 탭 위치를 그대로 둡니다.) */
+  .tabsbar{position:sticky;top:0;z-index:80;background:var(--paper);
+           margin:-10px -20px 8px;padding:10px 20px 8px}
+  .tabs{display:flex;gap:5px;padding:5px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px}
+  /* 앵커(#contact 등)로 이동할 때 고정된 탭 뒤로 제목이 숨지 않게 여백을 둡니다 */
+  section,[id]{scroll-margin-top:78px}
   .tabs a{flex:1 1 0;text-align:center;font-family:var(--sans);font-size:13.5px;font-weight:700;letter-spacing:.01em;color:var(--ink-faint);text-decoration:none;padding:9px 4px;border-radius:999px;transition:background .18s,color .18s}
   .tabs a:hover{color:var(--blue-deep)}
   .tabs a.on{background:var(--blue);color:#fff}
@@ -89,7 +97,8 @@
   .tabs a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
   @media(max-width:400px){
     .langsw button{padding:5px 9px;font-size:11.5px}
-    .tabs{gap:3px;padding:4px;margin-bottom:13px}
+    .tabsbar{margin-bottom:5px}
+    .tabs{gap:3px;padding:4px}
     .tabs a{font-size:12.5px;padding:8px 3px}
   }
 
@@ -163,13 +172,15 @@
   <div class="page">
 
     <!-- SECTION TABS — 탭 이름은 한국어 화면에서도 영어로 유지 (data-en 없음) -->
-    <nav class="tabs rv" aria-label="Sections">
-      <a href="/">Home</a>
-      <a href="/about.html">About</a>
-      <a href="/projects.html">Projects</a>
-      <a href="/store.html" class="on" aria-current="page">Store</a>
-      <a href="/contact.html">Contact</a>
-    </nav>
+    <div class="tabsbar">
+      <nav class="tabs rv" aria-label="Sections">
+        <a href="/">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/projects.html">Projects</a>
+        <a href="/store.html" class="on" aria-current="page">Store</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+    </div>
 
     <!-- TOP BAR -->
     <div class="topbar rv">
