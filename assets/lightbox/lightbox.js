@@ -32,7 +32,11 @@
       var capEl = fig.querySelector('figcaption');
       var it = {
         src: img.getAttribute('src') || '',
-        cap: (capEl ? capEl.textContent : img.alt || '').trim(),
+        // 확대 화면 제목: data-lb-cap 이 있으면 그것을 씁니다.
+        // 페이지에서는 '초대장 1' 처럼 짧게 두고, 확대하면 어느 전시인지까지
+        // 보여주고 싶을 때 쓰라고 둔 것입니다.
+        cap: (fig.getAttribute('data-lb-cap') ||
+              (capEl ? capEl.textContent : img.alt) || '').trim(),
         group: fig.getAttribute('data-lb') || ('_' + ord),
         el: img,
         ord: ord            // 페이지에 놓인 순서. 아래 정렬에 씁니다.
