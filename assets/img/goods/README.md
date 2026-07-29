@@ -16,14 +16,20 @@ store.html 의 각 칸이 아래 파일명을 **이미 가리키고 있습니다
 | `keyring-d.jpg`  | 키링D   | 책 읽는 세루 · 검정 백팩 |
 | `keyring-e.jpg`  | 키링E   | 자는 세루 · 회색 백팩 |
 | `keyring-f.jpg`  | 키링F   | 클립보드 든 김심리 · 회색 백팩 |
-| `postcard-a.jpg` | 엽서A   | HAPPY BIRTHDAY! CELEBRATE YOU! · 케이크 위 김심리 |
-| `postcard-b.jpg` | 엽서B   | HAPPY BIRTHDAY! · 선물기차 탄 세루 |
+| `postcard-a.png` | 엽서A   | HAPPY BIRTHDAY! · 케이크 위 김심리 |
+| `postcard-b.png` | 엽서B   | HAPPY BIRTHDAY! · 선물기차 탄 세루 |
 | `mirror-a.jpg`   | 손거울A | 하늘색 · 책 읽는 세루 (True knowledge is more than knowing…) |
 | `mirror-b.jpg`   | 손거울B | 청록 · 걷는 김심리 (The heart holds wisdom…) |
 
 ## 알아두면 좋은 것
 
 - **확장자가 다르면** (png 등) store.html 의 해당 `<img src>` 도 같이 고쳐야 합니다.
-- **크기·비율은 맞추지 않아도 됩니다.** CSS 가 4:3 으로 잘라 맞춥니다 (`object-fit:cover`).
-  다만 잘리는 걸 원치 않으면 가로세로 4:3 에 가깝게 준비하는 편이 안전합니다.
+  위 표의 확장자가 곧 store.html 이 찾는 이름입니다.
+- **사진은 자르지 않고 원래 비율 그대로 나옵니다.** 그래서 같은 줄에 놓이는
+  짝(엽서A·B, 키링 6종처럼)은 **서로 비율을 맞춰야** 한 장만 길쭉해 보이지 않습니다.
+  현재 엽서 두 장은 290×426 으로 같고, 키링 6장은 979×1024 로 같습니다.
+- **가로 폭은 최소 600px 이상**을 권합니다. 한 칸이 화면에서 170~200px 인데
+  요즘 휴대폰은 그 2~3배 해상도로 그리기 때문에, 그보다 작으면 흐릿해 보입니다.
 - 웹용이므로 긴 변 **1600px 이하**, 장당 **300KB 안팎**을 권합니다. 원본 인쇄용 파일은 너무 큽니다.
+- 사진(실물 촬영)은 `.jpg`, 일러스트·도안처럼 색이 평평하고 글자가 있는 그림은
+  `.png` 가 더 선명하고 용량도 작습니다. 엽서 두 장이 그 경우입니다.
