@@ -124,9 +124,24 @@
     sheetBack.textContent = t('back');
 
     sheetBody.innerHTML = '';
+    // 초대장처럼 짝을 이루는 사진은 한 줄에 나란히 놓습니다.
+    // 카드에 class="invite" 가 붙어 있으면 같은 묶음으로 들어갑니다.
+    var pair = null;
     Array.prototype.slice.call(list.querySelectorAll('.gcard figure')).forEach(function (fig) {
       var img = fig.querySelector('img');
       if (!img || !isReal(img)) return;
+      var card = fig.parentNode;
+      var box = sheetBody;
+      if (card.classList.contains('invite')) {
+        if (!pair) {
+          pair = document.createElement('div');
+          pair.className = 'lbd-pair';
+          sheetBody.appendChild(pair);
+        }
+        box = pair;
+      } else {
+        pair = null;
+      }
       var cap = fig.querySelector('figcaption');
       var f = document.createElement('figure');
       var i = document.createElement('img');
@@ -143,7 +158,7 @@
         c.textContent = label;
         f.appendChild(c);
       }
-      sheetBody.appendChild(f);
+      box.appendChild(f);
     });
     sheetBody.scrollTop = 0;
     show(sheet, sheetX);
