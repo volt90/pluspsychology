@@ -1,0 +1,54 @@
+/* 사진 확대 보기 — 클릭하면 화면 가득 크게 봅니다.
+   색은 각 페이지의 :root 값을 그대로 씁니다.
+   ※ 수정은 이 파일 한 곳에서. 페이지별로 복사해 두지 마세요. */
+
+/* 확대되는 사진에는 손가락 커서와 살짝 뜨는 반응을 줍니다 */
+.lb-open{cursor:zoom-in; transition:transform .18s, box-shadow .18s}
+@media (hover:hover){
+  .lb-open:hover{transform:translateY(-2px); box-shadow:0 10px 24px -14px rgba(43,38,32,.55)}
+}
+.lb-open:focus-visible{outline:3px solid var(--gold); outline-offset:3px}
+
+.lb{position:fixed; inset:0; z-index:120; display:flex; align-items:center; justify-content:center;
+    background:rgba(30,26,20,.92); padding:56px 16px 84px; opacity:0; transition:opacity .18s}
+.lb[hidden]{display:none}
+.lb.in{opacity:1}
+@supports ((backdrop-filter:blur(3px)) or (-webkit-backdrop-filter:blur(3px))){
+  .lb{-webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px)}
+}
+
+.lb figure{margin:0; max-width:100%; max-height:100%; display:flex; flex-direction:column;
+           align-items:center; gap:14px}
+.lb img{max-width:min(1100px,100%); max-height:calc(100vh - 190px); width:auto; height:auto;
+        display:block; border-radius:12px; box-shadow:0 24px 60px -20px rgba(0,0,0,.7)}
+.lb figcaption{font-family:var(--sans); font-size:13.5px; font-weight:700; color:#F3EEE3;
+               text-align:center; line-height:1.5; letter-spacing:.01em}
+.lb .lb-count{display:block; margin-top:4px; font-weight:400; font-size:12px; color:#B9B0A1;
+              font-variant-numeric:tabular-nums}
+
+/* 조작 버튼 — 닫기 / 이전 / 다음 */
+.lb button{position:absolute; border:0; background:rgba(255,253,247,.13); color:#FFFDF7;
+           border-radius:999px; cursor:pointer; display:flex; align-items:center;
+           justify-content:center; transition:background .16s; -webkit-tap-highlight-color:transparent}
+.lb button:hover{background:rgba(255,253,247,.26)}
+.lb button:focus-visible{outline:3px solid var(--gold); outline-offset:3px}
+.lb button svg{width:22px; height:22px; stroke:currentColor; stroke-width:2.1; fill:none;
+               stroke-linecap:round; stroke-linejoin:round}
+.lb .lb-x{top:14px; right:14px; width:44px; height:44px}
+.lb .lb-prev,.lb .lb-next{top:50%; transform:translateY(-50%); width:46px; height:46px}
+.lb .lb-prev{left:14px}
+.lb .lb-next{right:14px}
+.lb[data-single="1"] .lb-prev,.lb[data-single="1"] .lb-next{display:none}
+
+@media(max-width:560px){
+  .lb{padding:52px 10px 76px}
+  .lb img{max-height:calc(100vh - 170px)}
+  .lb .lb-prev,.lb .lb-next{top:auto; bottom:16px; transform:none; width:42px; height:42px}
+  .lb .lb-prev{left:calc(50% - 56px)}
+  .lb .lb-next{right:calc(50% - 56px)}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .lb,.lb-open{transition:none!important}
+  .lb-open:hover{transform:none!important}
+}

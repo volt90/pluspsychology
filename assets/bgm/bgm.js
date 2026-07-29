@@ -27,6 +27,10 @@
 (function () {
   'use strict';
 
+  // 페이지에 이 파일이 두 번 실려도 한 번만 돕니다.
+  if (window.__kswBgm) return;
+  window.__kswBgm = true;
+
   var SRC       = '/assets/bgm/landing-loop.mp3';
   var LOOP      = 15.73771;   // 초 — 8마디 @ 122.000 BPM
   var GAIN      = 0.28;       // 배경음이라 낮게 (원본 대비 약 -11dB)
