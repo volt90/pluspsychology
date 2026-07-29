@@ -2,7 +2,11 @@
 //  /api/contact.js  —  문의 폼 접수 → 내 메일함으로 전달
 //  contact.html의 폼이 여기로 POST 합니다.
 //
-//  저장하지 않고 메일로만 전달합니다. (문의는 명단이 아니므로 DB 미사용)
+//  Supabase(inquiries)에 먼저 저장하고, 그 다음 메일로 전달합니다.
+//  순서가 중요합니다 — 메일이 스팸으로 가거나 실수로 지워져도 원본이 남습니다.
+//  저장이 실패해도 접수는 막지 않습니다(메일은 나갑니다). 반대로 메일이
+//  실패하면 실패로 응답하되, 이미 저장된 행이 email_sent=false 로 남습니다.
+//
 //  답장은 메일 클라이언트의 '회신'을 누르면 문의자에게 바로 갑니다
 //  — reply_to 를 문의자 주소로 넣기 때문입니다.
 //
@@ -12,6 +16,8 @@
 //                        (예: 김심리월드 <hello@pluspsychology.ai>)
 //    CONTACT_TO_EMAIL  : 문의를 받을 주소 (선택 — 없으면 NOTIFY_EMAIL,
 //                        그것도 없으면 아래 DEFAULT_TO 로 갑니다)
+//    SUPABASE_URL              : 프로젝트 URL (선택 — 없으면 저장만 건너뜁니다)
+//    SUPABASE_SERVICE_ROLE_KEY : service_role 키 (RLS 우회 — 서버 전용)
 //
 //  ※ 위 설정이 없으면 503을 돌려줍니다. 그러면 contact.html이
 //    "이메일로 보내주세요" 안내로 바꿔 보여주므로, 설정 전에도
@@ -21,6 +27,10 @@
 
 const RESEND_API = 'https://api.resend.com';
 const DEFAULT_TO = 'pluspsychology@gmail.com';
+
+const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const INQUIRIES_TABLE = 'inquiries';
 
 // 첨부 제한 — contact.html의 MAX_FILES / MAX_TOTAL과 같은 값이어야 합니다.
 const MAX_FILES = 3;
@@ -92,6 +102,7 @@ export default async function handler(req, res) {
   }
 
   const attachments = [];
+  const attachmentBytes = [];        // 파일별 원본 바이트 (DB 에 목록으로 남깁니다)
   let totalBytes = 0;
   for (const a of rawAttachments) {
     const filename = String((a && a.name) || '').trim().replace(/[\r\n"]/g, '').slice(0, 120);
@@ -109,11 +120,35 @@ export default async function handler(req, res) {
     // base64 길이로 원본 바이트 수를 계산 (4글자 → 3바이트)
     const clean = content.replace(/\s/g, '');
     const pad = (clean.match(/=+$/) || [''])[0].length;
-    totalBytes += Math.floor(clean.length * 3 / 4) - pad;
+    const bytes = Math.floor(clean.length * 3 / 4) - pad;
+    totalBytes += bytes;
     if (totalBytes > MAX_TOTAL_BYTES) {
       return res.status(413).json({ error: 'Attachments too large' });
     }
     attachments.push({ filename, content: clean });
+    attachmentBytes.push(bytes);
+  }
+
+  // --- 먼저 저장 ---
+  // 여기서 실패해도 접수를 막지 않습니다. 저장은 사본이고, 문의자에게는
+  // 메일이 전달되는 것이 우선입니다. 실패는 로그로 남깁니다.
+  let inquiryId = null;
+  if (SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      inquiryId = await insertInquiry({
+        type, name, email, phone: phone || null, subject, message, lang,
+        attachments: attachments.map((a, i) => ({
+          name: a.filename,
+          bytes: attachmentBytes[i]
+        })),
+        consent: true,
+        consented_at: new Date().toISOString(),
+        consent_ip: clientIp(req),
+        consent_user_agent: String(req.headers['user-agent'] || '').slice(0, 500)
+      });
+    } catch (err) {
+      console.error('inquiry save failed:', err);
+    }
   }
 
   // --- 메일 발송 ---
@@ -137,15 +172,57 @@ export default async function handler(req, res) {
     });
 
     if (!sendRes.ok) {
-      console.error('Contact send error:', sendRes.status, await sendRes.text());
+      const detail = await sendRes.text();
+      console.error('Contact send error:', sendRes.status, detail);
+      await markEmail(inquiryId, { email_sent: false, email_error: `${sendRes.status} ${detail}`.slice(0, 500) });
       return res.status(502).json({ error: 'Could not deliver inquiry' });
     }
 
+    const sent = await sendRes.json().catch(() => null);
+    await markEmail(inquiryId, { email_sent: true, email_id: (sent && sent.id) || null });
     return res.status(200).json({ ok: true });
 
   } catch (err) {
     console.error('contact error:', err);
+    await markEmail(inquiryId, { email_sent: false, email_error: String(err).slice(0, 500) });
     return res.status(500).json({ error: 'Unexpected error' });
+  }
+}
+
+// ── Supabase (PostgREST REST API — SDK 의존성 없음) ──────────
+
+function supabaseHeaders() {
+  return {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Content-Type': 'application/json'
+  };
+}
+
+async function insertInquiry(row) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${INQUIRIES_TABLE}`, {
+    method: 'POST',
+    headers: { ...supabaseHeaders(), 'Prefer': 'return=representation' },
+    body: JSON.stringify(row)
+  });
+  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
+  const rows = await res.json().catch(() => null);
+  return Array.isArray(rows) && rows[0] ? rows[0].id : null;
+}
+
+// 발송 결과 기록. 저장이 없었거나 여기서 실패해도 응답에는 영향을 주지 않습니다.
+async function markEmail(id, patch) {
+  if (!id || !SUPABASE_URL || !SUPABASE_KEY) return;
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/${INQUIRIES_TABLE}?id=eq.${encodeURIComponent(id)}`;
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: { ...supabaseHeaders(), 'Prefer': 'return=minimal' },
+      body: JSON.stringify(patch)
+    });
+    if (!res.ok) console.error('inquiry patch failed:', res.status, await res.text());
+  } catch (err) {
+    console.error('inquiry patch failed:', err);
   }
 }
 

@@ -129,3 +129,71 @@ alter table public.orders enable row level security;
 
 comment on table public.orders is
   '워크북 주문·결제 기록. 서버(service_role)에서만 접근. 전자상거래법상 5년 보존 대상.';
+
+
+-- ============================================================
+--  문의 (contact.html 폼)
+--
+--  메일 발송(Resend)과 별개로 원본을 남깁니다. 메일이 스팸으로 분류되거나
+--  실수로 지워져도 문의가 사라지지 않게 하려는 것입니다.
+--  첨부파일 자체는 넣지 않습니다 — 파일은 메일에 붙어 가고, 여기에는
+--  무엇이 몇 바이트로 왔는지만 남깁니다.
+--
+--  보유 기간: 개인정보처리방침 §3 기준 3년. 지난 건은 주기적으로 파기해야 합니다.
+--    delete from public.inquiries where created_at < now() - interval '3 years';
+-- ============================================================
+
+create table if not exists public.inquiries (
+  id                uuid primary key default gen_random_uuid(),
+
+  -- 문의 내용
+  type              text        not null
+                                check (type in ('purchase','bulk','partnership','press','etc')),
+  name              text        not null,       -- 이름 또는 기관명
+  email             text        not null,
+  phone             text,
+  subject           text        not null,
+  message           text        not null,
+  lang              text        not null default 'ko' check (lang in ('ko','en')),
+
+  -- 첨부 목록 (파일 내용은 저장하지 않음)
+  --   예: [{"name":"제안서.pdf","bytes":183245}]
+  attachments       jsonb       not null default '[]'::jsonb,
+
+  -- 수집·이용 동의 증적 (개인정보보호법 대응 — 삭제 금지)
+  consent           boolean     not null default false,
+  consented_at      timestamptz,
+  consent_ip        text,
+  consent_user_agent text,
+
+  -- 메일 전달 결과. 저장이 먼저이고 발송이 나중이라, 여기서 실패가 보이면
+  -- 메일함에는 없지만 이 표에는 남아 있는 문의라는 뜻입니다.
+  email_sent        boolean     not null default false,
+  email_id          text,                       -- Resend 메시지 id
+  email_error       text,
+
+  -- 처리 상태 (운영용)
+  status            text        not null default 'new'
+                                check (status in ('new','in_progress','done','spam')),
+  note              text,                       -- 내부 메모
+
+  created_at        timestamptz not null default now(),
+  updated_at        timestamptz not null default now()
+);
+
+create index if not exists inquiries_created_at_idx on public.inquiries (created_at desc);
+create index if not exists inquiries_status_idx     on public.inquiries (status);
+create index if not exists inquiries_email_idx      on public.inquiries (lower(email));
+create index if not exists inquiries_type_idx       on public.inquiries (type);
+
+drop trigger if exists inquiries_set_updated_at on public.inquiries;
+create trigger inquiries_set_updated_at
+  before update on public.inquiries
+  for each row execute function public.set_updated_at();
+
+-- subscribers·orders 와 동일 — RLS만 켜고 정책은 만들지 않습니다 (서버 전용).
+-- 정책이 없으면 anon/authenticated 키로는 아무것도 못 읽고 못 씁니다.
+alter table public.inquiries enable row level security;
+
+comment on table public.inquiries is
+  '문의 폼 접수 내역. 서버(service_role)에서만 접근. 보유 3년(처리방침 §3).';
