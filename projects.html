@@ -135,6 +135,11 @@
         grid-template-columns:repeat(3,1fr);align-items:start}
   .gcard{margin:0}
   .gcard img{width:100%;height:auto;display:block;border-radius:14px}
+  /* 전시 목록은 대표 사진 한 장만 크게 보여줍니다. 나머지 사진도 마크업에는
+     그대로 있어서, 자바스크립트가 없으면 전부 그냥 나열돼 보입니다. */
+  .grid.ex{grid-template-columns:1fr}
+  .grid.ex .gcard:not(.lead){display:none}
+  .grid.ex .lead figcaption{color:var(--blue-deep)}
   .gcard figcaption{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--ink-soft);
                     line-height:1.5;text-align:center}
   @media(max-width:560px){
@@ -183,31 +188,31 @@
       <h2 class="head rv" data-en="Exhibitions">전시</h2>
       <div class="rv">
         <h3 class="gsub" data-en="Busan Illustration Fair (2025)">부산 일러스트레이션 페어(2025)</h3>
-        <ul class="grid">
-          <li class="gcard"><figure data-lb="busan" data-lb-cap="부산 일러스트레이션 페어(2025) · 전시"><img src="/assets/img/exhibitions/busan-2025.jpg" alt="부산 일러스트레이션 페어(2025) 전시" data-en-alt="Busan Illustration Fair (2025) Exhibition" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Exhibition">전시</figcaption></figure></li>
-          <li class="gcard"><figure data-lb="busan" data-lb-cap="부산 일러스트레이션 페어(2025) · 초대장 1"><img src="/assets/img/exhibitions/busan-2025-invite-1.jpg" alt="부산 일러스트레이션 페어(2025) 초대장 1" data-en-alt="Busan Illustration Fair (2025) Invitation 1" loading="lazy"
+        <ul class="grid ex" data-ex-title="부산 일러스트레이션 페어(2025)" data-ex-title-en="Busan Illustration Fair (2025)">
+          <li class="gcard lead"><figure data-cap="전시" data-cap-en="Exhibition"><img src="/assets/img/exhibitions/busan-2025.jpg" alt="부산 일러스트레이션 페어(2025) 전시" data-en-alt="Busan Illustration Fair (2025) Exhibition" loading="lazy"
+                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="View all 3 photos">사진 3장 보기</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/exhibitions/busan-2025-invite-1.jpg" alt="부산 일러스트레이션 페어(2025) 초대장 1" data-en-alt="Busan Illustration Fair (2025) Invitation 1" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Invitation 1">초대장 1</figcaption></figure></li>
-          <li class="gcard"><figure data-lb="busan" data-lb-cap="부산 일러스트레이션 페어(2025) · 초대장 2"><img src="/assets/img/exhibitions/busan-2025-invite-2.jpg" alt="부산 일러스트레이션 페어(2025) 초대장 2" data-en-alt="Busan Illustration Fair (2025) Invitation 2" loading="lazy"
+          <li class="gcard"><figure><img src="/assets/img/exhibitions/busan-2025-invite-2.jpg" alt="부산 일러스트레이션 페어(2025) 초대장 2" data-en-alt="Busan Illustration Fair (2025) Invitation 2" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Invitation 2">초대장 2</figcaption></figure></li>
         </ul>
         <h3 class="gsub" data-en="Seongsu Understand Avenue pop-up (2025)">성수동 언더스탠드 애비뉴 팝업(2025)</h3>
-        <ul class="grid">
-          <li class="gcard"><figure data-lb="seongsu" data-lb-cap="성수동 언더스탠드 애비뉴 팝업(2025) · 전시 1"><img src="/assets/img/exhibitions/seongsu-2025-1.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 전시 1" data-en-alt="Seongsu Understand Avenue pop-up (2025) Exhibition 1" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Exhibition 1">전시 1</figcaption></figure></li>
-          <li class="gcard"><figure data-lb="seongsu" data-lb-cap="성수동 언더스탠드 애비뉴 팝업(2025) · 전시 2"><img src="/assets/img/exhibitions/seongsu-2025-2.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 전시 2" data-en-alt="Seongsu Understand Avenue pop-up (2025) Exhibition 2" loading="lazy"
+        <ul class="grid ex" data-ex-title="성수동 언더스탠드 애비뉴 팝업(2025)" data-ex-title-en="Seongsu Understand Avenue pop-up (2025)">
+          <li class="gcard lead"><figure data-cap="전시 1" data-cap-en="Exhibition 1"><img src="/assets/img/exhibitions/seongsu-2025-1.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 전시 1" data-en-alt="Seongsu Understand Avenue pop-up (2025) Exhibition 1" loading="lazy"
+                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="View all 5 photos">사진 5장 보기</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/exhibitions/seongsu-2025-2.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 전시 2" data-en-alt="Seongsu Understand Avenue pop-up (2025) Exhibition 2" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Exhibition 2">전시 2</figcaption></figure></li>
-          <li class="gcard"><figure data-lb="seongsu" data-lb-cap="성수동 언더스탠드 애비뉴 팝업(2025) · 전시 3"><img src="/assets/img/exhibitions/seongsu-2025-3.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 전시 3" data-en-alt="Seongsu Understand Avenue pop-up (2025) Exhibition 3" loading="lazy"
+          <li class="gcard"><figure><img src="/assets/img/exhibitions/seongsu-2025-3.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 전시 3" data-en-alt="Seongsu Understand Avenue pop-up (2025) Exhibition 3" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Exhibition 3">전시 3</figcaption></figure></li>
-          <li class="gcard"><figure data-lb="seongsu" data-lb-cap="성수동 언더스탠드 애비뉴 팝업(2025) · 초대장 1"><img src="/assets/img/exhibitions/seongsu-2025-invite-1.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 초대장 1" data-en-alt="Seongsu Understand Avenue pop-up (2025) Invitation 1" loading="lazy"
+          <li class="gcard"><figure><img src="/assets/img/exhibitions/seongsu-2025-invite-1.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 초대장 1" data-en-alt="Seongsu Understand Avenue pop-up (2025) Invitation 1" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Invitation 1">초대장 1</figcaption></figure></li>
-          <li class="gcard"><figure data-lb="seongsu" data-lb-cap="성수동 언더스탠드 애비뉴 팝업(2025) · 초대장 2"><img src="/assets/img/exhibitions/seongsu-2025-invite-2.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 초대장 2" data-en-alt="Seongsu Understand Avenue pop-up (2025) Invitation 2" loading="lazy"
+          <li class="gcard"><figure><img src="/assets/img/exhibitions/seongsu-2025-invite-2.jpg" alt="성수동 언더스탠드 애비뉴 팝업(2025) 초대장 2" data-en-alt="Seongsu Understand Avenue pop-up (2025) Invitation 2" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Invitation 2">초대장 2</figcaption></figure></li>
         </ul>
         <h3 class="gsub" data-en="Square One pop-up (2025)">스퀘어원 팝업(2025)</h3>
-        <ul class="grid">
-          <li class="gcard"><figure data-lb="squareone" data-lb-cap="스퀘어원 팝업(2025) · 전시"><img src="/assets/img/exhibitions/squareone-2025.jpg" alt="스퀘어원 팝업(2025) 전시" data-en-alt="Square One pop-up (2025) Exhibition" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Exhibition">전시</figcaption></figure></li>
+        <ul class="grid ex" data-ex-title="스퀘어원 팝업(2025)" data-ex-title-en="Square One pop-up (2025)">
+          <li class="gcard lead"><figure data-cap="전시" data-cap-en="Exhibition"><img src="/assets/img/exhibitions/squareone-2025.jpg" alt="스퀘어원 팝업(2025) 전시" data-en-alt="Square One pop-up (2025) Exhibition" loading="lazy"
+                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="View larger">크게 보기</figcaption></figure></li>
         </ul>
       </div>
     </section>

@@ -1,15 +1,28 @@
-/* 사진 확대 보기 (lightbox)
+/* 사진 크게 보기 — 두 가지 방식
    ────────────────────────────────────────────────────────────────
-   쓰는 법 — 확대하고 싶은 <img> 를 감싼 요소에 data-lb 를 붙이면 끝입니다.
+   ① 전시 상세  (.grid.ex)
+      목록에는 대표 사진 한 장만 크게 보이고, 그 사진을 누르면 그 전시의
+      사진이 위에서 아래로 쭉 이어진 상세 화면이 열립니다. 맨 아래
+      '목록으로' 버튼으로 닫습니다.
 
-     <figure data-lb="seongsu"><img src="..." alt="성수동 팝업"><figcaption>…</figcaption></figure>
+        <ul class="grid ex" data-ex-title="부산 일러스트레이션 페어(2025)"
+                            data-ex-title-en="Busan Illustration Fair (2025)">
+          <li class="gcard lead"> … 대표 사진 … </li>
+          <li class="gcard">      … 나머지 사진 … </li>
+        </ul>
 
-   data-lb 의 값이 같은 사진끼리 한 묶음이 되어, 확대 화면에서 ← → 로
-   넘겨볼 수 있습니다. 값이 비어 있으면 그 사진 혼자 한 묶음입니다.
-   캡션은 figcaption 을, 없으면 img 의 alt 를 씁니다.
+      목록에서 나머지 사진을 감추는 건 CSS 가 합니다. 마크업에는 그대로
+      남아 있어서, 자바스크립트가 없어도 사진은 다 보입니다.
 
-   자리표시 이미지(placeholder.svg)는 확대할 게 없으므로 건너뜁니다.
-   실제 사진이 올라오면 자동으로 확대 대상이 됩니다.
+   ② 사진 한 장 확대  (data-lb)
+      figure 에 data-lb 를 붙이면 그 사진만 화면 가득 띄웁니다.
+      값이 같은 사진끼리 묶여 ← → 로 넘겨볼 수 있습니다.
+      data-lb-cap 이 있으면 그것을 제목으로 씁니다.
+
+   두 방식 모두 Esc·배경 클릭으로 닫히고, 열려 있는 동안 뒤 페이지는
+   스크롤되지 않으며, 닫으면 눌렀던 사진으로 초점이 돌아갑니다.
+
+   자리표시 이미지(placeholder.svg)만 있는 칸은 열리지 않습니다.
    ──────────────────────────────────────────────────────────────── */
 (function () {
   'use strict';
@@ -19,79 +32,151 @@
   window.__kswLightbox = true;
 
   var PLACEHOLDER = 'placeholder.svg';
+  var LBL = {
+    close: { ko: '닫기', en: 'Close' },
+    back:  { ko: '목록으로', en: 'Back to list' },
+    prev:  { ko: '이전 사진', en: 'Previous photo' },
+    next:  { ko: '다음 사진', en: 'Next photo' }
+  };
+  function t(k) { return LBL[k][document.documentElement.lang === 'en' ? 'en' : 'ko']; }
+  function isReal(img) { return (img.getAttribute('src') || '').indexOf(PLACEHOLDER) === -1; }
 
-  var items = [];          // {src, cap, group, el}
-  var groups = {};         // group -> items 배열
-  var cur = null, curIdx = 0, lastFocus = null;
+  var openBox = null, lastFocus = null;
 
-  function collect() {
-    var nodes = Array.prototype.slice.call(document.querySelectorAll('[data-lb]'));
-    nodes.forEach(function (fig, ord) {
-      var img = fig.querySelector('img');
-      if (!img) return;
-      var capEl = fig.querySelector('figcaption');
-      var it = {
-        src: img.getAttribute('src') || '',
-        // 확대 화면 제목: data-lb-cap 이 있으면 그것을 씁니다.
-        // 페이지에서는 '초대장 1' 처럼 짧게 두고, 확대하면 어느 전시인지까지
-        // 보여주고 싶을 때 쓰라고 둔 것입니다.
-        cap: (fig.getAttribute('data-lb-cap') ||
-              (capEl ? capEl.textContent : img.alt) || '').trim(),
-        group: fig.getAttribute('data-lb') || ('_' + ord),
-        el: img,
-        ord: ord            // 페이지에 놓인 순서. 아래 정렬에 씁니다.
-      };
-
-      // 사진이 아직 안 올라온 칸은 onerror 가 자리표시로 바꿔치기하는데,
-      // 그 시점이 이 코드보다 늦을 수 있습니다. 그래서 지금 src 로 판단하지 않고
-      // 로드가 끝난 뒤 최종 src 를 보고 확대 대상에 넣을지 정합니다.
-      function settle() {
-        var now = img.getAttribute('src') || '';
-        var real = now.indexOf(PLACEHOLDER) === -1;
-        it.src = now;
-        if (real === enrolled) return;
-        if (real) enroll(); else drop();
-      }
-      var enrolled = false;
-      function enroll() {
-        enrolled = true;
-        items.push(it);
-        var g = (groups[it.group] = groups[it.group] || []);
-        g.push(it);
-        // 사진마다 로딩이 끝나는 순서가 제각각이라, 그 순서대로 담으면
-        // 확대 화면에서 3번째 사진이 1번으로 나오는 일이 생깁니다.
-        // 페이지에 놓인 순서로 다시 세웁니다.
-        g.sort(function (a, b) { return a.ord - b.ord; });
-        img.classList.add('lb-open');
-        img.setAttribute('tabindex', '0');
-        img.setAttribute('role', 'button');
-      }
-      function drop() {
-        enrolled = false;
-        var g = groups[it.group] || [];
-        var i = g.indexOf(it); if (i > -1) g.splice(i, 1);
-        i = items.indexOf(it); if (i > -1) items.splice(i, 1);
-        img.classList.remove('lb-open');
-        img.removeAttribute('tabindex');
-        img.removeAttribute('role');
-      }
-
-      img.addEventListener('click', function () { if (enrolled) open(it); });
-      img.addEventListener('keydown', function (e) {
-        if (!enrolled) return;
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(it); }
-      });
-      img.addEventListener('load', settle);
-      img.addEventListener('error', function () { setTimeout(settle, 0); });
-      if (img.complete) settle();
-    });
-    return items.length;
+  // ── 공통: 열기 / 닫기 ──────────────────────────────────
+  function show(el, focusEl) {
+    lastFocus = document.activeElement;
+    el.hidden = false;
+    var pad = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    if (pad > 0) document.body.style.paddingRight = pad + 'px';
+    requestAnimationFrame(function () { el.classList.add('in'); });
+    openBox = el;
+    if (focusEl) focusEl.focus();
   }
 
-  // ── 확대 화면 만들기 ────────────────────────────────────
-  var box, imgEl, capEl, capTxt, cntEl, btnPrev, btnNext, btnX;
+  function hide() {
+    if (!openBox) return;
+    openBox.classList.remove('in');
+    openBox.hidden = true;
+    openBox = null;
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
 
-  function build() {
+  document.addEventListener('keydown', function (e) {
+    if (!openBox) return;
+    if (e.key === 'Escape') { e.preventDefault(); hide(); return; }
+    if (e.key === 'Tab') {
+      var f = Array.prototype.slice.call(openBox.querySelectorAll('button'))
+                .filter(function (b) { return b.offsetParent !== null; });
+      if (!f.length) return;
+      var i = f.indexOf(document.activeElement);
+      e.preventDefault();
+      f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+    }
+    if (openBox.classList.contains('lb')) {
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); step(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+    }
+  });
+
+  function svgIcon(d) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + d + '"/></svg>';
+  }
+
+  // ── ① 전시 상세 ────────────────────────────────────────
+  var sheet = null, sheetTitle = null, sheetBody = null, sheetX = null, sheetBack = null;
+
+  function buildSheet() {
+    sheet = document.createElement('div');
+    sheet.className = 'lbd';
+    sheet.hidden = true;
+    sheet.setAttribute('role', 'dialog');
+    sheet.setAttribute('aria-modal', 'true');
+    sheet.innerHTML =
+      '<div class="lbd-sheet">' +
+        '<header class="lbd-head"><h2></h2>' +
+          '<button type="button" class="lbd-x">' + svgIcon('M6 6l12 12M18 6L6 18') + '</button>' +
+        '</header>' +
+        '<div class="lbd-body"></div>' +
+        '<footer class="lbd-foot"><button type="button" class="lbd-back"></button></footer>' +
+      '</div>';
+    document.body.appendChild(sheet);
+    sheetTitle = sheet.querySelector('h2');
+    sheetBody  = sheet.querySelector('.lbd-body');
+    sheetX     = sheet.querySelector('.lbd-x');
+    sheetBack  = sheet.querySelector('.lbd-back');
+    sheetX.addEventListener('click', hide);
+    sheetBack.addEventListener('click', hide);
+    // 시트 바깥(어두운 여백)을 누르면 닫습니다
+    sheet.addEventListener('click', function (e) { if (e.target === sheet) hide(); });
+  }
+
+  function openDetail(list) {
+    if (!sheet) buildSheet();
+    var en = document.documentElement.lang === 'en';
+    var title = (en && list.getAttribute('data-ex-title-en')) || list.getAttribute('data-ex-title') || '';
+    sheetTitle.textContent = title;
+    sheet.setAttribute('aria-label', title);
+    sheetX.setAttribute('aria-label', t('close'));
+    sheetBack.textContent = t('back');
+
+    sheetBody.innerHTML = '';
+    Array.prototype.slice.call(list.querySelectorAll('.gcard figure')).forEach(function (fig) {
+      var img = fig.querySelector('img');
+      if (!img || !isReal(img)) return;
+      var cap = fig.querySelector('figcaption');
+      var f = document.createElement('figure');
+      var i = document.createElement('img');
+      i.src = img.getAttribute('src');
+      i.alt = img.alt || '';
+      f.appendChild(i);
+      // 대표 사진의 목록 캡션은 '사진 3장 보기' 같은 안내라 상세에 그대로 쓸 수
+      // 없습니다. data-cap 에 적어둔 진짜 이름을 대신 씁니다.
+      var label = (en && fig.getAttribute('data-cap-en')) || fig.getAttribute('data-cap') ||
+                  (cap ? cap.textContent : '');
+      label = (label || '').trim();
+      if (label) {
+        var c = document.createElement('figcaption');
+        c.textContent = label;
+        f.appendChild(c);
+      }
+      sheetBody.appendChild(f);
+    });
+    sheetBody.scrollTop = 0;
+    show(sheet, sheetX);
+    if (typeof gtag === 'function') gtag('event', 'exhibition_open', { exhibition: title });
+  }
+
+  function wireDetails() {
+    Array.prototype.slice.call(document.querySelectorAll('.grid.ex')).forEach(function (list) {
+      var leadImg = list.querySelector('.lead img');
+      if (!leadImg) return;
+      function settle() {
+        var ok = isReal(leadImg);
+        leadImg.classList.toggle('lb-open', ok);
+        if (ok) { leadImg.setAttribute('tabindex', '0'); leadImg.setAttribute('role', 'button'); }
+        else { leadImg.removeAttribute('tabindex'); leadImg.removeAttribute('role'); }
+      }
+      leadImg.addEventListener('load', settle);
+      leadImg.addEventListener('error', function () { setTimeout(settle, 0); });
+      if (leadImg.complete) settle();
+
+      function go() { if (isReal(leadImg)) openDetail(list); }
+      leadImg.addEventListener('click', go);
+      leadImg.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+      });
+    });
+  }
+
+  // ── ② 사진 한 장 확대 ──────────────────────────────────
+  var box, imgEl, capEl, capTxt, cntEl, btnPrev, btnNext, btnX;
+  var groups = {}, cur = null, curIdx = 0;
+
+  function buildBox() {
     box = document.createElement('div');
     box.className = 'lb';
     box.hidden = true;
@@ -99,97 +184,99 @@
     box.setAttribute('aria-modal', 'true');
     box.innerHTML =
       '<figure><img alt=""><figcaption></figcaption></figure>' +
-      '<button type="button" class="lb-x" aria-label="닫기">' +
-        '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
-      '<button type="button" class="lb-prev" aria-label="이전 사진">' +
-        '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>' +
-      '<button type="button" class="lb-next" aria-label="다음 사진">' +
-        '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>';
+      '<button type="button" class="lb-x">' + svgIcon('M6 6l12 12M18 6L6 18') + '</button>' +
+      '<button type="button" class="lb-prev">' + svgIcon('M15 5l-7 7 7 7') + '</button>' +
+      '<button type="button" class="lb-next">' + svgIcon('M9 5l7 7-7 7') + '</button>';
     document.body.appendChild(box);
-
-    imgEl   = box.querySelector('img');
-    capEl   = box.querySelector('figcaption');
-    btnX    = box.querySelector('.lb-x');
+    imgEl = box.querySelector('img');
+    capEl = box.querySelector('figcaption');
+    btnX = box.querySelector('.lb-x');
     btnPrev = box.querySelector('.lb-prev');
     btnNext = box.querySelector('.lb-next');
-
-    // 캡션은 [텍스트 노드][카운터] 두 조각으로 한 번만 만들어 두고,
-    // 열 때마다 그 노드의 내용만 갈아 끼웁니다.
     capTxt = document.createTextNode('');
     capEl.appendChild(capTxt);
     cntEl = document.createElement('span');
     cntEl.className = 'lb-count';
     capEl.appendChild(cntEl);
-
-    btnX.addEventListener('click', close);
+    btnX.addEventListener('click', hide);
     btnPrev.addEventListener('click', function () { step(-1); });
     btnNext.addEventListener('click', function () { step(1); });
-    // 사진이나 버튼이 아닌 빈 공간을 누르면 닫습니다
-    box.addEventListener('click', function (e) { if (e.target === box) close(); });
-    document.addEventListener('keydown', onKey);
+    box.addEventListener('click', function (e) { if (e.target === box) hide(); });
   }
 
-  function render() {
+  function renderBox() {
     var it = cur[curIdx];
     imgEl.src = it.src;
     imgEl.alt = it.cap;
     capTxt.nodeValue = it.cap;
     cntEl.textContent = cur.length > 1 ? (curIdx + 1) + ' / ' + cur.length : '';
     box.setAttribute('data-single', cur.length > 1 ? '0' : '1');
-  }
-
-  function open(it) {
-    if (!box) build();
-    cur = groups[it.group];
-    curIdx = cur.indexOf(it);
-    lastFocus = document.activeElement;
-    render();
-    box.hidden = false;
-    // 배경이 스크롤되지 않게. 스크롤바가 사라지며 생기는 밀림도 막습니다.
-    var pad = window.innerWidth - document.documentElement.clientWidth;
-    document.body.style.overflow = 'hidden';
-    if (pad > 0) document.body.style.paddingRight = pad + 'px';
-    requestAnimationFrame(function () { box.classList.add('in'); });
-    btnX.focus();
-    if (typeof gtag === 'function') gtag('event', 'photo_zoom', { photo: cur[curIdx].cap });
-  }
-
-  function close() {
-    if (!box || box.hidden) return;
-    box.classList.remove('in');
-    box.hidden = true;
-    imgEl.removeAttribute('src');
-    document.body.style.overflow = '';
-    document.body.style.paddingRight = '';
-    if (lastFocus && lastFocus.focus) lastFocus.focus();
-    cur = null;
+    btnX.setAttribute('aria-label', t('close'));
+    btnPrev.setAttribute('aria-label', t('prev'));
+    btnNext.setAttribute('aria-label', t('next'));
   }
 
   function step(d) {
     if (!cur || cur.length < 2) return;
     curIdx = (curIdx + d + cur.length) % cur.length;
-    render();
+    renderBox();
   }
 
-  function onKey(e) {
-    if (!box || box.hidden) return;
-    if (e.key === 'Escape') { e.preventDefault(); close(); }
-    else if (e.key === 'ArrowLeft')  { e.preventDefault(); step(-1); }
-    else if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
-    else if (e.key === 'Tab') {
-      // 확대 화면 안에서만 초점이 돌게 가둡니다
-      var f = Array.prototype.slice.call(box.querySelectorAll('button'))
-                .filter(function (b) { return b.offsetParent !== null; });
-      if (!f.length) return;
-      var i = f.indexOf(document.activeElement);
-      e.preventDefault();
-      f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
-    }
+  function openBoxAt(it) {
+    if (!box) buildBox();
+    cur = groups[it.group];
+    curIdx = cur.indexOf(it);
+    renderBox();
+    show(box, btnX);
+    if (typeof gtag === 'function') gtag('event', 'photo_zoom', { photo: it.cap });
   }
+
+  function wireSingles() {
+    Array.prototype.slice.call(document.querySelectorAll('[data-lb]')).forEach(function (fig, ord) {
+      var img = fig.querySelector('img');
+      if (!img) return;
+      var cap = fig.querySelector('figcaption');
+      var it = {
+        src: img.getAttribute('src') || '',
+        cap: (fig.getAttribute('data-lb-cap') || (cap ? cap.textContent : img.alt) || '').trim(),
+        group: fig.getAttribute('data-lb') || ('_' + ord),
+        ord: ord
+      };
+      var enrolled = false;
+      function settle() {
+        it.src = img.getAttribute('src') || '';
+        var real = isReal(img);
+        if (real === enrolled) return;
+        enrolled = real;
+        var g = (groups[it.group] = groups[it.group] || []);
+        if (real) {
+          g.push(it);
+          // 로딩이 끝나는 순서가 제각각이라 페이지 순서로 다시 세웁니다
+          g.sort(function (a, b) { return a.ord - b.ord; });
+        } else {
+          var i = g.indexOf(it); if (i > -1) g.splice(i, 1);
+        }
+        img.classList.toggle('lb-open', real);
+        if (real) { img.setAttribute('tabindex', '0'); img.setAttribute('role', 'button'); }
+        else { img.removeAttribute('tabindex'); img.removeAttribute('role'); }
+      }
+      img.addEventListener('load', settle);
+      img.addEventListener('error', function () { setTimeout(settle, 0); });
+      if (img.complete) settle();
+
+      img.addEventListener('click', function () { if (enrolled) openBoxAt(it); });
+      img.addEventListener('keydown', function (e) {
+        if (!enrolled) return;
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openBoxAt(it); }
+      });
+    });
+  }
+
+  function init() { wireDetails(); wireSingles(); }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', collect);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    collect();
+    init();
   }
 })();

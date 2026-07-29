@@ -52,3 +52,52 @@
   .lb,.lb-open{transition:none!important}
   .lb-open:hover{transform:none!important}
 }
+
+/* ──────────────────────────────────────────────────────────
+   전시 상세 — 대표 사진을 누르면 열리는, 위아래로 이어진 화면
+   ────────────────────────────────────────────────────────── */
+.lbd{position:fixed; inset:0; z-index:120; overflow-y:auto; overscroll-behavior:contain;
+     background:rgba(30,26,20,.86); padding:28px 16px; opacity:0; transition:opacity .18s}
+.lbd[hidden]{display:none}
+.lbd.in{opacity:1}
+@supports ((backdrop-filter:blur(3px)) or (-webkit-backdrop-filter:blur(3px))){
+  .lbd{-webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px)}
+}
+
+.lbd-sheet{max-width:640px; margin:0 auto; background:var(--surface);
+           border:1.5px solid var(--line); border-radius:20px; overflow:hidden;
+           box-shadow:0 30px 70px -24px rgba(0,0,0,.6)}
+
+.lbd-head{position:relative; padding:20px 56px; border-bottom:1.5px solid var(--line)}
+.lbd-head h2{font-family:var(--sans); font-weight:800; font-size:clamp(15px,3.8vw,17.5px);
+             line-height:1.5; color:var(--ink); text-align:center; word-break:keep-all}
+.lbd-x{position:absolute; top:50%; right:14px; transform:translateY(-50%);
+       width:36px; height:36px; border:0; background:transparent; color:var(--ink-faint);
+       border-radius:999px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+       transition:background .16s, color .16s; -webkit-tap-highlight-color:transparent}
+.lbd-x:hover{background:var(--paper-2); color:var(--ink)}
+.lbd-x svg{width:20px; height:20px; stroke:currentColor; stroke-width:2.1; fill:none;
+           stroke-linecap:round; stroke-linejoin:round}
+
+.lbd-body{padding:18px}
+.lbd-body figure{margin:0}
+.lbd-body figure + figure{margin-top:18px}
+.lbd-body img{width:100%; height:auto; display:block; border-radius:12px}
+.lbd-body figcaption{margin-top:9px; font-size:12.5px; font-weight:700; color:var(--ink-soft);
+                     text-align:center; line-height:1.5}
+
+.lbd-foot{padding:4px 18px 22px; text-align:center}
+.lbd-back{font-family:var(--sans); font-size:14px; font-weight:800; color:#fff;
+          background:var(--blue); border:0; border-radius:12px; padding:12px 30px; cursor:pointer;
+          transition:background .16s; -webkit-tap-highlight-color:transparent}
+.lbd-back:hover{background:var(--blue-deep)}
+.lbd-x:focus-visible,.lbd-back:focus-visible{outline:3px solid var(--gold); outline-offset:2px}
+
+@media(max-width:560px){
+  .lbd{padding:16px 10px}
+  .lbd-head{padding:16px 48px}
+  .lbd-body{padding:14px}
+}
+@media (prefers-reduced-motion: reduce){
+  .lbd,.lbd-x,.lbd-back{transition:none!important}
+}
