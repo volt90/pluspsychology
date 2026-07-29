@@ -134,13 +134,13 @@
   /* 항목이 1개든 6개든 카드 크기는 같게 — 3열 고정.
      개수에 따라 열을 바꾸면 스티커 1장이 메모지 3장보다 커집니다. */
   .grid{list-style:none;display:grid;gap:14px 12px;margin-top:16px;
-        grid-template-columns:repeat(3,1fr)}
+        grid-template-columns:repeat(3,1fr);align-items:start}
   .gcard{margin:0}
-  /* 굿즈 사진은 세로가 많고(엽서·스티커·키링) 정사각도 섞여 있어(손거울·메모지),
-     cover 로 채우면 제품이 잘립니다. contain 으로 전체를 보여주고 남는 자리는 여백으로 둡니다. */
-  .gcard img{width:100%;aspect-ratio:3/4;object-fit:contain;display:block;
-             background:var(--paper-2);border:1.5px solid var(--line);border-radius:14px;
-             padding:6px}
+  /* 사진은 틀에 맞추지 않고 원래 비율 그대로 둡니다. 그래야 흰 여백이 생기지 않고,
+     모서리 라운드가 이미지 상자가 아니라 사진 자체에 걸립니다.
+     그래서 같은 줄이라도 사진 높이가 다를 수 있어 위쪽으로 정렬합니다.
+     (키링 6장은 파일 자체를 키링A와 같은 979×1024 로 맞춰뒀습니다) */
+  .gcard img{width:100%;height:auto;display:block;border-radius:14px}
   .gcard figcaption{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--ink-soft);
                     line-height:1.5;text-align:center}
   @media(max-width:560px){
