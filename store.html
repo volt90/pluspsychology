@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Store · 김심리월드</title>
 <meta name="theme-color" content="#FBF6EA">
-<meta name="description" content="김심리월드 스토어 — 굿즈와 워크북 판매를 준비하고 있습니다.">
+<meta name="description" content="김심리월드 굿즈 — 메모지·스티커·키링·엽서·손거울. 김심리월드 친구들을 굿즈로 만나보세요.">
 <link rel="canonical" href="https://www.pluspsychology.ai/store.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,9 +123,27 @@
   footer .flinks a:hover{color:var(--blue-deep);text-decoration:underline}
   footer .fnote{font-size:11.5px;color:var(--ink-faint);letter-spacing:.03em;line-height:1.7}
   .heart{color:var(--coral)}
-  .soon{margin-top:26px;padding:34px 26px;text-align:center}
-  .soon h2{font-family:var(--sans);font-weight:800;font-size:clamp(19px,4.8vw,24px);line-height:1.45}
-  .soon p{margin-top:12px;font-size:14px;color:var(--ink-soft);line-height:1.85}
+  /* ---------- 갤러리 (굿즈) ----------
+     사진은 아직 없어 자리표시용 SVG 가 들어가 있습니다.
+     실제 사진을 받으면 각 <img> 의 src 만 바꾸면 됩니다 —
+     비율·자르기는 CSS 가 잡아주므로 원본 크기는 신경 쓰지 않아도 됩니다. */
+  .gsub{font-family:var(--display);font-weight:400;font-size:clamp(17px,4.4vw,20px);
+        margin:34px 0 2px;color:var(--ink)}
+  .gsub:first-of-type{margin-top:20px}
+  .glead{font-size:14px;color:var(--ink-soft);line-height:1.8;margin-top:10px}
+  /* 항목이 1개든 6개든 카드 크기는 같게 — 3열 고정.
+     개수에 따라 열을 바꾸면 스티커 1장이 메모지 3장보다 커집니다. */
+  .grid{list-style:none;display:grid;gap:14px 12px;margin-top:16px;
+        grid-template-columns:repeat(3,1fr)}
+  .gcard{margin:0}
+  .gcard img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;
+             background:var(--paper-2);border:1.5px solid var(--line);border-radius:14px}
+  .gcard figcaption{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--ink-soft);
+                    line-height:1.5;text-align:center}
+  @media(max-width:560px){
+    .grid{grid-template-columns:repeat(2,1fr);gap:12px 10px}
+    .gcard figcaption{font-size:11.5px}
+  }
 
 
   @media (prefers-reduced-motion: reduce){
@@ -160,16 +178,39 @@
     </div>
 
     <section>
-      <span class="eyebrow rv" data-en="Store">스토어</span>
-      <h2 class="head rv" data-en="Getting the shelves ready">가판을 차리는 중입니다</h2>
-
-      <div class="soon panel rv">
-        <h2 data-en="The shop is not open yet">아직 문을 열지 않았어요</h2>
-        <p data-en="The goods and the workbook are being prepared for sale. Leave your email on the home page and we&#39;ll let you know first when it opens.">굿즈와 워크북을 판매할 준비를 하고 있어요.<br>홈에서 이메일을 남겨주시면 문 여는 날 가장 먼저 알려드릴게요.</p>
-        <div class="btns">
-          <a class="btn btn-primary" href="/" data-en="Leave your email">이메일 남기기</a>
-          <a class="btn btn-ghost" href="/projects.html" data-en="See the goods">굿즈 구경하기</a>
-        </div>
+      <span class="eyebrow rv" data-en="Things we made">만든 것들</span>
+      <h2 class="head rv" data-en="Goods">굿즈</h2>
+      <p class="glead rv" data-en="Meet the Kim Simri World friends as goods.">김심리월드 친구들을 굿즈로 만나보세요.</p>
+      <div class="rv">
+        <h3 class="gsub" data-en="Notepads">메모지</h3>
+        <ul class="grid">
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Notepad A">메모지A</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Notepad B">메모지B</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Notepad C">메모지C</figcaption></figure></li>
+        </ul>
+        <h3 class="gsub" data-en="Stickers">스티커</h3>
+        <ul class="grid">
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Sticker A">스티커A</figcaption></figure></li>
+        </ul>
+        <h3 class="gsub" data-en="Keyrings">키링</h3>
+        <ul class="grid">
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Keyring A">키링A</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Keyring B">키링B</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Keyring C">키링C</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Keyring D">키링D</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Keyring E">키링E</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Keyring F">키링F</figcaption></figure></li>
+        </ul>
+        <h3 class="gsub" data-en="Postcards">엽서</h3>
+        <ul class="grid">
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Postcard A">엽서A</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Postcard B">엽서B</figcaption></figure></li>
+        </ul>
+        <h3 class="gsub" data-en="Hand mirrors">손거울</h3>
+        <ul class="grid">
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Mirror A">손거울A</figcaption></figure></li>
+          <li class="gcard"><figure><img src="/assets/img/placeholder.svg" alt="" loading="lazy"><figcaption data-en="Mirror B">손거울B</figcaption></figure></li>
+        </ul>
       </div>
     </section>
 
