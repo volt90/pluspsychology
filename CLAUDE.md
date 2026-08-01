@@ -25,6 +25,10 @@ supabase/schema-app.sql # 앱 연동 스키마 (회원·이용권한·검사기�
 docs/setup-supabase.md # Supabase 연결 순서 (이메일 수집 켜기)
 docs/app-integration.md # 모바일 앱 연동 (같은 Supabase 프로젝트 공유)
 docs/commerce-plan.md  # 판매 개시 준비 (결제·환불·회원 정책 설계)
+og.png              # 링크 미리보기 이미지 1200×630 (기본)
+og-store.png        # 링크 미리보기 — Store 탭 (굿즈)
+og-projects.png     # 링크 미리보기 — Projects 탭 (전시)
+vercel.json         # Vercel 설정 — cleanUrls (주소에서 .html 제거)
 .vercelignore       # 배포에서 제외할 내부 문서 목록
 robots.txt
 sitemap.xml
@@ -343,6 +347,41 @@ var BUSINESS = {
 - [ ] **Search Console 인증 파일 `googlee928fd2a17217f2b.html`이 저장소에 없음** →
       루트에 추가해야 소유권 확인 가능 (내용 한 줄: `google-site-verification: googlee928fd2a17217f2b.html`)
 - [ ] sitemap.xml이 현재 페이지 상태와 맞는지 확인 (about/contact는 추가해 두었습니다)
+
+## 주소에 `.html`을 붙이지 않습니다
+`vercel.json`의 `"cleanUrls": true` 로 `/about.html` 이 아니라 **`/about`** 으로 서비스됩니다.
+옛 주소로 들어와도 Vercel이 308로 새 주소에 보내주며, **쿼리스트링은 보존**됩니다
+(토스 결제 복귀 주소 `?paymentKey=...&orderId=...` 가 여기 의존합니다).
+
+- **새 링크를 넣을 때 `.html`을 붙이지 마세요.** 붙여도 동작은 하지만 리다이렉트가 한 번 더 돕니다.
+- 홈은 `/index`가 아니라 **`/`** 입니다.
+- `canonical` 태그와 `sitemap.xml`도 `.html` 없는 주소로 맞춰져 있습니다. 한쪽만 고치면
+  검색엔진에 중복 주소로 잡힙니다 — **함께 고치세요.**
+- `api/*` 경로는 영향받지 않습니다 (`.html`이 아니므로).
+
+## 링크 미리보기 (Open Graph · Twitter Card)
+카카오톡·페이스북·슬랙 등에 주소를 붙였을 때 보이는 카드입니다.
+`index` · `about` · `projects` · `store` · `contact` · `privacy` · `terms` 일곱 페이지에
+들어 있습니다 (`confirm`·`checkout`은 noindex라 넣지 않았습니다).
+
+| 페이지 | og:image |
+|---|---|
+| Store | `og-store.png` (굿즈 6종) |
+| Projects | `og-projects.png` (전시 사진 3장) |
+| 나머지 | `og.png` (워크북 표지 + 로고 + 캐릭터) |
+
+- 🚨 **`og:image`는 반드시 실제 파일의 절대 URL이어야 합니다.** 이 사이트는 캐릭터·표지를
+  base64로 인라인하지만, **`data:` URI는 크롤러가 읽지 못합니다.** 그래서 `og*.png` 세 장만
+  실제 파일로 두었습니다. 지우거나 `.vercelignore`에 넣지 마세요.
+- 세 장 모두 1200×630입니다. 크기를 바꾸면 `og:image:width`/`height`도 함께 고치세요.
+- **크롤러는 JS를 실행하지 않습니다.** 언어 전환(`data-en`)과 무관하게 항상 한국어 값이
+  쓰이므로 영문 미리보기는 나오지 않습니다. 문구를 고칠 때 `<title>`·`description`·
+  `og:title`·`og:description`·`twitter:*` 를 **함께** 고치세요 (한 페이지에 5군데).
+- **`content` 값에 ASCII `<` `>` 를 쓰지 마세요.** 일부 스크래퍼가 태그로 오인해 문장을
+  잘라먹습니다. 책 제목은 전각 꺾쇠 `〈마음 사용 설명서〉`를 씁니다.
+- 미리보기가 갱신되지 않으면 각 플랫폼 캐시 때문입니다 —
+  페이스북 [Sharing Debugger](https://developers.facebook.com/tools/debug/) 에서 Scrape Again,
+  카카오톡은 [캐시 초기화](https://developers.kakao.com/tool/clear/og).
 
 ## 주의사항
 - 광고 연결 URL에 `#`(앵커)를 넣지 마세요. 네이버 NaPm 파라미터가 무시되어 전환추적이 깨집니다.

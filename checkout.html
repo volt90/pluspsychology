@@ -195,8 +195,8 @@
         <input type="checkbox" id="agreeTerms">
         <label for="agreeTerms">
           <span class="req">[필수]</span>
-          주문 내용을 확인했으며, <a href="/terms.html" target="_blank" rel="noopener">이용약관</a>과
-          <a href="/privacy.html" target="_blank" rel="noopener">개인정보처리방침</a>에 따른
+          주문 내용을 확인했으며, <a href="/terms" target="_blank" rel="noopener">이용약관</a>과
+          <a href="/privacy" target="_blank" rel="noopener">개인정보처리방침</a>에 따른
           결제 진행에 동의합니다.
         </label>
       </div>
@@ -217,7 +217,7 @@
   </form>
 
   <div class="flinks">
-    <a href="/">홈</a>·<a href="/terms.html">이용약관</a>·<a href="/privacy.html">개인정보처리방침</a>
+    <a href="/">홈</a>·<a href="/terms">이용약관</a>·<a href="/privacy">개인정보처리방침</a>
   </div>
 
 </div>
@@ -371,8 +371,8 @@
       orderName: order.orderName,
       customerName: order.customerName,
       customerEmail: order.customerEmail,
-      successUrl: origin + '/checkout-result.html',
-      failUrl: origin + '/checkout-result.html',
+      successUrl: origin + '/checkout-result',
+      failUrl: origin + '/checkout-result',
       card: { useEscrow: false, flowMode: 'DEFAULT', useCardPoint: false, useAppCardOnly: false }
     })
     .catch(function(err){
