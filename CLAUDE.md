@@ -25,6 +25,10 @@ supabase/schema-app.sql # 앱 연동 스키마 (회원·이용권한·검사기�
 docs/setup-supabase.md # Supabase 연결 순서 (이메일 수집 켜기)
 docs/app-integration.md # 모바일 앱 연동 (같은 Supabase 프로젝트 공유)
 docs/commerce-plan.md  # 판매 개시 준비 (결제·환불·회원 정책 설계)
+admin.html          # 관리자 대시보드 (noindex · 로그인 필요)
+api/admin-stats.js  # 대시보드 데이터 — GA4 + Supabase 를 서버에서 합침
+api/admin-config.js # 프런트가 쓸 공개 설정(anon 키)만 내려줌
+supabase/schema-admin.sql # campaigns 표 + 캠페인 컬럼 + 집계 뷰
 og.png              # 링크 미리보기 이미지 1200×630 (기본)
 og-store.png        # 링크 미리보기 — Store 탭 (굿즈)
 og-projects.png     # 링크 미리보기 — Projects 탭 (전시)
@@ -347,6 +351,51 @@ var BUSINESS = {
 - [ ] **Search Console 인증 파일 `googlee928fd2a17217f2b.html`이 저장소에 없음** →
       루트에 추가해야 소유권 확인 가능 (내용 한 줄: `google-site-verification: googlee928fd2a17217f2b.html`)
 - [ ] sitemap.xml이 현재 페이지 상태와 맞는지 확인 (about/contact는 추가해 두었습니다)
+
+## 관리자 대시보드 (`/admin`)
+
+로그인해야 보이는 내부 화면입니다. `noindex` + `robots.txt` 차단이 걸려 있습니다.
+
+### 보이는 것
+| 구역 | 내용 | 출처 |
+|---|---|---|
+| 접수 현황 | 이메일 알림신청 · 문의 · 구매 · 앱 회원가입 **4종을 각각** 카드 + 꺾은선 | Supabase |
+| 방문 통계 | 활성 사용자 · 세션 · 페이지뷰 추이, 유입 채널, 페이지별 조회수, 이벤트 | GA4 Data API |
+| 캠페인 | 캠페인별 방문자 · 신청 · 문의 · 결제 · **가입률 · 전환율** | 둘을 합침 |
+| 최근 접수 | 최근 알림신청/문의 8건 (이메일은 마스킹) | Supabase |
+
+### 🔒 인증은 2단계입니다 — 한쪽만 통과하면 안 됩니다
+1. **Supabase Auth 토큰** — 브라우저가 로그인해 받은 토큰을 서버가 Supabase에 되물어 검증
+2. **이메일 허용목록** — 그 이메일이 `ADMIN_EMAILS` 에 있어야 데이터를 내려줍니다
+
+앱 회원과 같은 Supabase를 쓰므로 **로그인만으로 통과시키면 앱 사용자 누구나 들어옵니다.**
+2단계를 하나로 줄이지 마세요. `ADMIN_EMAILS` 가 비어 있으면 서버가 503으로 막습니다
+(실수로 전체 공개되는 것을 방지).
+
+### 필요한 Vercel 환경변수
+| 변수 | 용도 |
+|---|---|
+| `SUPABASE_URL` · `SUPABASE_SERVICE_ROLE_KEY` | 집계 조회 (기존과 공용) |
+| `SUPABASE_ANON_KEY` | 로그인·토큰검증용 — **공개돼도 되는 키** |
+| `ADMIN_EMAILS` | 쉼표 구분 허용 이메일. 비면 대시보드가 열리지 않습니다 |
+| `GA4_PROPERTY_ID` | **숫자 속성 ID** (`G-7HK4CQK6ZW` 측정ID가 아닙니다) |
+| `GOOGLE_SERVICE_ACCOUNT_EMAIL` · `GOOGLE_PRIVATE_KEY` | GA4 Data API 서비스계정 |
+
+- GA4 설정이 없어도 **Supabase 수치는 그대로 나옵니다.** 방문자 칸만 `—` 로 비고
+  전환율은 계산하지 않습니다 (분모를 모르면서 비율을 지어내지 않기 위함).
+- `api/admin-config.js` 는 anon 키만 내려줍니다. **service_role 키를 여기 넣지 마세요.**
+
+### 캠페인 등록 방법
+`supabase/schema-admin.sql` 을 SQL Editor에서 한 번 실행한 뒤,
+`campaigns` 표에 행을 추가하면 대시보드에 나타납니다.
+
+- `slug='spring-2026'` → 방문자를 `/c/spring-2026` 경로에서 셉니다 (`page_path` 로 덮어쓸 수 있음)
+- 🚨 **캠페인 페이지의 폼은 `campaign` 값을 함께 보내야 합니다.** 안 보내면 방문자만 잡히고
+  신청·문의가 그 캠페인에 연결되지 않아 전환율이 0으로 보입니다.
+  `subscribers`·`inquiries`·`orders` 세 표 모두 `campaign` 컬럼을 갖고 있습니다.
+- `source` 와 `campaign` 은 역할이 다릅니다 — `source`=사이트 어디서, `campaign`=어느 캠페인.
+- 앱 회원가입은 **캠페인별로 나눌 수 없습니다.** 앱 가입에 유입 경로가 기록되지 않기 때문입니다.
+  랜딩에서 앱으로 보낼 때 campaign 을 넘겨 `profiles` 에 저장하면 그때 나뉩니다.
 
 ## 주소에 `.html`을 붙이지 않습니다
 `vercel.json`의 `"cleanUrls": true` 로 `/about.html` 이 아니라 **`/about`** 으로 서비스됩니다.

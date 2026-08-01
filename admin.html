@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 · 김심리월드</title>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#FBF6EA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<!-- 추적 코드는 넣지 않습니다 — 내 방문이 통계를 오염시키면 안 되므로. -->
+<style>
+  :root{
+    --paper:#FBF6EA; --paper-2:#FFFDF7; --surface:#FFFFFF;
+    --ink:#2B2620; --ink-soft:#6E6658; --ink-faint:#A79E8E;
+    --line:#ECE2CD;
+    --blue:#4C8CCB; --blue-deep:#2F6FA8; --blue-soft:#EAF1F9;
+    --gold:#F2B620; --gold-soft:#FDF2D2;
+    --coral:#E86B5E; --coral-soft:#FBE3E0;
+    --green:#54B491; --green-soft:#DEF1E9;
+    --violet:#8A7BC8; --violet-soft:#ECE8F8;
+    --display:'Jua','Noto Sans KR',sans-serif;
+    --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--sans);background:var(--paper);color:var(--ink);
+    line-height:1.65;-webkit-font-smoothing:antialiased;word-break:keep-all}
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 18px 60px}
+
+  /* ───── 로그인 ───── */
+  .gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .gate .card{width:100%;max-width:380px;background:var(--surface);border:1.5px solid var(--line);
+    border-radius:22px;padding:32px 28px;box-shadow:0 20px 40px -26px rgba(43,38,32,.32)}
+  .gate h1{font-family:var(--display);font-weight:400;font-size:24px;text-align:center}
+  .gate .sub{font-size:12.5px;color:var(--ink-faint);text-align:center;margin-top:6px;margin-bottom:22px}
+  .gate label{display:block;font-size:12.5px;font-weight:700;margin-bottom:6px;margin-top:14px}
+  .gate input{width:100%;font-family:var(--sans);font-size:14.5px;padding:12px 13px;
+    background:var(--paper-2);border:1.5px solid var(--line);border-radius:12px;color:var(--ink)}
+  .gate input:focus{outline:none;border-color:var(--blue);background:#fff}
+  .gate input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .gate button{width:100%;margin-top:20px;font-family:var(--sans);font-size:15px;font-weight:800;
+    color:#fff;background:var(--blue);border:0;border-radius:13px;padding:14px;cursor:pointer}
+  .gate button:hover{background:var(--blue-deep)}
+  .gate button:disabled{background:var(--ink-faint);cursor:not-allowed}
+  .gate .msg{min-height:18px;margin-top:12px;font-size:12.5px;text-align:center;color:var(--coral);font-weight:700}
+
+  /* ───── 헤더 ───── */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding-bottom:16px;border-bottom:1.5px solid var(--line);margin-bottom:22px}
+  .top h1{font-family:var(--display);font-weight:400;font-size:21px}
+  .top .who{font-size:12px;color:var(--ink-faint);margin-top:2px}
+  .tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+  .seg button{font-family:var(--sans);font-size:12.5px;font-weight:700;padding:7px 13px;border:0;
+    background:transparent;color:var(--ink-faint);cursor:pointer}
+  .seg button.on{background:var(--blue);color:#fff}
+  .ghost{font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--ink-soft);
+    background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+  .ghost:hover{border-color:var(--blue);color:var(--blue-deep)}
+
+  /* ───── 공통 ───── */
+  section{margin-top:30px}
+  h2.sec{font-size:14.5px;font-weight:800;letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+  h2.sec .hint{font-size:11.5px;font-weight:500;color:var(--ink-faint)}
+  .panel{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:20px 18px;margin-top:12px}
+  .note{font-size:12px;color:var(--ink-faint);margin-top:10px;line-height:1.6}
+  .warn{background:var(--gold-soft);border:1.5px solid #E9CE7E;border-radius:14px;
+    padding:13px 15px;font-size:12.5px;color:#6b5410;margin-top:12px;line-height:1.7}
+
+  /* KPI 카드 */
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+  @media(max-width:860px){.cards{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:460px){.cards{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:16px 16px 12px}
+  .card .lbl{font-size:12px;color:var(--ink-soft);font-weight:700;display:flex;align-items:center;gap:6px}
+  .card .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .card .num{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.15;margin-top:6px}
+  .card .sub{font-size:11.5px;color:var(--ink-faint);margin-top:1px}
+  .card svg{display:block;margin-top:8px;width:100%;height:34px;overflow:visible}
+
+  /* 가로 막대 */
+  .bars{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+  .bar{display:grid;grid-template-columns:132px 1fr 56px;align-items:center;gap:10px;font-size:12.5px}
+  @media(max-width:560px){.bar{grid-template-columns:96px 1fr 46px;font-size:11.5px}}
+  .bar .nm{color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar .track{display:block;height:14px;background:var(--paper-2);border:1.5px solid var(--line);border-radius:999px;overflow:hidden}
+  /* display:block 이 없으면 인라인 요소라 height 가 무시돼 막대가 안 보입니다 */
+  .bar .fill{display:block;height:100%;border-radius:999px}
+  .bar .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+
+  /* 표 */
+  .tw{overflow-x:auto;margin-top:12px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:640px}
+  th,td{padding:10px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-size:11.5px;color:var(--ink-soft);font-weight:700;background:var(--paper-2)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tbody tr:hover{background:var(--paper-2)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px}
+  .pill.on{background:var(--green-soft);color:#2f7d61}
+  .pill.off{background:var(--line);color:var(--ink-soft)}
+  .rate{font-weight:800}
+  .dim{color:var(--ink-faint)}
+
+  .empty{text-align:center;color:var(--ink-faint);font-size:12.5px;padding:26px 10px;line-height:1.8}
+  .spin{display:inline-block;width:15px;height:15px;border:2.5px solid var(--line);
+    border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){.spin{animation:none}}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- ───────────── 로그인 ───────────── -->
+<div class="gate" id="gate">
+  <form class="card" id="loginForm" novalidate>
+    <h1>김심리월드 관리자</h1>
+    <p class="sub">허용된 계정만 들어올 수 있습니다</p>
+    <label for="em">이메일</label>
+    <input type="email" id="em" autocomplete="username" placeholder="you@example.com" required>
+    <label for="pw">비밀번호</label>
+    <input type="password" id="pw" autocomplete="current-password" required>
+    <button type="submit" id="loginBtn">로그인</button>
+    <p class="msg" id="loginMsg" role="status" aria-live="polite"></p>
+  </form>
+</div>
+
+<!-- ───────────── 대시보드 ───────────── -->
+<div class="wrap hidden" id="dash">
+
+  <div class="top">
+    <div>
+      <h1>관리자 대시보드</h1>
+      <div class="who" id="who"></div>
+    </div>
+    <div class="tools">
+      <div class="seg" id="range" role="group" aria-label="기간 선택">
+        <button type="button" data-days="7">7일</button>
+        <button type="button" data-days="28" class="on">28일</button>
+        <button type="button" data-days="90">90일</button>
+      </div>
+      <button type="button" class="ghost" id="reload">새로고침</button>
+      <button type="button" class="ghost" id="logout">로그아웃</button>
+    </div>
+  </div>
+
+  <div id="loading" class="empty"><span class="spin"></span> 불러오는 중…</div>
+  <div id="error" class="warn hidden"></div>
+
+  <div id="body" class="hidden">
+
+    <!-- 접수 지표 4종 -->
+    <section style="margin-top:4px">
+      <h2 class="sec">접수 현황 <span class="hint" id="rangeLabel"></span></h2>
+      <div class="cards" id="kpiCards"></div>
+      <div class="panel">
+        <div id="dailyChart"></div>
+      </div>
+    </section>
+
+    <!-- GA4 -->
+    <section>
+      <h2 class="sec">방문 통계 <span class="hint">Google Analytics</span></h2>
+      <div id="gaBody"></div>
+    </section>
+
+    <!-- 캠페인 -->
+    <section>
+      <h2 class="sec">캠페인 <span class="hint">전환율 = (문의 + 결제) ÷ 방문자 · 가입률 = 알림신청 ÷ 방문자</span></h2>
+      <div id="campBody"></div>
+    </section>
+
+    <!-- 최근 -->
+    <section>
+      <h2 class="sec">최근 접수</h2>
+      <div class="panel" id="recentBody"></div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ─────────────────────────────────────────────────────────
+  //  로그인 — Supabase Auth 를 REST 로 직접 호출합니다.
+  //  SDK 를 쓰지 않는 이유는 이 저장소에 의존성이 없기 때문입니다.
+  //  토큰은 sessionStorage 에 둡니다 — 탭을 닫으면 사라집니다.
+  // ─────────────────────────────────────────────────────────
+  var KEY = 'ksw_admin_token';
+  var cfg = null;
+  var token = sessionStorage.getItem(KEY) || '';
+  var days = 28;
+
+  var gate = document.getElementById('gate');
+  var dash = document.getElementById('dash');
+  var loginForm = document.getElementById('loginForm');
+  var loginBtn = document.getElementById('loginBtn');
+  var loginMsg = document.getElementById('loginMsg');
+
+  function getConfig(){
+    if (cfg) return Promise.resolve(cfg);
+    return fetch('/api/admin-config').then(function(r){
+      if (!r.ok) throw new Error('설정이 아직 없습니다. Vercel 환경변수를 확인해 주세요.');
+      return r.json();
+    }).then(function(c){ cfg = c; return c; });
+  }
+
+  loginForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = document.getElementById('em').value.trim();
+    var pw = document.getElementById('pw').value;
+    if (!email || !pw){ loginMsg.textContent = '이메일과 비밀번호를 입력해 주세요.'; return; }
+
+    loginBtn.disabled = true; loginMsg.textContent = '';
+    getConfig().then(function(c){
+      return fetch(c.supabaseUrl + '/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', apikey: c.anonKey},
+        body: JSON.stringify({email: email, password: pw})
+      });
+    }).then(function(r){
+      return r.json().then(function(d){ return {ok: r.ok, d: d}; });
+    }).then(function(r){
+      if (!r.ok || !r.d.access_token){
+        throw new Error(r.d && /invalid/i.test(r.d.error_description || r.d.msg || '')
+          ? '이메일 또는 비밀번호가 맞지 않습니다.' : '로그인에 실패했습니다.');
+      }
+      token = r.d.access_token;
+      sessionStorage.setItem(KEY, token);
+      showDash();
+      load();
+    }).catch(function(err){
+      loginMsg.textContent = err.message || '로그인에 실패했습니다.';
+    }).then(function(){ loginBtn.disabled = false; });
+  });
+
+  function showDash(){ gate.classList.add('hidden'); dash.classList.remove('hidden'); }
+  function showGate(msg){
+    sessionStorage.removeItem(KEY); token = '';
+    dash.classList.add('hidden'); gate.classList.remove('hidden');
+    if (msg) loginMsg.textContent = msg;
+  }
+  document.getElementById('logout').addEventListener('click', function(){ showGate(''); });
+
+  document.getElementById('reload').addEventListener('click', load);
+  Array.prototype.slice.call(document.querySelectorAll('#range button')).forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#range button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      days = Number(b.getAttribute('data-days'));
+      load();
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────
+  //  데이터 로드
+  // ─────────────────────────────────────────────────────────
+  var elLoading = document.getElementById('loading');
+  var elError = document.getElementById('error');
+  var elBody = document.getElementById('body');
+
+  function load(){
+    if (!token){ showGate(''); return; }
+    elLoading.classList.remove('hidden');
+    elError.classList.add('hidden');
+    elBody.classList.add('hidden');
+
+    fetch('/api/admin-stats?days=' + days, {headers:{Authorization:'Bearer ' + token}})
+      .then(function(r){
+        if (r.status === 401){ showGate('세션이 만료되었어요. 다시 로그인해 주세요.'); return null; }
+        if (r.status === 403){ throw new Error('이 계정은 관리자 목록에 없습니다. Vercel 의 ADMIN_EMAILS 를 확인해 주세요.'); }
+        if (r.status === 503){ throw new Error('서버 설정이 아직 없습니다. SUPABASE_URL · SUPABASE_SERVICE_ROLE_KEY · ADMIN_EMAILS 를 넣어주세요.'); }
+        if (!r.ok) throw new Error('데이터를 불러오지 못했습니다 (' + r.status + ')');
+        return r.json();
+      })
+      .then(function(d){
+        if (!d) return;
+        render(d);
+        elBody.classList.remove('hidden');
+      })
+      .catch(function(err){
+        elError.textContent = err.message;
+        elError.classList.remove('hidden');
+      })
+      .then(function(){ elLoading.classList.add('hidden'); });
+  }
+
+  // ─────────────────────────────────────────────────────────
+  //  그리기 — 차트는 전부 SVG 로 직접 그립니다 (외부 라이브러리 없음)
+  // ─────────────────────────────────────────────────────────
+  var SERIES = [
+    {key:'subscribers', label:'이메일 알림신청', color:'var(--blue)',   raw:'#4C8CCB'},
+    {key:'inquiries',   label:'문의 접수',       color:'var(--gold)',   raw:'#F2B620'},
+    {key:'orders',      label:'구매·주문',       color:'var(--coral)',  raw:'#E86B5E'},
+    {key:'appSignups',  label:'앱 회원가입',     color:'var(--violet)', raw:'#8A7BC8'}
+  ];
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function n(v){ return (Number(v)||0).toLocaleString('ko-KR'); }
+  function pct(v){ return v == null ? '—' : (v*100).toFixed(v < 0.01 ? 2 : 1) + '%'; }
+  function shortDate(d){ return String(d).slice(5).replace('-','/'); }
+
+  function sparkline(values, color){
+    var w = 200, h = 34, max = Math.max.apply(null, values.concat([1]));
+    if (!values.length) return '';
+    var step = values.length > 1 ? w/(values.length-1) : 0;
+    var pts = values.map(function(v,i){ return [i*step, h - (v/max)*(h-4) - 2]; });
+    var line = pts.map(function(p,i){ return (i?'L':'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
+    var area = line + ' L' + w + ' ' + h + ' L0 ' + h + ' Z';
+    return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true">'
+      + '<path d="'+area+'" fill="'+color+'" opacity=".13"/>'
+      + '<path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="2" '
+      + 'stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>';
+  }
+
+  // 여러 계열을 겹쳐 그리는 꺾은선
+  function lineChart(rows, series, xKey){
+    if (!rows.length) return '<div class="empty">아직 데이터가 없어요.</div>';
+    var W = 900, H = 240, PL = 40, PR = 12, PT = 14, PB = 26;
+    var iw = W-PL-PR, ih = H-PT-PB;
+    var max = 1;
+    rows.forEach(function(r){ series.forEach(function(s){ max = Math.max(max, Number(r[s.key])||0); }); });
+    var step = rows.length > 1 ? iw/(rows.length-1) : 0;
+    var y = function(v){ return PT + ih - (v/max)*ih; };
+
+    var grid = '', ticks = 4;
+    for (var g=0; g<=ticks; g++){
+      var val = Math.round(max*g/ticks), yy = y(val);
+      grid += '<line x1="'+PL+'" x2="'+(W-PR)+'" y1="'+yy.toFixed(1)+'" y2="'+yy.toFixed(1)+'" stroke="#ECE2CD" stroke-width="1"/>'
+           +  '<text x="'+(PL-7)+'" y="'+(yy+3.5).toFixed(1)+'" font-size="10" fill="#A79E8E" text-anchor="end">'+val+'</text>';
+    }
+    var paths = series.map(function(s){
+      var d = rows.map(function(r,i){
+        return (i?'L':'M') + (PL+i*step).toFixed(1) + ' ' + y(Number(r[s.key])||0).toFixed(1);
+      }).join(' ');
+      return '<path d="'+d+'" fill="none" stroke="'+s.raw+'" stroke-width="2.2" '
+           + 'stroke-linecap="round" stroke-linejoin="round"/>';
+    }).join('');
+
+    var labels = '', every = Math.max(1, Math.ceil(rows.length/8));
+    rows.forEach(function(r,i){
+      if (i % every && i !== rows.length-1) return;
+      labels += '<text x="'+(PL+i*step).toFixed(1)+'" y="'+(H-8)+'" font-size="10" fill="#A79E8E" text-anchor="middle">'
+             + esc(shortDate(r[xKey])) + '</text>';
+    });
+
+    var legend = series.map(function(s){
+      return '<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-soft)">'
+        + '<i style="width:11px;height:3px;border-radius:2px;background:'+s.raw+';display:inline-block"></i>'
+        + esc(s.label) + '</span>';
+    }).join('');
+
+    return '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px">'+legend+'</div>'
+      + '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="기간별 추이">'
+      + grid + paths + labels + '</svg>';
+  }
+
+  function barList(items, nameKey, valKey, color){
+    if (!items || !items.length) return '<div class="empty">데이터가 없어요.</div>';
+    var max = Math.max.apply(null, items.map(function(i){ return Number(i[valKey])||0; }).concat([1]));
+    return '<div class="bars">' + items.map(function(i){
+      var v = Number(i[valKey])||0;
+      return '<div class="bar"><span class="nm" title="'+esc(i[nameKey])+'">'+esc(i[nameKey])+'</span>'
+        + '<span class="track"><span class="fill" style="width:'+(v/max*100).toFixed(1)+'%;background:'+color+'"></span></span>'
+        + '<span class="v">'+n(v)+'</span></div>';
+    }).join('') + '</div>';
+  }
+
+  function render(d){
+    document.getElementById('who').textContent = d.user + ' · ' + d.range.since + ' ~ ' + d.range.until;
+    document.getElementById('rangeLabel').textContent = '최근 ' + d.range.days + '일';
+
+    // ── KPI 카드 4종 ──
+    document.getElementById('kpiCards').innerHTML = SERIES.map(function(s){
+      var vals = d.daily.map(function(r){ return Number(r[s.key])||0; });
+      return '<div class="card">'
+        + '<div class="lbl"><i class="dot" style="background:'+s.raw+'"></i>'+esc(s.label)+'</div>'
+        + '<div class="num">'+n(d.totals.period[s.key])+'</div>'
+        + '<div class="sub">전체 누적 '+n(d.totals.allTime[s.key])+'건</div>'
+        + sparkline(vals, s.raw) + '</div>';
+    }).join('');
+
+    document.getElementById('dailyChart').innerHTML = lineChart(d.daily, SERIES, 'day');
+
+    // ── GA4 ──
+    var ga = d.ga || {};
+    var gaEl = document.getElementById('gaBody');
+    if (!ga.available){
+      gaEl.innerHTML = '<div class="warn"><b>GA4가 아직 연결되지 않았습니다.</b><br>'
+        + 'Vercel 환경변수에 <code>GA4_PROPERTY_ID</code> · <code>GOOGLE_SERVICE_ACCOUNT_EMAIL</code> · '
+        + '<code>GOOGLE_PRIVATE_KEY</code> 를 넣고 재배포하면 방문자 수와 전환율이 채워집니다.<br>'
+        + '<span class="dim">' + esc(ga.reason || '') + '</span></div>';
+    } else {
+      gaEl.innerHTML =
+        '<div class="cards">'
+        + card('활성 사용자', ga.totals.users, '#4C8CCB', sparkline(ga.trend.map(function(r){return r.users;}), '#4C8CCB'))
+        + card('세션', ga.totals.sessions, '#54B491', sparkline(ga.trend.map(function(r){return r.sessions;}), '#54B491'))
+        + card('페이지뷰', ga.totals.views, '#F2B620', sparkline(ga.trend.map(function(r){return r.views;}), '#F2B620'))
+        + card('평균 세션/일', Math.round(ga.totals.sessions/Math.max(1,ga.trend.length)), '#8A7BC8', '')
+        + '</div>'
+        + '<div class="panel">' + lineChart(ga.trend, [
+            {key:'users', label:'활성 사용자', raw:'#4C8CCB'},
+            {key:'sessions', label:'세션', raw:'#54B491'},
+            {key:'views', label:'페이지뷰', raw:'#F2B620'}
+          ], 'day') + '</div>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px" class="two-up">'
+          + '<div class="panel"><h2 class="sec" style="margin-bottom:12px">유입 채널</h2>'
+            + barList(ga.channels, 'name', 'sessions', '#54B491') + '</div>'
+          + '<div class="panel"><h2 class="sec" style="margin-bottom:12px">페이지별 조회수</h2>'
+            + barList(ga.pages, 'path', 'views', '#4C8CCB') + '</div>'
+        + '</div>'
+        + '<div class="panel"><h2 class="sec" style="margin-bottom:12px">이벤트 <span class="hint">사이트에 심어둔 전환 이벤트</span></h2>'
+          + barList(ga.events, 'name', 'count', '#F2B620') + '</div>';
+    }
+
+    // ── 캠페인 ──
+    var camps = d.campaigns || [];
+    var cEl = document.getElementById('campBody');
+    if (!camps.length){
+      cEl.innerHTML = '<div class="panel"><div class="empty">'
+        + '아직 등록된 캠페인이 없습니다.<br>'
+        + 'Supabase의 <code>campaigns</code> 표에 행을 추가하면 여기에 나타납니다.<br>'
+        + '<span class="dim">slug를 <code>spring-2026</code>으로 넣으면 <code>/c/spring-2026</code> 페이지의 방문자를 셉니다.</span>'
+        + '</div></div>';
+    } else {
+      var active = camps.filter(function(c){ return c.isActive; });
+      var ended  = camps.filter(function(c){ return !c.isActive; });
+      cEl.innerHTML = campTable(active, '진행 중') + (ended.length ? campTable(ended, '종료') : '');
+    }
+
+    // ── 최근 접수 ──
+    var subs = (d.recent && d.recent.subscribers) || [];
+    var inqs = (d.recent && d.recent.inquiries) || [];
+    var TYPE = {purchase:'구매·주문', bulk:'기관·단체', partnership:'강연·협업', press:'언론', etc:'기타'};
+    document.getElementById('recentBody').innerHTML =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" class="two-up">'
+      + '<div><div class="lbl" style="font-size:12.5px;font-weight:700;margin-bottom:8px">이메일 알림신청</div>'
+        + (subs.length ? '<div class="bars">' + subs.map(function(s){
+            return '<div style="display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line)">'
+              + '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(maskEmail(s.email))
+              + (s.campaign ? ' <span class="pill on">'+esc(s.campaign)+'</span>' : '') + '</span>'
+              + '<span class="dim">'+esc(shortDate(s.created_at))+'</span></div>';
+          }).join('') + '</div>' : '<div class="empty">아직 없어요.</div>')
+      + '</div>'
+      + '<div><div class="lbl" style="font-size:12.5px;font-weight:700;margin-bottom:8px">문의</div>'
+        + (inqs.length ? '<div class="bars">' + inqs.map(function(q){
+            return '<div style="display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line)">'
+              + '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'
+              + '<b>'+esc(TYPE[q.type]||q.type)+'</b> · '+esc(q.subject)+'</span>'
+              + '<span class="dim">'+esc(shortDate(q.created_at))+'</span></div>';
+          }).join('') + '</div>' : '<div class="empty">아직 없어요.</div>')
+      + '</div></div>';
+  }
+
+  function card(label, value, color, spark){
+    return '<div class="card"><div class="lbl"><i class="dot" style="background:'+color+'"></i>'+esc(label)+'</div>'
+      + '<div class="num">'+n(value)+'</div><div class="sub">&nbsp;</div>'+spark+'</div>';
+  }
+
+  // 명단이므로 화면에서는 부분만 보여줍니다 (어깨너머로 새는 것 방지)
+  function maskEmail(e){
+    var s = String(e||''); var at = s.indexOf('@');
+    if (at < 1) return s;
+    var id = s.slice(0, at);
+    return (id.length <= 2 ? id[0]+'*' : id.slice(0,2) + '*'.repeat(Math.min(6, id.length-2))) + s.slice(at);
+  }
+
+  function campTable(list, title){
+    return '<div class="panel"><h2 class="sec" style="margin-bottom:2px">'+esc(title)
+      + ' <span class="hint">'+list.length+'개</span></h2><div class="tw"><table>'
+      + '<thead><tr><th>캠페인</th><th>페이지</th><th class="num">방문자</th>'
+      + '<th class="num">알림신청</th><th class="num">문의</th><th class="num">결제</th>'
+      + '<th class="num">가입률</th><th class="num">전환율</th><th>상태</th></tr></thead><tbody>'
+      + list.map(function(c){
+        return '<tr>'
+          + '<td><b>'+esc(c.name)+'</b><br><span class="dim">'+esc(c.slug)+'</span></td>'
+          + '<td class="dim">'+esc(c.path)+'</td>'
+          + '<td class="num">'+(c.visitors == null ? '<span class="dim">—</span>' : n(c.visitors))+'</td>'
+          + '<td class="num">'+n(c.subscribers)+'</td>'
+          + '<td class="num">'+n(c.inquiries)+'</td>'
+          + '<td class="num">'+n(c.orders)+'</td>'
+          + '<td class="num rate" style="color:var(--blue-deep)">'+pct(c.signupRate)+'</td>'
+          + '<td class="num rate" style="color:var(--green)">'+pct(c.conversionRate)+'</td>'
+          + '<td><span class="pill '+(c.isActive?'on':'off')+'">'+(c.isActive?'진행 중':'종료')+'</span></td>'
+          + '</tr>';
+      }).join('')
+      + '</tbody></table></div>'
+      + '<p class="note">방문자가 <b>—</b> 로 나오면 GA4에 그 페이지 기록이 아직 없다는 뜻입니다. '
+      + '비율은 분모를 모를 때 지어내지 않고 비워둡니다.</p></div>';
+  }
+
+  // 좁은 화면에서 2열 → 1열
+  var mq = window.matchMedia('(max-width: 720px)');
+  function applyMq(){
+    Array.prototype.slice.call(document.querySelectorAll('.two-up')).forEach(function(el){
+      el.style.gridTemplateColumns = mq.matches ? '1fr' : '1fr 1fr';
+    });
+  }
+  new MutationObserver(applyMq).observe(document.body, {childList:true, subtree:true});
+  mq.addEventListener ? mq.addEventListener('change', applyMq) : mq.addListener(applyMq);
+
+  // 시작
+  if (token){ showDash(); load(); }
+})();
+</script>
+</body>
+</html>
