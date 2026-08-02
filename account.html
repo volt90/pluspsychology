@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 정보 · 김심리월드</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#FBF6EA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EA; --paper-2:#FFFDF7; --surface:#FFFFFF;
+    --ink:#2B2620; --ink-soft:#6E6658; --ink-faint:#A79E8E; --line:#ECE2CD;
+    --blue:#4C8CCB; --blue-deep:#2F6FA8; --blue-soft:#EAF1F9;
+    --gold:#F2B620; --gold-soft:#FDF2D2;
+    --coral:#E86B5E; --coral-soft:#FBE3E0;
+    --green:#54B491; --green-soft:#DEF1E9;
+    --display:'Jua','Noto Sans KR',sans-serif;
+    --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--sans);color:var(--ink);line-height:1.65;word-break:keep-all;
+    -webkit-font-smoothing:antialiased;
+    background-color:var(--paper);
+    background-image:
+      radial-gradient(120% 60% at 50% -8%, #FFFCF3 0%, rgba(255,252,243,0) 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cg fill='none' stroke='%23caa96f' stroke-opacity='0.09' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M17 13.5v7M13.5 17h7'/%3E%3C/g%3E%3C/svg%3E")}
+  a{color:inherit}
+  .wrap{max-width:600px;margin:0 auto;padding:24px 18px 56px}
+
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding-bottom:16px;border-bottom:1.5px solid var(--line)}
+  .top .brand{font-family:var(--display);font-size:19px;text-decoration:none}
+  .ghost{font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--ink-soft);
+    background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+  .ghost:hover{border-color:var(--blue);color:var(--blue-deep)}
+  .ghost:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+  h1{font-family:var(--display);font-weight:400;font-size:23px;margin-top:26px}
+  .sub{font-size:12.5px;color:var(--ink-faint);margin-top:4px}
+
+  section{margin-top:26px}
+  h2{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
+  h2 .hint{font-size:11.5px;font-weight:500;color:var(--ink-faint)}
+  .panel{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;
+    padding:18px 17px;margin-top:11px}
+
+  .rows{display:flex;flex-direction:column}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .row:last-child{border-bottom:0}
+  .row .k{color:var(--ink-soft);font-size:12.5px;flex:0 0 auto}
+  .row .v{text-align:right;overflow:hidden;text-overflow:ellipsis}
+  .pill{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px}
+  .pill.ok{background:var(--green-soft);color:#2f7d61}
+  .pill.warn{background:var(--gold-soft);color:#6b5410}
+  .pill.teen{background:var(--blue-soft);color:var(--blue-deep)}
+  .dim{color:var(--ink-faint)}
+
+  .item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+  .item:last-child{border-bottom:0}
+  .item .ico{width:38px;height:38px;border-radius:11px;background:var(--gold-soft);flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center}
+  .item .ico svg{width:19px;height:19px}
+  .item .body{flex:1 1 auto;min-width:0}
+  /* span 이라 display:block 이 없으면 제목과 설명이 한 줄에 붙습니다 */
+  .item .t{display:block;font-weight:700;font-size:13.5px}
+  .item .m{display:block;font-size:12px;color:var(--ink-faint);margin-top:2px}
+
+  .cta{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:1 1 auto;
+    font-size:14px;font-weight:800;text-decoration:none;border-radius:13px;padding:13px 18px;
+    transition:background .18s,border-color .18s,color .18s;cursor:pointer;border:0;
+    font-family:var(--sans)}
+  .btn-primary{color:#fff;background:var(--blue);box-shadow:0 10px 20px -12px rgba(47,111,168,.8)}
+  .btn-primary:hover{background:var(--blue-deep)}
+  .btn-ghost{background:var(--surface);border:1.5px solid var(--line);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--blue);color:var(--blue-deep)}
+  .btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+  .empty{text-align:center;color:var(--ink-faint);font-size:12.5px;padding:20px 8px;line-height:1.8}
+  .warn{background:var(--gold-soft);border:1.5px solid #E9CE7E;border-radius:14px;
+    padding:13px 15px;font-size:12.5px;color:#6b5410;line-height:1.7;margin-top:12px}
+  .spin{display:inline-block;width:15px;height:15px;border:2.5px solid var(--line);
+    border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){.spin{animation:none}}
+
+  /* 연령 확인 (프로필이 없을 때) */
+  .gate{max-width:400px;margin:0 auto}
+  .gate label{display:block;font-size:12.5px;font-weight:700;margin:14px 0 6px}
+  .gate input{width:100%;font-family:var(--sans);font-size:14.5px;padding:12px 13px;
+    background:var(--paper-2);border:1.5px solid var(--line);border-radius:12px;color:var(--ink)}
+  .gate input:focus{outline:none;border-color:var(--blue);background:#fff}
+  .msg{min-height:18px;margin-top:12px;font-size:12.5px;text-align:center;font-weight:700}
+  .msg.err{color:var(--coral)}
+  .foot{margin-top:30px;font-size:11.5px;color:var(--ink-faint);text-align:center;line-height:1.9}
+  .foot a{color:var(--ink-soft)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a class="brand" href="/">김심리월드</a>
+    <button type="button" class="ghost" id="logout">로그아웃</button>
+  </div>
+
+  <div id="loading" class="empty" style="padding-top:60px"><span class="spin"></span> 불러오는 중…</div>
+  <div id="error" class="warn hidden"></div>
+
+  <!-- 프로필이 아직 없는 계정 — 앱의 연령 확인 단계와 같습니다 -->
+  <div id="ageGate" class="hidden">
+    <h1>거의 다 됐어요</h1>
+    <p class="sub">이용할 수 있는 기능을 정하기 위해 출생 연도가 필요합니다.</p>
+    <div class="panel gate">
+      <label for="by">출생 연도</label>
+      <input type="number" id="by" inputmode="numeric" placeholder="예: 2005" min="1900" max="2100">
+      <button type="button" class="btn btn-primary" id="saveAge" style="width:100%;margin-top:18px">저장하고 계속하기</button>
+      <p class="msg" id="ageMsg" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <!-- 본 화면 -->
+  <div id="body" class="hidden">
+    <h1>내 정보</h1>
+    <p class="sub" id="hello"></p>
+
+    <section>
+      <h2>계정</h2>
+      <div class="panel"><div class="rows" id="accountRows"></div></div>
+    </section>
+
+    <section>
+      <h2>내 워크북 <span class="hint">앱에서 바로 열 수 있어요</span></h2>
+      <div class="panel" id="purchases"></div>
+    </section>
+
+    <section>
+      <h2>주문 내역 <span class="hint">사이트에서 주문한 실물</span></h2>
+      <div class="panel" id="orders"></div>
+    </section>
+
+    <section>
+      <h2>앱에서 이어가기</h2>
+      <div class="panel">
+        <p style="font-size:13px;color:var(--ink-soft)">
+          기록하고 돌아보는 것은 앱에서 합니다. 같은 계정으로 로그인하시면 됩니다.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#" id="appLink">앱 열기</a>
+          <a class="btn btn-ghost" href="/store">굿즈 보러 가기</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <p class="foot">
+    <a href="/">홈</a> · <a href="/contact">문의하기</a> ·
+    <a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a>
+  </p>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var $ = function(id){ return document.getElementById(id); };
+  var token = sessionStorage.getItem('ksw_token') || '';
+  var cfg = null, me = null;
+
+  // 앱 스토어 주소가 생기면 여기만 바꾸면 됩니다.
+  var APP_URL = 'world.kimsimri.app://';
+
+  if (!token){ location.replace('/login'); return; }
+
+  function config(){
+    if (cfg) return Promise.resolve(cfg);
+    return fetch('/api/public-config').then(function(r){ return r.json(); })
+      .then(function(c){ cfg = c; return c; });
+  }
+  function signOut(){
+    sessionStorage.removeItem('ksw_token');
+    sessionStorage.removeItem('ksw_refresh');
+    location.replace('/login');
+  }
+  $('logout').addEventListener('click', signOut);
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function date(d){ return d ? String(d).slice(0,10).replace(/-/g,'.') : '—'; }
+  function won(n){ return (Number(n)||0).toLocaleString('ko-KR') + '원'; }
+
+  function load(){
+    fetch('/api/account', {headers:{Authorization:'Bearer '+token}})
+      .then(function(r){
+        if (r.status === 401){ signOut(); return null; }
+        if (r.status === 503) throw new Error('회원 기능이 아직 준비 중이에요. 잠시 후 다시 시도해 주세요.');
+        if (!r.ok) throw new Error('정보를 불러오지 못했어요 (' + r.status + ')');
+        return r.json();
+      })
+      .then(function(d){
+        if (!d) return;
+        me = d;
+        $('loading').classList.add('hidden');
+        if (!d.profile) { $('ageGate').classList.remove('hidden'); return; }
+        render(d);
+        $('body').classList.remove('hidden');
+      })
+      .catch(function(err){
+        $('loading').classList.add('hidden');
+        $('error').textContent = err.message;
+        $('error').classList.remove('hidden');
+      });
+  }
+
+  function render(d){
+    $('hello').textContent = d.user.email;
+    $('appLink').setAttribute('href', APP_URL);
+
+    var role = d.profile.role;
+    var roleLabel = role === 'teen' ? '청소년 회원' : (role === 'admin' ? '관리자' : '일반 회원');
+    var rolePill  = role === 'teen' ? 'teen' : 'ok';
+
+    $('accountRows').innerHTML =
+        row('이메일', esc(d.user.email))
+      + row('회원 구분', '<span class="pill '+rolePill+'">'+esc(roleLabel)+'</span>')
+      + row('출생 연도', esc(d.profile.birth_year) + '년')
+      + row('가입일', date(d.profile.created_at || d.user.createdAt))
+      + row('이메일 확인', d.user.emailConfirmed
+            ? '<span class="pill ok">완료</span>'
+            : '<span class="pill warn">미완료</span>');
+
+    // 내 워크북 (앱의 workbook_purchases)
+    $('purchases').innerHTML = d.purchases.length
+      ? '<div class="rows">' + d.purchases.map(function(p){
+          var st = p.status === 'refunded' ? '환불됨'
+                 : (p.status === 'paid' ? '구매 완료' : '이용 가능');
+          return '<div class="item">'
+            + '<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#F2B620" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+            + '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/></svg></span>'
+            + '<span class="body"><span class="t">' + esc(p.title) + '</span>'
+            + '<span class="m">' + (p.type === 'physical' ? '실물' : '디지털')
+            + ' · ' + esc(st) + ' · ' + date(p.createdAt) + '</span></span></div>';
+        }).join('') + '</div>'
+      : '<div class="empty">아직 이용 중인 워크북이 없어요.<br>'
+        + '<span class="dim">구매하시면 여기와 앱에 함께 나타납니다.</span></div>';
+
+    // 주문 내역 (랜딩 orders)
+    $('orders').innerHTML = d.orders.length
+      ? '<div class="rows">' + d.orders.map(function(o){
+          var st = {pending:'결제 대기', paid:'결제 완료', failed:'결제 실패',
+                    canceled:'취소됨', refunded:'환불됨'}[o.status] || o.status;
+          return '<div class="item">'
+            + '<span class="ico" style="background:var(--blue-soft)"><svg viewBox="0 0 24 24" fill="none" stroke="#4C8CCB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+            + '<path d="M4 7h16l-1.4 11.2A2 2 0 0 1 16.6 20H7.4a2 2 0 0 1-2-1.8Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span>'
+            + '<span class="body"><span class="t">' + esc(o.product_name || '주문') + '</span>'
+            + '<span class="m">' + esc(st) + ' · ' + won(o.amount)
+            + (o.quantity > 1 ? ' · ' + o.quantity + '개' : '')
+            + ' · ' + date(o.created_at) + '</span></span></div>';
+        }).join('') + '</div>'
+      : '<div class="empty">주문 내역이 없어요.</div>';
+  }
+
+  function row(k, v){
+    return '<div class="row"><span class="k">'+esc(k)+'</span><span class="v">'+v+'</span></div>';
+  }
+
+  // ── 프로필이 없는 계정: 연령 확인 후 생성 (앱과 같은 규칙) ──
+  $('saveAge').addEventListener('click', function(){
+    var by = parseInt($('by').value, 10);
+    var y = new Date().getFullYear();
+    if (!by || by < 1900 || by > y){ $('ageMsg').textContent='출생 연도를 다시 확인해 주세요.'; $('ageMsg').className='msg err'; return; }
+    if (y - by < 14){ $('ageMsg').textContent='만 14세 미만은 보호자 동의가 필요해요. 문의하기로 연락 주세요.'; $('ageMsg').className='msg err'; return; }
+
+    $('saveAge').disabled = true;
+    $('ageMsg').textContent = '저장 중이에요…'; $('ageMsg').className='msg';
+
+    // 쓰기는 브라우저에서 본인 토큰으로 — RLS(profiles_insert_own)가 지켜줍니다.
+    config().then(function(c){
+      var h = {'Content-Type':'application/json', apikey:c.anonKey,
+               Authorization:'Bearer '+token, Prefer:'resolution=merge-duplicates'};
+      return fetch(c.supabaseUrl + '/rest/v1/profiles', {
+        method:'POST', headers:h,
+        body: JSON.stringify({ id: me.user.id, birth_year: by,
+                               role: (y - by) < 19 ? 'teen' : 'member' })
+      }).then(function(r){
+        if (!r.ok) throw new Error('저장에 실패했어요.');
+        return fetch(c.supabaseUrl + '/rest/v1/consents?on_conflict=user_id,consent_type', {
+          method:'POST', headers:h,
+          body: JSON.stringify({ user_id: me.user.id, consent_type:'service', granted:true })
+        });
+      });
+    }).then(function(){
+      location.reload();
+    }).catch(function(err){
+      $('ageMsg').textContent = err.message || '저장에 실패했어요.';
+      $('ageMsg').className = 'msg err';
+      $('saveAge').disabled = false;
+    });
+  });
+
+  // 가입 시 메타데이터에 출생 연도를 넣어뒀다면 물어보지 않고 바로 만듭니다.
+  function prefillFromMetadata(){
+    return config().then(function(c){
+      return fetch(c.supabaseUrl + '/auth/v1/user',
+        {headers:{apikey:c.anonKey, Authorization:'Bearer '+token}})
+        .then(function(r){ return r.ok ? r.json() : null; });
+    }).then(function(u){
+      var by = u && u.user_metadata && u.user_metadata.birth_year;
+      if (by){ $('by').value = by; $('saveAge').click(); }
+    }).catch(function(){});
+  }
+
+  load();
+  // 연령 확인 화면이 뜬 뒤 메타데이터가 있으면 자동으로 넘어갑니다.
+  setTimeout(function(){
+    if (!$('ageGate').classList.contains('hidden')) prefillFromMetadata();
+  }, 400);
+})();
+</script>
+</body>
+</html>

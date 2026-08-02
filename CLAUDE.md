@@ -27,7 +27,10 @@ docs/app-integration.md # 모바일 앱 연동 (같은 Supabase 프로젝트 공
 docs/commerce-plan.md  # 판매 개시 준비 (결제·환불·회원 정책 설계)
 admin.html          # 관리자 대시보드 (noindex · 로그인 필요)
 api/admin-stats.js  # 대시보드 데이터 — GA4 + Supabase 를 서버에서 합침
-api/admin-config.js # 프런트가 쓸 공개 설정(anon 키)만 내려줌
+api/public-config.js # 프런트가 쓸 공개 설정(anon 키)만 내려줌 — admin·login·account 공용
+login.html          # 회원 로그인·가입 (noindex)
+account.html        # 내 정보·구매·이용권한 (noindex · 로그인 필요)
+api/account.js      # 내 정보 조회 — 토큰 검증 후 본인 것만
 supabase/schema-admin.sql # campaigns 표 + 캠페인 컬럼 + 집계 뷰
 og.png              # 링크 미리보기 이미지 1200×630 (기본)
 og-store.png        # 링크 미리보기 — Store 탭 (굿즈)
@@ -383,7 +386,7 @@ var BUSINESS = {
 
 - GA4 설정이 없어도 **Supabase 수치는 그대로 나옵니다.** 방문자 칸만 `—` 로 비고
   전환율은 계산하지 않습니다 (분모를 모르면서 비율을 지어내지 않기 위함).
-- `api/admin-config.js` 는 anon 키만 내려줍니다. **service_role 키를 여기 넣지 마세요.**
+- `api/public-config.js` 는 anon 키만 내려줍니다. **service_role 키를 여기 넣지 마세요.**
 
 ### 캠페인 등록 방법
 `supabase/schema-admin.sql` 을 SQL Editor에서 한 번 실행한 뒤,
@@ -396,6 +399,49 @@ var BUSINESS = {
 - `source` 와 `campaign` 은 역할이 다릅니다 — `source`=사이트 어디서, `campaign`=어느 캠페인.
 - 앱 회원가입은 **캠페인별로 나눌 수 없습니다.** 앱 가입에 유입 경로가 기록되지 않기 때문입니다.
   랜딩에서 앱으로 보낼 때 campaign 을 넘겨 `profiles` 에 저장하면 그때 나뉩니다.
+
+## 웹 로그인 — 앱과 같은 계정 (`/login` · `/account`)
+
+**같은 Supabase 프로젝트를 쓰므로 계정은 원래 공유됩니다.** 앱에서 가입한 사람은
+웹에서 같은 이메일·비밀번호로 그대로 로그인됩니다. 별도 '연동' 코드가 없습니다.
+
+### 가입할 때 앱과 똑같은 두 줄을 만들어야 합니다
+앱(`auth_controller.dart`)은 가입 직후 **클라이언트에서** 이 둘을 만듭니다.
+DB 트리거가 아니므로 웹도 같은 일을 해야 합니다.
+
+```
+profiles  : { id, birth_year(필수), role: 'teen' | 'member' }
+consents  : { user_id, consent_type:'service', granted:true }
+```
+
+- `role` 판정은 앱과 같은 규칙 — **(올해 − 출생연도) < 19 이면 `teen`**
+- 🚨 **`auth.users` 에 프로필 생성 트리거를 걸지 마세요.** 앱이 `profiles.insert` 를
+  직접 하므로 트리거가 먼저 만들면 중복키로 **앱 가입이 깨집니다.**
+
+### 이메일 확인이 켜지면 가입 순서가 달라집니다
+확인이 켜져 있으면 `signup` 응답에 **세션이 없습니다.** 그 시점에는 RLS
+(`profiles_insert_own`)가 막아 프로필을 만들 수 없습니다. 그래서 웹은:
+
+1. 가입할 때 출생연도를 **계정 메타데이터(`user_metadata.birth_year`)** 에 실어 보냄
+2. 확인 메일 → 로그인 → `/account` 가 프로필이 없으면 그 값으로 자동 생성
+3. 메타데이터도 없으면(앱 OAuth 등) 연령 확인 칸을 보여주고 입력받아 생성
+
+앱도 프로필 없는 계정을 `SplashGateScreen` → 연령 확인으로 복구하므로,
+**웹에서 가입하고 앱을 먼저 열어도 정상 동작합니다.**
+
+### 읽기는 서버, 쓰기는 브라우저
+- **읽기**(`api/account.js`) — `orders` 는 RLS 정책이 하나도 없어 service_role 로만
+  읽힙니다. `profiles`·`workbook_purchases` 만 브라우저로 읽으면 경로가 둘로
+  갈리므로 **읽기는 전부 서버**로 모았습니다. 서버는 토큰을 검증해 **본인 것만** 돌려줍니다.
+- **쓰기**(프로필 생성) — 앱과 똑같이 브라우저에서 본인 토큰으로. RLS 가 지켜줍니다.
+
+### 그 밖에
+- 세션은 `sessionStorage` 에만 둡니다 — 탭을 닫으면 로그아웃됩니다.
+- 만 **14세 미만은 가입을 막습니다** (개인정보보호법상 법정대리인 동의 필요 —
+  웹에서 그 절차를 받을 수 없음). 결제 19세 기준과 헷갈리지 마세요.
+- 비밀번호 재설정은 **가입된 주소인지 알려주지 않습니다** (계정 존재 여부 노출 방지).
+- 카카오 로그인은 웹에 넣지 않았습니다. 앱도 지금 버튼을 숨긴 상태입니다.
+- `account.html` 의 `APP_URL` 이 앱 딥링크입니다. 스토어 주소가 생기면 여기만 고치세요.
 
 ## 주소에 `.html`을 붙이지 않습니다
 `vercel.json`의 `"cleanUrls": true` 로 `/about.html` 이 아니라 **`/about`** 으로 서비스됩니다.

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로그인 · 김심리월드</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#FBF6EA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EA; --paper-2:#FFFDF7; --surface:#FFFFFF;
+    --ink:#2B2620; --ink-soft:#6E6658; --ink-faint:#A79E8E; --line:#ECE2CD;
+    --blue:#4C8CCB; --blue-deep:#2F6FA8; --blue-soft:#EAF1F9;
+    --gold:#F2B620; --gold-soft:#FDF2D2;
+    --coral:#E86B5E; --green:#54B491; --green-soft:#DEF1E9;
+    --display:'Jua','Noto Sans KR',sans-serif;
+    --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--sans);color:var(--ink);line-height:1.65;word-break:keep-all;
+    -webkit-font-smoothing:antialiased;
+    background-color:var(--paper);
+    background-image:
+      radial-gradient(120% 60% at 50% -8%, #FFFCF3 0%, rgba(255,252,243,0) 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cg fill='none' stroke='%23caa96f' stroke-opacity='0.09' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M17 13.5v7M13.5 17h7'/%3E%3C/g%3E%3C/svg%3E");
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;padding:28px 18px}
+  a{color:inherit}
+
+  .card{width:100%;max-width:400px;background:var(--surface);border:1.5px solid var(--line);
+    border-radius:22px;padding:30px 26px 26px;box-shadow:0 2px 0 rgba(43,38,32,.04),0 24px 46px -28px rgba(43,38,32,.4)}
+  .home{display:block;text-align:center;font-family:var(--display);font-size:19px;
+    text-decoration:none;margin-bottom:4px}
+  .lead{font-size:12.5px;color:var(--ink-faint);text-align:center;margin-bottom:20px}
+
+  .seg{display:flex;gap:4px;padding:4px;background:var(--paper-2);border:1.5px solid var(--line);
+    border-radius:999px;margin-bottom:20px}
+  .seg button{flex:1;font-family:var(--sans);font-size:13px;font-weight:700;padding:8px 4px;
+    border:0;background:transparent;color:var(--ink-faint);border-radius:999px;cursor:pointer;
+    transition:background .16s,color .16s}
+  .seg button.on{background:var(--blue);color:#fff}
+  .seg button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+  label{display:block;font-size:12.5px;font-weight:700;margin:14px 0 6px}
+  label .opt{font-weight:500;color:var(--ink-faint);font-size:11.5px;margin-left:4px}
+  input[type=email],input[type=password],input[type=number]{
+    width:100%;font-family:var(--sans);font-size:14.5px;padding:12px 13px;color:var(--ink);
+    background:var(--paper-2);border:1.5px solid var(--line);border-radius:12px}
+  input:focus{outline:none;border-color:var(--blue);background:#fff}
+  input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .hint{font-size:11.5px;color:var(--ink-faint);margin-top:6px;line-height:1.6}
+
+  .consent{display:flex;align-items:flex-start;gap:9px;margin-top:16px}
+  .consent input{margin-top:3px;width:16px;height:16px;flex:0 0 auto;accent-color:var(--blue)}
+  .consent label{font-size:12px;color:var(--ink-soft);line-height:1.6;margin:0;font-weight:400}
+  .consent a{color:var(--blue-deep)}
+
+  .btn{width:100%;margin-top:20px;font-family:var(--sans);font-size:15px;font-weight:800;color:#fff;
+    background:var(--blue);border:0;border-radius:13px;padding:14px;cursor:pointer;
+    box-shadow:0 10px 20px -12px rgba(47,111,168,.8);transition:background .18s}
+  .btn:hover{background:var(--blue-deep)}
+  .btn:disabled{background:var(--ink-faint);cursor:not-allowed;box-shadow:none}
+  .btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+  .link{display:block;width:100%;margin-top:12px;text-align:center;font-size:12.5px;
+    color:var(--ink-soft);background:none;border:0;cursor:pointer;font-family:var(--sans);
+    text-decoration:underline;text-underline-offset:3px}
+  .link:hover{color:var(--blue-deep)}
+
+  .msg{min-height:18px;margin-top:14px;font-size:12.5px;text-align:center;line-height:1.6;font-weight:700}
+  .msg.err{color:var(--coral)}
+  .msg.ok{color:var(--green)}
+
+  .done{text-align:center}
+  .done .mark{width:52px;height:52px;margin:0 auto 14px;border-radius:50%;
+    background:var(--green-soft);display:flex;align-items:center;justify-content:center}
+  .done .mark svg{width:26px;height:26px}
+  .done h2{font-family:var(--display);font-weight:400;font-size:19px}
+  .done p{font-size:13px;color:var(--ink-soft);margin-top:10px;line-height:1.8}
+  .done .em{font-weight:700;color:var(--ink)}
+
+  .foot{margin-top:18px;font-size:11.5px;color:var(--ink-faint);text-align:center;line-height:1.8}
+  .foot a{color:var(--ink-soft)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <a class="home" href="/">김심리월드</a>
+
+  <!-- ── 로그인 / 가입 ── -->
+  <div id="formArea">
+    <p class="lead" id="lead">앱과 같은 계정으로 로그인합니다</p>
+
+    <div class="seg" role="group" aria-label="로그인 또는 가입">
+      <button type="button" id="tabLogin" class="on">로그인</button>
+      <button type="button" id="tabSignup">회원가입</button>
+    </div>
+
+    <form id="form" novalidate>
+      <label for="em">이메일</label>
+      <input type="email" id="em" autocomplete="username" placeholder="you@example.com" required>
+
+      <label for="pw">비밀번호</label>
+      <input type="password" id="pw" autocomplete="current-password" required>
+      <p class="hint hidden" id="pwHint">6자 이상으로 정해주세요.</p>
+
+      <!-- 가입할 때만 보이는 칸 -->
+      <div id="signupOnly" class="hidden">
+        <label for="by">출생 연도</label>
+        <input type="number" id="by" inputmode="numeric" placeholder="예: 2005" min="1900" max="2100">
+        <p class="hint">청소년 보호를 위해 필요합니다. 나이에 따라 이용할 수 있는 기능이 달라집니다.</p>
+
+        <div class="consent">
+          <input type="checkbox" id="agree">
+          <label for="agree"><a href="/terms" target="_blank" rel="noopener">이용약관</a>과
+            <a href="/privacy" target="_blank" rel="noopener">개인정보처리방침</a>에 동의합니다. (필수)</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">로그인</button>
+      <button type="button" class="link" id="resetBtn">비밀번호를 잊으셨나요?</button>
+      <p class="msg" id="msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+
+  <!-- ── 확인 메일 안내 ── -->
+  <div id="sentArea" class="done hidden">
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#54B491" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg>
+    </div>
+    <h2>확인 메일을 보냈어요</h2>
+    <p><span class="em" id="sentTo"></span> 로 보낸 메일에서<br>링크를 눌러주시면 가입이 완료됩니다.</p>
+    <p class="hint">메일이 보이지 않으면 스팸함도 확인해 주세요.</p>
+    <button type="button" class="link" id="backBtn">로그인으로 돌아가기</button>
+  </div>
+
+  <p class="foot">
+    <a href="/">홈</a> · <a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a>
+  </p>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var cfg = null, mode = 'login';
+  var $ = function(id){ return document.getElementById(id); };
+
+  function config(){
+    if (cfg) return Promise.resolve(cfg);
+    return fetch('/api/public-config').then(function(r){
+      if (!r.ok) throw new Error('로그인 준비가 아직 안 됐어요. 잠시 후 다시 시도해 주세요.');
+      return r.json();
+    }).then(function(c){ cfg = c; return c; });
+  }
+
+  // ── 탭 전환 ──
+  function setMode(next){
+    mode = next;
+    var signup = (mode === 'signup');
+    $('tabLogin').classList.toggle('on', !signup);
+    $('tabSignup').classList.toggle('on', signup);
+    $('signupOnly').classList.toggle('hidden', !signup);
+    $('pwHint').classList.toggle('hidden', !signup);
+    $('resetBtn').classList.toggle('hidden', signup);
+    $('submitBtn').textContent = signup ? '가입하고 시작하기' : '로그인';
+    $('pw').setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
+    $('lead').textContent = signup
+      ? '한 번 가입하면 앱과 웹에서 함께 쓸 수 있어요'
+      : '앱과 같은 계정으로 로그인합니다';
+    say('');
+  }
+  $('tabLogin').addEventListener('click', function(){ setMode('login'); });
+  $('tabSignup').addEventListener('click', function(){ setMode('signup'); });
+
+  function say(text, kind){
+    var m = $('msg');
+    m.textContent = text;
+    m.className = 'msg' + (kind ? ' ' + kind : '');
+  }
+  function busy(on){ $('submitBtn').disabled = on; }
+
+  // 앱의 isTeenBirthYear 와 같은 규칙 (auth_controller.dart)
+  function isTeen(birthYear){ return (new Date().getFullYear() - birthYear) < 19; }
+
+  // ── 제출 ──
+  $('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = $('em').value.trim();
+    var pw = $('pw').value;
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ say('이메일 주소를 다시 확인해 주세요.','err'); $('em').focus(); return; }
+    if (!pw){ say('비밀번호를 입력해 주세요.','err'); $('pw').focus(); return; }
+
+    if (mode === 'login') return doLogin(email, pw);
+
+    // 가입 — 추가 검증
+    if (pw.length < 6){ say('비밀번호는 6자 이상으로 정해주세요.','err'); $('pw').focus(); return; }
+    var by = parseInt($('by').value, 10);
+    var thisYear = new Date().getFullYear();
+    if (!by || by < 1900 || by > thisYear){ say('출생 연도를 다시 확인해 주세요.','err'); $('by').focus(); return; }
+    // 개인정보보호법상 만 14세 미만은 법정대리인 동의가 필요합니다.
+    // 웹에서 그 절차를 받을 수 없으므로 가입을 막습니다.
+    if (thisYear - by < 14){
+      say('만 14세 미만은 보호자 동의가 필요해요. 문의하기로 연락 주시면 안내해 드릴게요.','err');
+      return;
+    }
+    if (!$('agree').checked){ say('약관과 개인정보처리방침에 동의해 주세요.','err'); $('agree').focus(); return; }
+
+    doSignup(email, pw, by);
+  });
+
+  function doLogin(email, pw){
+    busy(true); say('로그인 중이에요…');
+    config().then(function(c){
+      return fetch(c.supabaseUrl + '/auth/v1/token?grant_type=password', {
+        method:'POST', headers:{'Content-Type':'application/json', apikey:c.anonKey},
+        body: JSON.stringify({email:email, password:pw})
+      }).then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); });
+    }).then(function(r){
+      if (!r.ok || !r.d.access_token){
+        var m = (r.d && (r.d.error_description || r.d.msg)) || '';
+        if (/not confirmed/i.test(m)) throw new Error('아직 이메일 확인이 안 됐어요. 메일함의 링크를 눌러주세요.');
+        throw new Error('이메일 또는 비밀번호가 맞지 않습니다.');
+      }
+      saveSession(r.d);
+      location.href = '/account';
+    }).catch(function(err){ say(err.message,'err'); })
+      .then(function(){ busy(false); });
+  }
+
+  function doSignup(email, pw, birthYear){
+    busy(true); say('가입 중이에요…');
+    config().then(function(c){
+      return fetch(c.supabaseUrl + '/auth/v1/signup', {
+        method:'POST', headers:{'Content-Type':'application/json', apikey:c.anonKey},
+        body: JSON.stringify({
+          email: email, password: pw,
+          // 이메일 확인을 켜면 이 시점에 세션이 없어 profiles 를 만들 수 없습니다.
+          // 그래서 출생 연도를 계정 메타데이터에 실어 보내고, 확인 후 로그인했을 때
+          // account 화면이 이 값으로 프로필을 만듭니다.
+          data: { birth_year: birthYear, signup_source: 'web' },
+          options: { emailRedirectTo: location.origin + '/confirm' }
+        })
+      }).then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); });
+    }).then(function(r){
+      if (!r.ok){
+        var m = (r.d && (r.d.msg || r.d.error_description || r.d.message)) || '';
+        if (/already/i.test(m) || /registered/i.test(m)) throw new Error('이미 가입된 이메일이에요. 로그인해 주세요.');
+        if (/password/i.test(m)) throw new Error('비밀번호는 6자 이상으로 정해주세요.');
+        throw new Error('가입에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      }
+      // 이메일 확인이 켜져 있으면 세션이 없습니다 → 안내 화면
+      if (!r.d.access_token){
+        $('sentTo').textContent = email;
+        $('formArea').classList.add('hidden');
+        $('sentArea').classList.remove('hidden');
+        return;
+      }
+      // 확인이 꺼져 있으면 바로 세션이 옵니다 → 프로필까지 만들고 이동
+      saveSession(r.d);
+      return createProfile(r.d.access_token, r.d.user && r.d.user.id, birthYear)
+        .catch(function(){ /* 실패해도 account 화면이 다시 시도합니다 */ })
+        .then(function(){ location.href = '/account'; });
+    }).catch(function(err){ say(err.message,'err'); })
+      .then(function(){ busy(false); });
+  }
+
+  // 앱의 signUpWithEmail 과 같은 두 줄을 만듭니다 (auth_controller.dart)
+  function createProfile(token, userId, birthYear){
+    if (!token || !userId) return Promise.reject(new Error('no session'));
+    return config().then(function(c){
+      var h = {'Content-Type':'application/json', apikey:c.anonKey, Authorization:'Bearer '+token};
+      return fetch(c.supabaseUrl + '/rest/v1/profiles', {
+        method:'POST', headers: Object.assign({Prefer:'resolution=merge-duplicates'}, h),
+        body: JSON.stringify({ id:userId, birth_year:birthYear,
+                               role: isTeen(birthYear) ? 'teen' : 'member' })
+      }).then(function(){
+        return fetch(c.supabaseUrl + '/rest/v1/consents?on_conflict=user_id,consent_type', {
+          method:'POST', headers: Object.assign({Prefer:'resolution=merge-duplicates'}, h),
+          body: JSON.stringify({ user_id:userId, consent_type:'service', granted:true })
+        });
+      });
+    });
+  }
+
+  // ── 비밀번호 재설정 ──
+  $('resetBtn').addEventListener('click', function(){
+    var email = $('em').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){
+      say('먼저 이메일 주소를 입력해 주세요.','err'); $('em').focus(); return;
+    }
+    say('메일을 보내는 중이에요…');
+    config().then(function(c){
+      return fetch(c.supabaseUrl + '/auth/v1/recover', {
+        method:'POST', headers:{'Content-Type':'application/json', apikey:c.anonKey},
+        body: JSON.stringify({ email: email })
+      });
+    }).then(function(){
+      // 가입된 주소인지 알려주지 않습니다 (계정 존재 여부가 새지 않도록)
+      say('메일을 보냈어요. 받은편지함을 확인해 주세요.','ok');
+    }).catch(function(){ say('전송에 실패했어요. 잠시 후 다시 시도해 주세요.','err'); });
+  });
+
+  $('backBtn').addEventListener('click', function(){
+    $('sentArea').classList.add('hidden');
+    $('formArea').classList.remove('hidden');
+    setMode('login');
+  });
+
+  // 세션은 sessionStorage 에만 둡니다 — 탭을 닫으면 사라집니다.
+  function saveSession(d){
+    try {
+      sessionStorage.setItem('ksw_token', d.access_token);
+      if (d.refresh_token) sessionStorage.setItem('ksw_refresh', d.refresh_token);
+    } catch (e) {}
+  }
+
+  // 이미 로그인돼 있으면 바로 내 정보로
+  if (sessionStorage.getItem('ksw_token')) location.replace('/account');
+})();
+</script>
+</body>
+</html>

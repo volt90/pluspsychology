@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /login
+Disallow: /account
 Disallow: /api/
 
 Sitemap: https://www.pluspsychology.ai/sitemap.xml
