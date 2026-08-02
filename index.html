@@ -112,6 +112,10 @@
     --green:#54B491;
     --display:'Jua','Noto Sans KR',sans-serif;
     --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    /* 화면 폭 — 탭바가 모든 페이지에서 같은 폭이어야 하므로 한 값만 씁니다 */
+    --page:960px;
+    /* 글 읽는 폭 — 한 줄이 길어지면 읽기 어려워 본문은 여기에 묶습니다 */
+    --read:660px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
@@ -127,7 +131,16 @@
     word-break:keep-all;
     overflow-x:hidden;
   }
-  .page{max-width:660px;margin:0 auto;padding:22px 20px 40px}
+  .page{max-width:var(--page);margin:0 auto;padding:22px 20px 40px}
+
+  /* ── 읽기 폭 ──────────────────────────────────────────────
+     컨테이너(--page)는 넓히되, 글이 담긴 요소는 --read 로 묶습니다.
+     한 줄이 길어지면 눈이 다음 줄 첫 글자를 찾기 어려워집니다. */
+  .hero > h1, .hero > .sub, .hero > p,
+  section > .eyebrow, section > h2, section > h3,
+  section > p, section > .lede, section > .sub{
+    max-width:var(--read); margin-left:auto; margin-right:auto;
+  }
   a{color:inherit}
   ::selection{background:var(--gold-soft)}
 

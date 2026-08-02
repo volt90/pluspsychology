@@ -490,6 +490,42 @@ consents  : { user_id, consent_type:'service', granted:true }
 - 카카오 로그인은 웹에 넣지 않았습니다. 앱도 지금 버튼을 숨긴 상태입니다.
 - `account.html` 의 `APP_URL` 이 앱 딥링크입니다. 스토어 주소가 생기면 여기만 고치세요.
 
+## 화면 폭 — 컨테이너는 넓게, 글은 읽기 좋게
+
+`:root` 에 두 값이 있고, 7개 공개 페이지가 **같은 값**을 씁니다.
+
+| 변수 | 값 | 무엇 |
+|---|---|---|
+| `--page` | `960px` | 화면 전체 폭 (`.page`) |
+| `--read` | `660px` | 글이 담긴 요소의 최대 폭 |
+
+- 🚨 **`--page` 를 페이지마다 다르게 두지 마세요.** 상단 탭바가 모든 페이지에 있어서,
+  값이 다르면 탭을 옮길 때 탭바 폭이 들썩입니다.
+- 제목·본문·`.lede` 는 `--read` 로 묶여 가운데 정렬됩니다. 카드·그리드·사진은
+  `--page` 폭을 그대로 씁니다. **컨테이너를 넓혔다고 글줄까지 길어지면 읽기 어려워집니다.**
+- `privacy` · `terms` 는 글이 전부이므로 `.doc` 자체를 `--read` 로 묶었습니다.
+
+### 옛 레이아웃으로 되돌리려면
+넓히기 직전(좁은 660px 단일 컬럼) 상태가 브랜치로 보존돼 있습니다.
+
+```
+브랜치: layout/narrow-660   (커밋 0212dd4)
+```
+
+- 통째로 되돌리기: `git checkout layout/narrow-660 -- index.html about.html projects.html store.html contact.html privacy.html terms.html`
+- 폭만 되돌리기: `:root` 의 `--page` 를 `660px` 로 바꾸면 거의 같아집니다.
+- 비교해 보기: `git diff layout/narrow-660 -- index.html`
+
+## 페이지 위치 표시 (breadcrumb)
+상단바 아래에 `Home / 현재페이지` 한 줄이 있습니다. **홈에는 없습니다** (자기 자신이므로).
+
+- 탭이 있는 페이지(About·Projects·Store·Contact)는 **탭 이름 그대로 영어**입니다 —
+  사이트 규칙대로 `data-en` 을 붙이지 마세요.
+- 약관·방침은 한글 이름이라 `data-en` 이 있습니다 (`이용약관` ↔ `Terms of Service`).
+- 각 페이지 `<head>` 에 **`BreadcrumbList` 구조화 데이터**가 함께 들어 있습니다.
+  검색결과에 `pluspsychology.ai › Store` 처럼 경로가 표시됩니다.
+  **breadcrumb 문구를 바꾸면 이 JSON-LD 도 함께 고치세요.**
+
 ## 주소에 `.html`을 붙이지 않습니다
 `vercel.json`의 `"cleanUrls": true` 로 `/about.html` 이 아니라 **`/about`** 으로 서비스됩니다.
 옛 주소로 들어와도 Vercel이 308로 새 주소에 보내주며, **쿼리스트링은 보존**됩니다
