@@ -40,6 +40,7 @@
   .seg{display:flex;gap:4px;padding:4px;background:var(--paper-2);border:1.5px solid var(--line);
     border-radius:999px;margin-bottom:20px}
   .seg button{flex:1;font-family:var(--sans);font-size:13px;font-weight:700;padding:8px 4px;
+    min-height:44px;                       /* 손가락으로 누를 최소 크기 */
     border:0;background:transparent;color:var(--ink-faint);border-radius:999px;cursor:pointer;
     transition:background .16s,color .16s}
   .seg button.on{background:var(--blue);color:#fff}
@@ -50,6 +51,11 @@
   input[type=email],input[type=password],input[type=number]{
     width:100%;font-family:var(--sans);font-size:14.5px;padding:12px 13px;color:var(--ink);
     background:var(--paper-2);border:1.5px solid var(--line);border-radius:12px}
+  /* iOS Safari 는 16px 미만 입력칸에 커서를 두면 화면을 확대해 버립니다.
+     확대되면 되돌아오지 않아 폼이 잘려 보이므로 휴대폰에서만 16px 로 올립니다. */
+  @media(max-width:520px){
+    input[type=email],input[type=password],input[type=number]{font-size:16px}
+  }
   input:focus{outline:none;border-color:var(--blue);background:#fff}
   input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
   .hint{font-size:11.5px;color:var(--ink-faint);margin-top:6px;line-height:1.6}
@@ -66,9 +72,9 @@
   .btn:disabled{background:var(--ink-faint);cursor:not-allowed;box-shadow:none}
   .btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 
-  .link{display:block;width:100%;margin-top:12px;text-align:center;font-size:12.5px;
+  .link{display:block;width:100%;margin-top:6px;padding:13px 0;text-align:center;font-size:12.5px;
     color:var(--ink-soft);background:none;border:0;cursor:pointer;font-family:var(--sans);
-    text-decoration:underline;text-underline-offset:3px}
+    text-decoration:underline;text-underline-offset:3px}   /* padding 으로 터치 영역 확보 */
   .link:hover{color:var(--blue-deep)}
 
   .msg{min-height:18px;margin-top:14px;font-size:12.5px;text-align:center;line-height:1.6;font-weight:700}

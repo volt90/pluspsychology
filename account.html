@@ -35,7 +35,7 @@
     padding-bottom:16px;border-bottom:1.5px solid var(--line)}
   .top .brand{font-family:var(--display);font-size:19px;text-decoration:none}
   .ghost{font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--ink-soft);
-    background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+    background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:11px 16px;cursor:pointer}
   .ghost:hover{border-color:var(--blue);color:var(--blue-deep)}
   .ghost:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
@@ -94,6 +94,8 @@
   .gate label{display:block;font-size:12.5px;font-weight:700;margin:14px 0 6px}
   .gate input{width:100%;font-family:var(--sans);font-size:14.5px;padding:12px 13px;
     background:var(--paper-2);border:1.5px solid var(--line);border-radius:12px;color:var(--ink)}
+  /* iOS 자동 확대 방지 — login.html 과 같은 이유 */
+  @media(max-width:520px){ .gate input{font-size:16px} }
   .gate input:focus{outline:none;border-color:var(--blue);background:#fff}
   .msg{min-height:18px;margin-top:12px;font-size:12.5px;text-align:center;font-weight:700}
   .msg.err{color:var(--coral)}
