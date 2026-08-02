@@ -97,6 +97,18 @@
   /* iOS 자동 확대 방지 — login.html 과 같은 이유 */
   @media(max-width:520px){ .gate input{font-size:16px} }
   .gate input:focus{outline:none;border-color:var(--blue);background:#fff}
+  .dates{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:8px}
+  .dates .unit{position:relative}
+  .dates .unit span{position:absolute;right:11px;top:50%;transform:translateY(-50%);
+    font-size:12px;color:var(--ink-faint);pointer-events:none}
+  .dates input{padding-right:26px}
+  /* 청소년 안내 배너 */
+  .guard{background:var(--blue-soft);border:1.5px solid #BFD8EE;border-radius:14px;
+    padding:14px 15px;margin-top:11px;font-size:12.5px;color:var(--blue-deep);line-height:1.7}
+  .guard b{color:var(--ink)}
+  .guard .go{display:inline-block;margin-top:10px;font-weight:800;font-size:12.5px;
+    color:#fff;background:var(--blue);border-radius:999px;padding:9px 16px;text-decoration:none}
+  .guard .go:hover{background:var(--blue-deep)}
   .msg{min-height:18px;margin-top:12px;font-size:12.5px;text-align:center;font-weight:700}
   .msg.err{color:var(--coral)}
   .foot{margin-top:30px;font-size:11.5px;color:var(--ink-faint);text-align:center;line-height:1.9}
@@ -118,10 +130,15 @@
   <!-- 프로필이 아직 없는 계정 — 앱의 연령 확인 단계와 같습니다 -->
   <div id="ageGate" class="hidden">
     <h1>거의 다 됐어요</h1>
-    <p class="sub">이용할 수 있는 기능을 정하기 위해 출생 연도가 필요합니다.</p>
+    <p class="sub">이용할 수 있는 기능을 정하기 위해 생년월일이 필요합니다.</p>
     <div class="panel gate">
-      <label for="by">출생 연도</label>
-      <input type="number" id="by" inputmode="numeric" placeholder="예: 2005" min="1900" max="2100">
+      <label for="by">생년월일</label>
+      <div class="dates">
+        <span class="unit"><input type="number" id="by" inputmode="numeric" placeholder="2005" min="1900" max="2100" aria-label="출생 연도"><span>년</span></span>
+        <span class="unit"><input type="number" id="bm" inputmode="numeric" placeholder="3" min="1" max="12" aria-label="출생 월"><span>월</span></span>
+        <span class="unit"><input type="number" id="bd" inputmode="numeric" placeholder="15" min="1" max="31" aria-label="출생 일"><span>일</span></span>
+      </div>
+      <p class="hint" id="ageHint" style="font-size:11.5px;color:var(--ink-faint);margin-top:8px;line-height:1.6">만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요.</p>
       <button type="button" class="btn btn-primary" id="saveAge" style="width:100%;margin-top:18px">저장하고 계속하기</button>
       <p class="msg" id="ageMsg" role="status" aria-live="polite"></p>
     </div>
@@ -135,6 +152,7 @@
     <section>
       <h2>계정</h2>
       <div class="panel"><div class="rows" id="accountRows"></div></div>
+      <div class="guard hidden" id="guardBox"></div>
     </section>
 
     <section>
@@ -194,6 +212,32 @@
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function date(d){ return d ? String(d).slice(0,10).replace(/-/g,'.') : '—'; }
   function won(n){ return (Number(n)||0).toLocaleString('ko-KR') + '원'; }
+  function pad(n){ return (n<10?'0':'')+n; }
+
+  // 만 나이 — 생일이 지났는지까지 셉니다 (login.html 과 같은 규칙)
+  function koreanAge(dt){
+    var t=new Date(), a=t.getFullYear()-dt.getFullYear(), m=t.getMonth()-dt.getMonth();
+    if (m<0 || (m===0 && t.getDate()<dt.getDate())) a--;
+    return a;
+  }
+  function birthFromInputs(){
+    var y=parseInt($('by').value,10), m=parseInt($('bm').value,10), d=parseInt($('bd').value,10);
+    if(!y||!m||!d) return null;
+    var dt=new Date(y,m-1,d);
+    if(dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==d) return null;
+    if(dt>new Date()) return null;
+    return dt;
+  }
+  ['by','bm','bd'].forEach(function(id){
+    var el=$(id); if(el) el.addEventListener('input', function(){
+      var dt=birthFromInputs(), h=$('ageHint');
+      if(!dt){ h.textContent='만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요.'; h.style.color=''; return; }
+      var a=koreanAge(dt);
+      h.textContent = a<14 ? '만 '+a+'세 — 가입할 수 없어요.'
+                    : (a<19 ? '만 '+a+'세 — 결제할 때는 보호자 동의가 한 번 더 필요합니다.' : '만 '+a+'세');
+      h.style.color = a<14 ? 'var(--coral)' : (a<19 ? 'var(--blue-deep)' : 'var(--ink-faint)');
+    });
+  });
 
   function load(){
     fetch('/api/account', {headers:{Authorization:'Bearer '+token}})
@@ -226,14 +270,36 @@
     var roleLabel = role === 'teen' ? '청소년 회원' : (role === 'admin' ? '관리자' : '일반 회원');
     var rolePill  = role === 'teen' ? 'teen' : 'ok';
 
+    // 생년월일이 있으면 만 나이까지 보여줍니다 (없는 계정은 연도만)
+    var bd = d.profile.birth_date ? new Date(d.profile.birth_date + 'T00:00:00') : null;
+    var birthLine = bd
+      ? date(d.profile.birth_date) + ' <span class="dim">(만 ' + koreanAge(bd) + '세)</span>'
+      : esc(d.profile.birth_year) + '년';
+
     $('accountRows').innerHTML =
         row('이메일', esc(d.user.email))
       + row('회원 구분', '<span class="pill '+rolePill+'">'+esc(roleLabel)+'</span>')
-      + row('출생 연도', esc(d.profile.birth_year) + '년')
+      + row('생년월일', birthLine)
       + row('가입일', date(d.profile.created_at || d.user.createdAt))
       + row('이메일 확인', d.user.emailConfirmed
             ? '<span class="pill ok">완료</span>'
             : '<span class="pill warn">미완료</span>');
+
+    // 미성년자에게는 결제 전 보호자 동의가 필요하다고 미리 알립니다.
+    // 민법 제5조 — 동의 없이 한 미성년자의 계약은 취소될 수 있습니다.
+    var minor = bd ? koreanAge(bd) < 19 : role === 'teen';
+    var box = $('guardBox');
+    if (minor){
+      box.innerHTML = d.guardianConsent
+        ? '<b>보호자 동의가 확인되었습니다.</b><br>결제를 진행하실 수 있어요.'
+        : '<b>결제하려면 보호자 동의가 한 번 필요해요.</b><br>'
+          + '만 19세 미만은 법정대리인 동의 없이 한 결제를 나중에 취소할 수 있습니다(민법 제5조). '
+          + '미리 받아두면 주문할 때 다시 묻지 않아요.'
+          + '<a class="go" href="/guardian">보호자 동의 남기기</a>';
+      box.classList.remove('hidden');
+    } else {
+      box.classList.add('hidden');
+    }
 
     // 내 워크북 (앱의 workbook_purchases)
     $('purchases').innerHTML = d.purchases.length
@@ -248,7 +314,11 @@
             + ' · ' + esc(st) + ' · ' + date(p.createdAt) + '</span></span></div>';
         }).join('') + '</div>'
       : '<div class="empty">아직 이용 중인 워크북이 없어요.<br>'
-        + '<span class="dim">구매하시면 여기와 앱에 함께 나타납니다.</span></div>';
+        + '<span class="dim">구매하시면 여기와 앱에 함께 나타납니다.</span>'
+        + '<div class="cta" style="margin-top:16px">'
+        +   '<a class="btn btn-primary" href="/">워크북 보러 가기</a>'
+        +   '<a class="btn btn-ghost" href="/store">굿즈 둘러보기</a>'
+        + '</div></div>';
 
     // 주문 내역 (랜딩 orders)
     $('orders').innerHTML = d.orders.length
@@ -263,7 +333,11 @@
             + (o.quantity > 1 ? ' · ' + o.quantity + '개' : '')
             + ' · ' + date(o.created_at) + '</span></span></div>';
         }).join('') + '</div>'
-      : '<div class="empty">주문 내역이 없어요.</div>';
+      : '<div class="empty">주문 내역이 없어요.<br>'
+        + '<span class="dim">사이트에서 주문하시면 배송 상태가 여기에 표시됩니다.</span>'
+        + '<div class="cta" style="margin-top:16px">'
+        +   '<a class="btn btn-ghost" href="/contact">구매 문의하기</a>'
+        + '</div></div>';
   }
 
   function row(k, v){
@@ -272,10 +346,14 @@
 
   // ── 프로필이 없는 계정: 연령 확인 후 생성 (앱과 같은 규칙) ──
   $('saveAge').addEventListener('click', function(){
-    var by = parseInt($('by').value, 10);
-    var y = new Date().getFullYear();
-    if (!by || by < 1900 || by > y){ $('ageMsg').textContent='출생 연도를 다시 확인해 주세요.'; $('ageMsg').className='msg err'; return; }
-    if (y - by < 14){ $('ageMsg').textContent='만 14세 미만은 보호자 동의가 필요해요. 문의하기로 연락 주세요.'; $('ageMsg').className='msg err'; return; }
+    var dt = birthFromInputs();
+    if (!dt){ $('ageMsg').textContent='생년월일을 다시 확인해 주세요.'; $('ageMsg').className='msg err'; return; }
+    var by = dt.getFullYear();
+    var iso = by + '-' + pad(dt.getMonth()+1) + '-' + pad(dt.getDate());
+    if (koreanAge(dt) < 14){
+      $('ageMsg').textContent='만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요. 문의하기로 연락 주세요.';
+      $('ageMsg').className='msg err'; return;
+    }
 
     $('saveAge').disabled = true;
     $('ageMsg').textContent = '저장 중이에요…'; $('ageMsg').className='msg';
@@ -286,8 +364,9 @@
                Authorization:'Bearer '+token, Prefer:'resolution=merge-duplicates'};
       return fetch(c.supabaseUrl + '/rest/v1/profiles', {
         method:'POST', headers:h,
-        body: JSON.stringify({ id: me.user.id, birth_year: by,
-                               role: (y - by) < 19 ? 'teen' : 'member' })
+        body: JSON.stringify({ id: me.user.id, birth_year: by, birth_date: iso,
+                               // role 은 앱과 같은 규칙 (연도 기준) — 결과가 갈리면 안 됩니다
+                               role: (new Date().getFullYear() - by) < 19 ? 'teen' : 'member' })
       }).then(function(r){
         if (!r.ok) throw new Error('저장에 실패했어요.');
         return fetch(c.supabaseUrl + '/rest/v1/consents?on_conflict=user_id,consent_type', {
@@ -311,8 +390,15 @@
         {headers:{apikey:c.anonKey, Authorization:'Bearer '+token}})
         .then(function(r){ return r.ok ? r.json() : null; });
     }).then(function(u){
-      var by = u && u.user_metadata && u.user_metadata.birth_year;
-      if (by){ $('by').value = by; $('saveAge').click(); }
+      var md = (u && u.user_metadata) || {};
+      if (md.birth_date && /^\d{4}-\d{2}-\d{2}$/.test(md.birth_date)){
+        var parts = md.birth_date.split('-');
+        $('by').value = +parts[0]; $('bm').value = +parts[1]; $('bd').value = +parts[2];
+        $('saveAge').click();
+      } else if (md.birth_year){
+        // 예전 가입자는 연도만 있습니다 — 월·일을 물어봅니다.
+        $('by').value = md.birth_year;
+      }
     }).catch(function(){});
   }
 

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>보호자 동의 · 김심리월드</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#FBF6EA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EA; --paper-2:#FFFDF7; --surface:#FFFFFF;
+    --ink:#2B2620; --ink-soft:#6E6658; --ink-faint:#A79E8E; --line:#ECE2CD;
+    --blue:#4C8CCB; --blue-deep:#2F6FA8; --blue-soft:#EAF1F9;
+    --gold:#F2B620; --gold-soft:#FDF2D2;
+    --coral:#E86B5E; --green:#54B491; --green-soft:#DEF1E9;
+    --display:'Jua','Noto Sans KR',sans-serif;
+    --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--sans);color:var(--ink);line-height:1.65;word-break:keep-all;
+    -webkit-font-smoothing:antialiased;
+    background-color:var(--paper);
+    background-image:
+      radial-gradient(120% 60% at 50% -8%, #FFFCF3 0%, rgba(255,252,243,0) 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cg fill='none' stroke='%23caa96f' stroke-opacity='0.09' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M17 13.5v7M13.5 17h7'/%3E%3C/g%3E%3C/svg%3E")}
+  a{color:inherit}
+  .wrap{max-width:520px;margin:0 auto;padding:24px 18px 56px}
+
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding-bottom:16px;border-bottom:1.5px solid var(--line)}
+  .top .brand{font-family:var(--display);font-size:19px;text-decoration:none}
+  .top a.back{font-size:12.5px;color:var(--ink-soft);text-decoration:none;
+    border:1.5px solid var(--line);border-radius:999px;padding:9px 14px;background:#fff}
+  .top a.back:hover{border-color:var(--blue);color:var(--blue-deep)}
+
+  h1{font-family:var(--display);font-weight:400;font-size:23px;margin-top:26px}
+  .sub{font-size:13px;color:var(--ink-soft);margin-top:8px;line-height:1.8}
+
+  .panel{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;
+    padding:20px 18px;margin-top:16px}
+  .law{background:var(--blue-soft);border-radius:12px;padding:13px 14px;font-size:12px;
+    color:var(--blue-deep);line-height:1.75}
+  .law b{color:var(--ink)}
+
+  label{display:block;font-size:12.5px;font-weight:700;margin:16px 0 6px}
+  label .opt{font-weight:500;color:var(--ink-faint);font-size:11.5px;margin-left:4px}
+  input[type=text],input[type=email],input[type=tel],select{
+    width:100%;font-family:var(--sans);font-size:14.5px;padding:12px 13px;color:var(--ink);
+    background:var(--paper-2);border:1.5px solid var(--line);border-radius:12px}
+  @media(max-width:520px){ input,select{font-size:16px} }
+  select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:38px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236E6658' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center}
+  input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff}
+  input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .hint{font-size:11.5px;color:var(--ink-faint);margin-top:6px;line-height:1.6}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:460px){.two{grid-template-columns:1fr;gap:0}}
+
+  .consent{display:flex;align-items:flex-start;gap:9px;margin-top:18px}
+  .consent input{margin-top:3px;width:17px;height:17px;flex:0 0 auto;accent-color:var(--blue)}
+  .consent label{font-size:12.5px;color:var(--ink-soft);line-height:1.7;margin:0;font-weight:400}
+  .consent a{color:var(--blue-deep)}
+
+  .btn{width:100%;margin-top:20px;font-family:var(--sans);font-size:15px;font-weight:800;color:#fff;
+    background:var(--blue);border:0;border-radius:13px;padding:15px;cursor:pointer;
+    box-shadow:0 10px 20px -12px rgba(47,111,168,.8)}
+  .btn:hover{background:var(--blue-deep)}
+  .btn:disabled{background:var(--ink-faint);cursor:not-allowed;box-shadow:none}
+  .btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+  .msg{min-height:18px;margin-top:14px;font-size:12.5px;text-align:center;font-weight:700;line-height:1.6}
+  .msg.err{color:var(--coral)}
+  .msg.ok{color:var(--green)}
+
+  .done{text-align:center;padding:34px 20px}
+  .done .mark{width:56px;height:56px;margin:0 auto 16px;border-radius:50%;
+    background:var(--green-soft);display:flex;align-items:center;justify-content:center}
+  .done .mark svg{width:28px;height:28px}
+  .done h2{font-family:var(--display);font-weight:400;font-size:20px}
+  .done p{font-size:13px;color:var(--ink-soft);margin-top:10px;line-height:1.8}
+  .done a{display:inline-block;margin-top:18px;font-weight:800;font-size:14px;color:#fff;
+    background:var(--blue);border-radius:13px;padding:13px 22px;text-decoration:none}
+
+  .spin{display:inline-block;width:15px;height:15px;border:2.5px solid var(--line);
+    border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){.spin{animation:none}}
+  .empty{text-align:center;color:var(--ink-faint);font-size:12.5px;padding:40px 10px}
+  .foot{margin-top:28px;font-size:11.5px;color:var(--ink-faint);text-align:center;line-height:1.9}
+  .foot a{color:var(--ink-soft)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a class="brand" href="/">김심리월드</a>
+    <a class="back" href="/account">내 정보</a>
+  </div>
+
+  <div id="loading" class="empty"><span class="spin"></span> 불러오는 중…</div>
+
+  <!-- 이미 동의가 있는 경우 -->
+  <div id="already" class="hidden">
+    <div class="panel done">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#54B491" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 5 5L20 7"/></svg>
+      </div>
+      <h2>보호자 동의가 등록되어 있어요</h2>
+      <p id="alreadyWho"></p>
+      <a href="/account">내 정보로 돌아가기</a>
+    </div>
+  </div>
+
+  <!-- 성인이라 필요 없는 경우 -->
+  <div id="notNeeded" class="hidden">
+    <div class="panel done">
+      <div class="mark" style="background:var(--gold-soft)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F2B620" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><circle cx="12" cy="16.5" r=".8" fill="#F2B620"/><circle cx="12" cy="12" r="9"/></svg>
+      </div>
+      <h2>보호자 동의가 필요하지 않아요</h2>
+      <p>만 19세 이상 회원은 본인 동의만으로 결제할 수 있습니다.</p>
+      <a href="/account">내 정보로 돌아가기</a>
+    </div>
+  </div>
+
+  <!-- 동의 폼 -->
+  <div id="formArea" class="hidden">
+    <h1>보호자 동의</h1>
+    <p class="sub">만 19세 미만 회원이 결제하려면 법정대리인의 동의가 필요합니다.
+      아래 내용을 <b>보호자님께서 직접</b> 확인하고 작성해 주세요.</p>
+
+    <div class="panel">
+      <div class="law">
+        <b>왜 필요한가요?</b><br>
+        민법 제5조에 따라 미성년자가 법정대리인의 동의 없이 한 계약은 나중에
+        취소될 수 있습니다. 동의를 미리 받아두면 주문이 안정적으로 유지되고,
+        주문할 때마다 다시 묻지 않습니다.
+      </div>
+
+      <div class="law" style="background:var(--gold-soft);color:#6b5410;margin-top:10px">
+        <b>확인해 주세요.</b><br>
+        자녀(피보호자) 계정: <b id="childEmail"></b><br>
+        만 나이: <b id="childAge"></b>
+      </div>
+
+      <form id="form" novalidate>
+        <div class="two">
+          <div>
+            <label for="gname">보호자 성함</label>
+            <input type="text" id="gname" maxlength="40" placeholder="예: 김보호" autocomplete="name">
+          </div>
+          <div>
+            <label for="grel">관계</label>
+            <select id="grel">
+              <option value="" disabled selected>선택해 주세요</option>
+              <option value="mother">어머니</option>
+              <option value="father">아버지</option>
+              <option value="grandparent">조부모</option>
+              <option value="guardian">후견인</option>
+              <option value="other">그 밖의 법정대리인</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="gphone">보호자 연락처</label>
+        <input type="tel" id="gphone" maxlength="20" placeholder="010-0000-0000" autocomplete="tel">
+        <p class="hint">동의 사실을 확인해야 할 때만 사용합니다.</p>
+
+        <label for="gemail">보호자 이메일<span class="opt">선택</span></label>
+        <input type="email" id="gemail" maxlength="254" placeholder="parent@example.com" autocomplete="email">
+
+        <div class="consent">
+          <input type="checkbox" id="agree1">
+          <label for="agree1">저는 위 회원의 <b>법정대리인</b>이며, 회원이 김심리월드에서
+            상품을 구매하고 결제하는 것에 동의합니다.</label>
+        </div>
+        <div class="consent">
+          <input type="checkbox" id="agree2">
+          <label for="agree2">동의 확인을 위해 보호자의 성함·관계·연락처를 수집·이용하는 데 동의합니다.
+            보유 기간은 5년이며 이후 파기합니다.
+            (<a href="/privacy" target="_blank" rel="noopener">개인정보처리방침</a>)</label>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">동의합니다</button>
+        <p class="msg" id="msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- 완료 -->
+  <div id="doneArea" class="hidden">
+    <div class="panel done">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#54B491" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 5 5L20 7"/></svg>
+      </div>
+      <h2>동의가 등록되었어요</h2>
+      <p>이제 결제를 진행하실 수 있습니다.<br>동의 사실은 내 정보 화면에서 확인할 수 있어요.</p>
+      <a href="/account">내 정보로 돌아가기</a>
+    </div>
+  </div>
+
+  <p class="foot">
+    <a href="/">홈</a> · <a href="/contact">문의하기</a> ·
+    <a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a>
+  </p>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var $ = function(id){ return document.getElementById(id); };
+  var token = sessionStorage.getItem('ksw_token') || '';
+  var cfg = null, me = null;
+
+  if (!token){ location.replace('/login'); return; }
+
+  function config(){
+    if (cfg) return Promise.resolve(cfg);
+    return fetch('/api/public-config').then(function(r){ return r.json(); })
+      .then(function(c){ cfg = c; return c; });
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function koreanAge(dt){
+    var t=new Date(), a=t.getFullYear()-dt.getFullYear(), m=t.getMonth()-dt.getMonth();
+    if (m<0 || (m===0 && t.getDate()<dt.getDate())) a--;
+    return a;
+  }
+  function say(t,k){ var m=$('msg'); m.textContent=t; m.className='msg'+(k?' '+k:''); }
+  function show(id){
+    ['loading','already','notNeeded','formArea','doneArea'].forEach(function(x){
+      $(x).classList.toggle('hidden', x !== id);
+    });
+  }
+
+  fetch('/api/account', {headers:{Authorization:'Bearer '+token}})
+    .then(function(r){
+      if (r.status === 401){ sessionStorage.removeItem('ksw_token'); location.replace('/login'); return null; }
+      if (!r.ok) throw new Error('불러오지 못했어요');
+      return r.json();
+    })
+    .then(function(d){
+      if (!d) return;
+      me = d;
+      if (!d.profile){ location.replace('/account'); return; }   // 프로필부터 만들어야 함
+
+      var bd = d.profile.birth_date ? new Date(d.profile.birth_date + 'T00:00:00') : null;
+      var age = bd ? koreanAge(bd) : null;
+      var minor = bd ? age < 19 : d.profile.role === 'teen';
+
+      if (d.guardianConsent){
+        var g = d.guardianConsent;
+        $('alreadyWho').innerHTML = esc(g.guardian_name) + ' 님 · '
+          + esc(RELATION[g.guardian_relation] || g.guardian_relation)
+          + '<br><span style="color:var(--ink-faint)">' + esc(String(g.consented_at).slice(0,10)) + ' 등록</span>';
+        return show('already');
+      }
+      if (!minor) return show('notNeeded');
+
+      $('childEmail').textContent = d.user.email;
+      $('childAge').textContent = age == null ? (d.profile.birth_year + '년생') : ('만 ' + age + '세');
+      show('formArea');
+    })
+    .catch(function(){ location.replace('/account'); });
+
+  var RELATION = {mother:'어머니', father:'아버지', grandparent:'조부모',
+                  guardian:'후견인', other:'법정대리인'};
+
+  $('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = $('gname').value.trim();
+    var rel  = $('grel').value;
+    var phone= $('gphone').value.trim();
+    var email= $('gemail').value.trim();
+
+    if (!name){ say('보호자 성함을 입력해 주세요.','err'); $('gname').focus(); return; }
+    if (!rel){ say('관계를 선택해 주세요.','err'); $('grel').focus(); return; }
+    if (!/^[0-9+\-\s()]{9,20}$/.test(phone)){ say('연락처를 다시 확인해 주세요.','err'); $('gphone').focus(); return; }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ say('이메일 주소를 다시 확인해 주세요.','err'); $('gemail').focus(); return; }
+    if (!$('agree1').checked || !$('agree2').checked){ say('두 항목에 모두 동의해 주세요.','err'); return; }
+
+    $('submitBtn').disabled = true; say('저장 중이에요…');
+
+    // 쓰기는 브라우저에서 본인 토큰으로 — RLS(guardian_consents_insert_own)가 지켜줍니다.
+    config().then(function(c){
+      var h = {'Content-Type':'application/json', apikey:c.anonKey,
+               Authorization:'Bearer '+token, Prefer:'resolution=merge-duplicates'};
+      return fetch(c.supabaseUrl + '/rest/v1/guardian_consents?on_conflict=user_id,purpose', {
+        method:'POST', headers:h,
+        body: JSON.stringify({
+          user_id: me.user.id, purpose:'payment',
+          guardian_name:name, guardian_relation:rel,
+          guardian_phone:phone, guardian_email: email || null,
+          granted:true, method:'self_report'
+        })
+      }).then(function(r){
+        if (!r.ok) throw new Error('저장에 실패했어요.');
+        // 앱이 읽는 consents 표에도 남깁니다 (teen_payment)
+        return fetch(c.supabaseUrl + '/rest/v1/consents?on_conflict=user_id,consent_type', {
+          method:'POST', headers:h,
+          body: JSON.stringify({ user_id: me.user.id, consent_type:'teen_payment', granted:true })
+        });
+      });
+    }).then(function(){ show('doneArea'); })
+      .catch(function(err){
+        say(err.message || '저장에 실패했어요.','err');
+        $('submitBtn').disabled = false;
+      });
+  });
+})();
+</script>
+</body>
+</html>

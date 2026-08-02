@@ -60,6 +60,34 @@
   input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
   .hint{font-size:11.5px;color:var(--ink-faint);margin-top:6px;line-height:1.6}
 
+  /* 비밀번호 조건 — 충족되면 초록으로 바뀝니다 */
+  .pwrules{list-style:none;margin-top:9px;display:flex;flex-direction:column;gap:5px}
+  .pwrules li{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-faint);
+    transition:color .18s}
+  .pwrules li .dot{width:15px;height:15px;border-radius:50%;flex:0 0 auto;
+    border:1.5px solid var(--line);background:#fff;display:flex;align-items:center;
+    justify-content:center;transition:background .18s,border-color .18s}
+  .pwrules li .dot svg{width:9px;height:9px;opacity:0;transition:opacity .18s}
+  .pwrules li.met{color:var(--green);font-weight:700}
+  .pwrules li.met .dot{background:var(--green);border-color:var(--green)}
+  .pwrules li.met .dot svg{opacity:1}
+  .pwrules li.miss{color:var(--coral);font-weight:700}
+  .pwrules li.miss .dot{border-color:var(--coral)}
+
+  /* 생년월일 — 년 / 월 / 일 */
+  .dates{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:8px}
+  .dates .unit{position:relative}
+  .dates .unit span{position:absolute;right:11px;top:50%;transform:translateY(-50%);
+    font-size:12px;color:var(--ink-faint);pointer-events:none}
+  .dates input{padding-right:26px}
+
+  /* 이메일 오타 제안 */
+  .typo{margin-top:7px;font-size:12px;color:var(--blue-deep);background:var(--blue-soft);
+    border-radius:10px;padding:8px 11px;line-height:1.5}
+  .typo button{font-family:var(--sans);font-size:12px;font-weight:800;color:var(--blue-deep);
+    background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;
+    text-underline-offset:2px}
+
   .consent{display:flex;align-items:flex-start;gap:9px;margin-top:16px}
   .consent input{margin-top:3px;width:16px;height:16px;flex:0 0 auto;accent-color:var(--blue)}
   .consent label{font-size:12px;color:var(--ink-soft);line-height:1.6;margin:0;font-weight:400}
@@ -111,16 +139,27 @@
     <form id="form" novalidate>
       <label for="em">이메일</label>
       <input type="email" id="em" autocomplete="username" placeholder="you@example.com" required>
+      <div class="typo hidden" id="typoBox" aria-live="polite"></div>
 
       <label for="pw">비밀번호</label>
       <input type="password" id="pw" autocomplete="current-password" required>
-      <p class="hint hidden" id="pwHint">6자 이상으로 정해주세요.</p>
+
+      <!-- 가입할 때만 보이는 비밀번호 조건 — 입력하는 동안 실시간으로 바뀝니다 -->
+      <ul class="pwrules hidden" id="pwRules" aria-live="polite">
+        <li data-rule="len"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 5 5L20 7"/></svg></span>8자 이상</li>
+        <li data-rule="num"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 5 5L20 7"/></svg></span>숫자 포함</li>
+        <li data-rule="sym"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 5 5L20 7"/></svg></span>특수문자 포함 (예: ! @ # $ %)</li>
+      </ul>
 
       <!-- 가입할 때만 보이는 칸 -->
       <div id="signupOnly" class="hidden">
-        <label for="by">출생 연도</label>
-        <input type="number" id="by" inputmode="numeric" placeholder="예: 2005" min="1900" max="2100">
-        <p class="hint">청소년 보호를 위해 필요합니다. 나이에 따라 이용할 수 있는 기능이 달라집니다.</p>
+        <label for="by">생년월일</label>
+        <div class="dates">
+          <span class="unit"><input type="number" id="by" inputmode="numeric" placeholder="2005" min="1900" max="2100" aria-label="출생 연도"><span>년</span></span>
+          <span class="unit"><input type="number" id="bm" inputmode="numeric" placeholder="3" min="1" max="12" aria-label="출생 월"><span>월</span></span>
+          <span class="unit"><input type="number" id="bd" inputmode="numeric" placeholder="15" min="1" max="31" aria-label="출생 일"><span>일</span></span>
+        </div>
+        <p class="hint" id="ageHint">만 나이에 따라 이용할 수 있는 기능이 달라집니다. 만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요.</p>
 
         <div class="consent">
           <input type="checkbox" id="agree">
@@ -144,7 +183,10 @@
     <h2>확인 메일을 보냈어요</h2>
     <p><span class="em" id="sentTo"></span> 로 보낸 메일에서<br>링크를 눌러주시면 가입이 완료됩니다.</p>
     <p class="hint">메일이 보이지 않으면 스팸함도 확인해 주세요.</p>
-    <button type="button" class="link" id="backBtn">로그인으로 돌아가기</button>
+    <button type="button" class="btn" id="resendBtn" style="margin-top:18px">메일 다시 보내기</button>
+    <button type="button" class="link" id="fixEmailBtn">주소를 잘못 입력했어요</button>
+    <p class="msg" id="sentMsg" role="status" aria-live="polite"></p>
+    <button type="button" class="link" id="backBtn" style="margin-top:0">로그인으로 돌아가기</button>
   </div>
 
   <p class="foot">
@@ -174,7 +216,8 @@
     $('tabLogin').classList.toggle('on', !signup);
     $('tabSignup').classList.toggle('on', signup);
     $('signupOnly').classList.toggle('hidden', !signup);
-    $('pwHint').classList.toggle('hidden', !signup);
+    $('pwRules').classList.toggle('hidden', !signup);
+    if (signup) checkPw();
     $('resetBtn').classList.toggle('hidden', signup);
     $('submitBtn').textContent = signup ? '가입하고 시작하기' : '로그인';
     $('pw').setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
@@ -193,8 +236,111 @@
   }
   function busy(on){ $('submitBtn').disabled = on; }
 
-  // 앱의 isTeenBirthYear 와 같은 규칙 (auth_controller.dart)
+  // ── 비밀번호 규칙 ──────────────────────────────────────
+  //  세 조건을 모두 채워야 가입됩니다. 입력하는 동안 어떤 조건이
+  //  아직 안 맞는지 바로 보여줍니다 (다 쓴 뒤 혼내지 않기 위해).
+  var PW = {
+    len: function(v){ return v.length >= 8; },
+    num: function(v){ return /[0-9]/.test(v); },
+    sym: function(v){ return /[^A-Za-z0-9]/.test(v); }
+  };
+  var PW_LABEL = {len:'8자 이상', num:'숫자', sym:'특수문자'};
+
+  function pwState(v){
+    return {len:PW.len(v), num:PW.num(v), sym:PW.sym(v)};
+  }
+  // show=true 면 못 채운 조건을 빨갛게 (제출을 눌렀을 때만)
+  function checkPw(show){
+    var v = $('pw').value, st = pwState(v);
+    Array.prototype.slice.call($('pwRules').children).forEach(function(li){
+      var k = li.getAttribute('data-rule');
+      li.classList.toggle('met', st[k]);
+      li.classList.toggle('miss', Boolean(show) && !st[k]);
+    });
+    return st;
+  }
+  function pwMissing(){
+    var st = pwState($('pw').value);
+    return Object.keys(st).filter(function(k){ return !st[k]; });
+  }
+  $('pw').addEventListener('input', function(){ if (mode === 'signup') checkPw(); });
+
+  // ── 만 나이 ────────────────────────────────────────────
+  //  생일이 지났는지까지 셉니다. 만 14세 미만은 가입 불가(개인정보보호법),
+  //  만 19세 미만은 결제할 때 보호자 동의가 필요합니다(민법 제5조).
+  function birthDate(){
+    var y = parseInt($('by').value,10), m = parseInt($('bm').value,10), d = parseInt($('bd').value,10);
+    if (!y || !m || !d) return null;
+    var dt = new Date(y, m-1, d);
+    // 2월 31일 같은 값을 걸러냅니다
+    if (dt.getFullYear()!==y || dt.getMonth()!==m-1 || dt.getDate()!==d) return null;
+    if (dt > new Date()) return null;
+    return dt;
+  }
+  function koreanAge(dt){
+    var t = new Date(), a = t.getFullYear() - dt.getFullYear();
+    var m = t.getMonth() - dt.getMonth();
+    if (m < 0 || (m === 0 && t.getDate() < dt.getDate())) a--;
+    return a;
+  }
+  // role 은 앱과 **같은 규칙**을 씁니다 (auth_controller.dart 의 isTeenBirthYear).
+  // 웹만 정확한 만 나이로 판정하면 앱과 결과가 갈릴 수 있습니다.
   function isTeen(birthYear){ return (new Date().getFullYear() - birthYear) < 19; }
+
+  function showAgeHint(){
+    var dt = birthDate();
+    var el = $('ageHint');
+    if (!dt){ el.textContent = '만 나이에 따라 이용할 수 있는 기능이 달라집니다. 만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요.';
+              el.style.color=''; return; }
+    var age = koreanAge(dt);
+    if (age < 14){ el.textContent = '만 ' + age + '세 — 만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요.';
+                   el.style.color='var(--coral)'; }
+    else if (age < 19){ el.textContent = '만 ' + age + '세 — 가입할 수 있어요. 결제할 때는 보호자 동의가 한 번 더 필요합니다.';
+                        el.style.color='var(--blue-deep)'; }
+    else { el.textContent = '만 ' + age + '세'; el.style.color='var(--ink-faint)'; }
+  }
+  ['by','bm','bd'].forEach(function(id){
+    $(id).addEventListener('input', showAgeHint);
+  });
+
+  // ── 이메일 오타 감지 ───────────────────────────────────
+  var DOMAINS = ['gmail.com','naver.com','daum.net','hanmail.net','nate.com',
+                 'kakao.com','outlook.com','hotmail.com','icloud.com','yahoo.com'];
+  function editDistance(a,b){
+    var m=a.length,n=b.length,prev=[],cur=[],i,j;
+    for(j=0;j<=n;j++) prev[j]=j;
+    for(i=1;i<=m;i++){
+      cur[0]=i;
+      for(j=1;j<=n;j++){
+        cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+(a[i-1]===b[j-1]?0:1));
+      }
+      prev=cur.slice();
+    }
+    return prev[n];
+  }
+  function suggestDomain(email){
+    var at = email.lastIndexOf('@');
+    if (at < 1) return null;
+    var dom = email.slice(at+1).toLowerCase();
+    if (!dom || DOMAINS.indexOf(dom) >= 0) return null;
+    for (var i=0;i<DOMAINS.length;i++){
+      if (editDistance(dom, DOMAINS[i]) <= 2) return email.slice(0,at+1) + DOMAINS[i];
+    }
+    return null;
+  }
+  function showTypo(){
+    var box = $('typoBox'), email = $('em').value.trim();
+    var fix = suggestDomain(email);
+    if (!fix){ box.classList.add('hidden'); box.innerHTML=''; return; }
+    box.innerHTML = '혹시 <b>' + fix.replace(/[<>&]/g,'') + '</b> 인가요? '
+                  + '<button type="button" id="useFix">이걸로 바꾸기</button>';
+    box.classList.remove('hidden');
+    $('useFix').addEventListener('click', function(){
+      $('em').value = fix; box.classList.add('hidden'); say('');
+    });
+  }
+  $('em').addEventListener('blur', showTypo);
+  $('em').addEventListener('input', function(){ $('typoBox').classList.add('hidden'); });
 
   // ── 제출 ──
   $('form').addEventListener('submit', function(e){
@@ -208,19 +354,27 @@
     if (mode === 'login') return doLogin(email, pw);
 
     // 가입 — 추가 검증
-    if (pw.length < 6){ say('비밀번호는 6자 이상으로 정해주세요.','err'); $('pw').focus(); return; }
-    var by = parseInt($('by').value, 10);
-    var thisYear = new Date().getFullYear();
-    if (!by || by < 1900 || by > thisYear){ say('출생 연도를 다시 확인해 주세요.','err'); $('by').focus(); return; }
-    // 개인정보보호법상 만 14세 미만은 법정대리인 동의가 필요합니다.
+    var missing = pwMissing();
+    if (missing.length){
+      checkPw(true);
+      say('비밀번호에 ' + missing.map(function(k){ return PW_LABEL[k]; }).join(', ') + '이(가) 필요해요.','err');
+      $('pw').focus(); return;
+    }
+    var dt = birthDate();
+    if (!dt){ say('생년월일을 다시 확인해 주세요.','err'); $('by').focus(); return; }
+    var age = koreanAge(dt);
+    // 개인정보보호법 제22조의2 — 만 14세 미만은 법정대리인 동의가 필요합니다.
     // 웹에서 그 절차를 받을 수 없으므로 가입을 막습니다.
-    if (thisYear - by < 14){
-      say('만 14세 미만은 보호자 동의가 필요해요. 문의하기로 연락 주시면 안내해 드릴게요.','err');
-      return;
+    if (age < 14){
+      say('만 ' + age + '세는 보호자 동의가 필요해 가입할 수 없어요. 문의하기로 연락 주시면 안내해 드릴게요.','err');
+      $('by').focus(); return;
     }
     if (!$('agree').checked){ say('약관과 개인정보처리방침에 동의해 주세요.','err'); $('agree').focus(); return; }
 
-    doSignup(email, pw, by);
+    var fix = suggestDomain(email);
+    if (fix){ showTypo(); say('이메일 주소를 한 번만 더 확인해 주세요.','err'); return; }
+
+    doSignup(email, pw, dt);
   });
 
   function doLogin(email, pw){
@@ -242,7 +396,9 @@
       .then(function(){ busy(false); });
   }
 
-  function doSignup(email, pw, birthYear){
+  function doSignup(email, pw, dt){
+    var birthYear = dt.getFullYear();
+    var iso = dt.getFullYear() + '-' + pad(dt.getMonth()+1) + '-' + pad(dt.getDate());
     busy(true); say('가입 중이에요…');
     config().then(function(c){
       return fetch(c.supabaseUrl + '/auth/v1/signup', {
@@ -252,7 +408,7 @@
           // 이메일 확인을 켜면 이 시점에 세션이 없어 profiles 를 만들 수 없습니다.
           // 그래서 출생 연도를 계정 메타데이터에 실어 보내고, 확인 후 로그인했을 때
           // account 화면이 이 값으로 프로필을 만듭니다.
-          data: { birth_year: birthYear, signup_source: 'web' },
+          data: { birth_year: birthYear, birth_date: iso, signup_source: 'web' },
           options: { emailRedirectTo: location.origin + '/confirm' }
         })
       }).then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); });
@@ -265,14 +421,16 @@
       }
       // 이메일 확인이 켜져 있으면 세션이 없습니다 → 안내 화면
       if (!r.d.access_token){
+        lastSignup = {email: email, password: pw, dt: dt};
         $('sentTo').textContent = email;
         $('formArea').classList.add('hidden');
         $('sentArea').classList.remove('hidden');
+        startCooldown();
         return;
       }
       // 확인이 꺼져 있으면 바로 세션이 옵니다 → 프로필까지 만들고 이동
       saveSession(r.d);
-      return createProfile(r.d.access_token, r.d.user && r.d.user.id, birthYear)
+      return createProfile(r.d.access_token, r.d.user && r.d.user.id, birthYear, iso)
         .catch(function(){ /* 실패해도 account 화면이 다시 시도합니다 */ })
         .then(function(){ location.href = '/account'; });
     }).catch(function(err){ say(err.message,'err'); })
@@ -280,13 +438,15 @@
   }
 
   // 앱의 signUpWithEmail 과 같은 두 줄을 만듭니다 (auth_controller.dart)
-  function createProfile(token, userId, birthYear){
+  function pad(n){ return (n<10?'0':'') + n; }
+
+  function createProfile(token, userId, birthYear, iso){
     if (!token || !userId) return Promise.reject(new Error('no session'));
     return config().then(function(c){
       var h = {'Content-Type':'application/json', apikey:c.anonKey, Authorization:'Bearer '+token};
       return fetch(c.supabaseUrl + '/rest/v1/profiles', {
         method:'POST', headers: Object.assign({Prefer:'resolution=merge-duplicates'}, h),
-        body: JSON.stringify({ id:userId, birth_year:birthYear,
+        body: JSON.stringify({ id:userId, birth_year:birthYear, birth_date: iso || null,
                                role: isTeen(birthYear) ? 'teen' : 'member' })
       }).then(function(){
         return fetch(c.supabaseUrl + '/rest/v1/consents?on_conflict=user_id,consent_type', {
@@ -315,9 +475,72 @@
     }).catch(function(){ say('전송에 실패했어요. 잠시 후 다시 시도해 주세요.','err'); });
   });
 
-  $('backBtn').addEventListener('click', function(){
+  // ── 확인 메일: 다시 보내기 / 주소 고치기 ────────────────
+  //  여기가 이탈이 가장 큰 지점입니다. 메일이 안 오거나 주소를 잘못 썼을 때
+  //  되돌아갈 길이 없으면 그대로 가입이 끝나버립니다.
+  var lastSignup = null, cooldown = 0, timer = null;
+
+  function startCooldown(){
+    cooldown = 60;
+    if (timer) clearInterval(timer);
+    tick();
+    timer = setInterval(function(){ cooldown--; tick(); if (cooldown <= 0) clearInterval(timer); }, 1000);
+  }
+  function tick(){
+    var b = $('resendBtn');
+    if (cooldown > 0){ b.disabled = true; b.textContent = '다시 보내기 (' + cooldown + '초)'; }
+    else { b.disabled = false; b.textContent = '메일 다시 보내기'; }
+  }
+  function sentSay(t, kind){
+    var m = $('sentMsg'); m.textContent = t; m.className = 'msg' + (kind ? ' ' + kind : '');
+  }
+
+  $('resendBtn').addEventListener('click', function(){
+    if (cooldown > 0 || !lastSignup) return;
+    $('resendBtn').disabled = true;
+    sentSay('다시 보내는 중이에요…');
+    config().then(function(c){
+      // 같은 주소로 signup 을 한 번 더 부르면 Supabase 가 확인 메일을 재발송합니다.
+      return fetch(c.supabaseUrl + '/auth/v1/signup', {
+        method:'POST', headers:{'Content-Type':'application/json', apikey:c.anonKey},
+        body: JSON.stringify({ email:lastSignup.email, password:lastSignup.password,
+          data:{ birth_year:lastSignup.dt.getFullYear(),
+                 birth_date: lastSignup.dt.getFullYear()+'-'+pad(lastSignup.dt.getMonth()+1)+'-'+pad(lastSignup.dt.getDate()),
+                 signup_source:'web' },
+          options:{ emailRedirectTo: location.origin + '/confirm' } })
+      });
+    }).then(function(){
+      sentSay('다시 보냈어요. 받은편지함과 스팸함을 확인해 주세요.','ok');
+      startCooldown();
+    }).catch(function(){
+      sentSay('보내지 못했어요. 잠시 후 다시 시도해 주세요.','err');
+      cooldown = 0; tick();
+    });
+  });
+
+  $('fixEmailBtn').addEventListener('click', function(){
+    if (timer) clearInterval(timer);
     $('sentArea').classList.add('hidden');
     $('formArea').classList.remove('hidden');
+    setMode('signup');
+    if (lastSignup){
+      $('em').value = lastSignup.email;
+      $('by').value = lastSignup.dt.getFullYear();
+      $('bm').value = lastSignup.dt.getMonth()+1;
+      $('bd').value = lastSignup.dt.getDate();
+      $('agree').checked = true;
+      showAgeHint();
+    }
+    $('em').focus(); $('em').select();
+    say('주소를 고치고 다시 보내주세요.','');
+    sentSay('');
+  });
+
+  $('backBtn').addEventListener('click', function(){
+    if (timer) clearInterval(timer);
+    $('sentArea').classList.add('hidden');
+    $('formArea').classList.remove('hidden');
+    sentSay('');
     setMode('login');
   });
 

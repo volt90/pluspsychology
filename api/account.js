@@ -47,8 +47,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const [profile, purchases, orders] = await Promise.all([
-      one(`profiles?id=eq.${user.id}&select=id,birth_year,role,onboarding_completed,created_at`),
+    const [profile, purchases, orders, guardianConsent] = await Promise.all([
+      one(`profiles?id=eq.${user.id}&select=id,birth_year,birth_date,role,onboarding_completed,created_at`),
       // workbooks 를 함께 붙여 제목까지 한 번에 가져옵니다.
       sbSoft(`workbook_purchases?user_id=eq.${user.id}` +
              `&select=id,purchase_type,status,created_at,workbooks(slug,title,subtitle)` +
@@ -56,7 +56,10 @@ export default async function handler(req, res) {
       sbSoft(`orders?buyer_email=eq.${encodeURIComponent(user.email)}` +
              `&select=order_id,status,product_name,quantity,amount,currency,` +
              `ship_country,payment_method,approved_at,created_at` +
-             `&order=created_at.desc&limit=20`, [])
+             `&order=created_at.desc&limit=20`, []),
+      // 보호자(법정대리인) 동의 — 미성년 회원의 결제 전에 필요합니다.
+      one(`guardian_consents?user_id=eq.${user.id}&purpose=eq.payment&granted=is.true` +
+          `&select=guardian_name,guardian_relation,consented_at,method`)
     ]);
 
     return res.status(200).json({
@@ -78,7 +81,9 @@ export default async function handler(req, res) {
         title: p.workbooks ? p.workbooks.title : '워크북',
         subtitle: p.workbooks ? p.workbooks.subtitle : null
       })),
-      orders: orders || []
+      orders: orders || [],
+      // 동의가 없으면 null — 화면이 '동의 남기기' 안내를 띄웁니다.
+      guardianConsent: guardianConsent || null
     });
   } catch (err) {
     console.error('account error:', err);
