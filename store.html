@@ -240,6 +240,10 @@
         margin:34px 0 2px;color:var(--ink)}
   .gsub:first-of-type{margin-top:20px}
   .glead{font-size:14px;color:var(--ink-soft);line-height:1.8;margin-top:10px}
+  /* 이 페이지는 굿즈 그리드가 --page 폭을 다 쓰므로, 제목과 리드문도
+     알약·그리드와 같은 왼쪽 끝에서 시작하게 둡니다.
+     읽기 폭(--read) 자체는 그대로라 긴 문장이 화면 끝까지 늘어나지는 않습니다. */
+  section > h2.head, section > .glead{margin-left:0;margin-right:auto}
 
   /* ---------- 워크북 구매 상자 ----------
      Store에서 결제로 이어지는 유일한 자리입니다. */
@@ -272,7 +276,7 @@
   .soonbox{margin-top:34px;padding:22px 24px;display:flex;align-items:center;gap:20px}
   .soonchar{flex:0 0 auto;width:78px;height:auto;display:block;
             filter:drop-shadow(0 6px 6px rgba(43,38,32,.14))}
-  .soontxt{min-width:0}
+  .soontxt{min-width:0;flex:1 1 auto}   /* 남는 자리를 글이 차지해 캐릭터가 오른쪽 끝에 섭니다 */
   .soonpill{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-weight:700;
             font-size:11.5px;letter-spacing:.02em;color:#9A6E0B;background:var(--gold-soft);
             border-radius:999px;padding:5px 11px}
@@ -282,7 +286,8 @@
   /* 휴대폰에서는 캐릭터를 글 위로 올립니다 — 옆에 두면 글줄이 너무 좁아집니다 */
   @media(max-width:520px){
     .soonbox{flex-direction:column;align-items:center;text-align:center;gap:12px;padding:22px 18px}
-    .soonchar{width:70px}
+    /* 세로로 쌓일 때는 캐릭터를 글 위로 — 아래에 두면 푸터와 붙어 보입니다 */
+    .soonchar{width:70px;order:-1}
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -427,14 +432,14 @@
 
       <!-- 판매처 안내 — 스마트스토어가 열리면 이 상자를 스토어 링크로 바꾸세요 -->
       <div class="soonbox panel rv">
-        <img class="soonchar" src="/assets/img/char-simri.png" alt="김심리 캐릭터가 수첩을 들고 준비하는 모습"
-             data-en-alt="Simri getting things ready with a notepad" loading="lazy"
-             onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
         <div class="soontxt">
           <span class="soonpill" data-en="Coming soon">준비중</span>
           <p class="soonh" data-en="Our Naver Smart Store is being set up.">네이버 스마트스토어 준비중입니다.</p>
           <p class="soonp" data-en="You&rsquo;ll be able to buy the goods once the store opens.">굿즈는 스토어가 열리는 대로 만나보실 수 있어요.</p>
         </div>
+        <img class="soonchar" src="/assets/img/char-simri.png" alt="김심리 캐릭터가 수첩을 들고 준비하는 모습"
+             data-en-alt="Simri getting things ready with a notepad" loading="lazy"
+             onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
       </div>
     </section>
 
