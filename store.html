@@ -131,7 +131,7 @@
      컨테이너(--page)는 넓히되, 글이 담긴 요소는 --read 로 묶습니다.
      한 줄이 길어지면 눈이 다음 줄 첫 글자를 찾기 어려워집니다. */
   .hero > h1, .hero > .sub, .hero > p,
-  section > .eyebrow, section > h2, section > h3,
+  section > .eyebrow, section > h1, section > h2, section > h3,
   section > p, section > .lede, section > .sub{
     max-width:var(--read); margin-left:auto; margin-right:auto;
   }
@@ -191,6 +191,10 @@
      순서를 바꿔도 로고가 항상 제일 왼쪽·제일 위입니다. */
   @media(max-width:760px){
     /* 헤더가 두 줄이 되므로 앵커 여백도 그만큼 키웁니다 */
+    /* 손가락으로 누를 수 있는 크기 — 헤더 도구와 푸터 링크가 작았습니다 */
+    .acct{min-height:40px}
+    .lgtrig{min-height:40px}
+    .flinks a{display:inline-block;padding:8px 10px}
     section,[id]{scroll-margin-top:112px}
     .hdr{flex-wrap:wrap;gap:8px 10px;padding:8px 16px}
     .hdr .brand{order:1}
@@ -206,7 +210,7 @@
   .eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.02em;color:var(--blue-deep);background:var(--blue-soft);border-radius:999px;padding:6px 13px}
   .panel{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;box-shadow:0 2px 0 rgba(43,38,32,.04),0 20px 40px -26px rgba(43,38,32,.28)}
   section{margin-top:clamp(46px,10vw,72px)}
-  h2.head{font-family:var(--sans);font-weight:800;font-size:clamp(21px,5.2vw,27px);line-height:1.45;letter-spacing:-.01em;margin-top:14px}
+  h1.head,h2.head{font-family:var(--sans);font-weight:800;font-size:clamp(21px,5.2vw,27px);line-height:1.45;letter-spacing:-.01em;margin-top:14px}
 
   /* 형광펜 강조 — 원본 bio의 시그니처를 사이트 팔레트로 옮긴 것 */
   .mk{font-weight:700;background:linear-gradient(transparent 58%, var(--gold-soft) 0);padding:0 2px;border-radius:2px}
@@ -243,7 +247,7 @@
   /* 이 페이지는 굿즈 그리드가 --page 폭을 다 쓰므로, 제목과 리드문도
      알약·그리드와 같은 왼쪽 끝에서 시작하게 둡니다.
      읽기 폭(--read) 자체는 그대로라 긴 문장이 화면 끝까지 늘어나지는 않습니다. */
-  section > h2.head, section > .glead{margin-left:0;margin-right:auto}
+  section > h1.head, section > h2.head, section > .glead{margin-left:0;margin-right:auto}
 
   /* ---------- 워크북 구매 상자 ----------
      Store에서 결제로 이어지는 유일한 자리입니다. */
@@ -382,10 +386,10 @@
 
     <section>
       <span class="eyebrow rv" data-en="Things we made">만든 것들</span>
-      <h2 class="head rv" data-en="Goods">굿즈</h2>
+      <h1 class="head rv" data-en="Goods">굿즈</h1>
       <p class="glead rv" data-en="Meet the Kim Simri World friends as goods.">김심리월드 친구들을 굿즈로 만나보세요.</p>
       <div class="rv">
-        <h3 class="gsub" data-en="Notepads">메모지</h3>
+        <h2 class="gsub" data-en="Notepads">메모지</h2>
         <ul class="grid">
           <li class="gcard"><figure><img src="/assets/img/goods/memo-a.jpg" alt="메모지A" data-en-alt="Notepad A" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Notepad A">메모지A</figcaption></figure></li>
@@ -394,12 +398,12 @@
           <li class="gcard"><figure><img src="/assets/img/goods/memo-c.jpg" alt="메모지C" data-en-alt="Notepad C" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Notepad C">메모지C</figcaption></figure></li>
         </ul>
-        <h3 class="gsub" data-en="Stickers">스티커</h3>
+        <h2 class="gsub" data-en="Stickers">스티커</h2>
         <ul class="grid">
           <li class="gcard"><figure><img src="/assets/img/goods/sticker-a.jpg" alt="스티커A" data-en-alt="Sticker A" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Sticker A">스티커A</figcaption></figure></li>
         </ul>
-        <h3 class="gsub" data-en="Keyrings">키링</h3>
+        <h2 class="gsub" data-en="Keyrings">키링</h2>
         <ul class="grid">
           <li class="gcard"><figure><img src="/assets/img/goods/keyring-a.jpg" alt="키링A" data-en-alt="Keyring A" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Keyring A">키링A</figcaption></figure></li>
@@ -414,14 +418,14 @@
           <li class="gcard"><figure><img src="/assets/img/goods/keyring-f.jpg" alt="키링F" data-en-alt="Keyring F" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Keyring F">키링F</figcaption></figure></li>
         </ul>
-        <h3 class="gsub" data-en="Postcards">엽서</h3>
+        <h2 class="gsub" data-en="Postcards">엽서</h2>
         <ul class="grid">
           <li class="gcard"><figure><img src="/assets/img/goods/postcard-a.png" alt="엽서A" data-en-alt="Postcard A" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Postcard A">엽서A</figcaption></figure></li>
           <li class="gcard"><figure><img src="/assets/img/goods/postcard-b.png" alt="엽서B" data-en-alt="Postcard B" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Postcard B">엽서B</figcaption></figure></li>
         </ul>
-        <h3 class="gsub" data-en="Hand mirrors">손거울</h3>
+        <h2 class="gsub" data-en="Hand mirrors">손거울</h2>
         <ul class="grid">
           <li class="gcard"><figure><img src="/assets/img/goods/mirror-a.jpg" alt="손거울A" data-en-alt="Hand mirror A" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Mirror A">손거울A</figcaption></figure></li>

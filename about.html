@@ -192,6 +192,10 @@
      순서를 바꿔도 로고가 항상 제일 왼쪽·제일 위입니다. */
   @media(max-width:760px){
     /* 헤더가 두 줄이 되므로 앵커 여백도 그만큼 키웁니다 */
+    /* 손가락으로 누를 수 있는 크기 — 헤더 도구와 푸터 링크가 작았습니다 */
+    .acct{min-height:40px}
+    .lgtrig{min-height:40px}
+    .flinks a{display:inline-block;padding:8px 10px}
     section,[id]{scroll-margin-top:112px}
     .hdr{flex-wrap:wrap;gap:8px 10px;padding:8px 16px}
     .hdr .brand{order:1}

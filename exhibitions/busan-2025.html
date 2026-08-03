@@ -130,7 +130,7 @@
      컨테이너(--page)는 넓히되, 글이 담긴 요소는 --read 로 묶습니다.
      한 줄이 길어지면 눈이 다음 줄 첫 글자를 찾기 어려워집니다. */
   .hero > h1, .hero > .sub, .hero > p,
-  section > .eyebrow, section > h2, section > h3,
+  section > .eyebrow, section > h1, section > h2, section > h3,
   section > p, section > .lede, section > .sub{
     max-width:var(--read); margin-left:auto; margin-right:auto;
   }
@@ -190,6 +190,10 @@
      순서를 바꿔도 로고가 항상 제일 왼쪽·제일 위입니다. */
   @media(max-width:760px){
     /* 헤더가 두 줄이 되므로 앵커 여백도 그만큼 키웁니다 */
+    /* 손가락으로 누를 수 있는 크기 — 헤더 도구와 푸터 링크가 작았습니다 */
+    .acct{min-height:40px}
+    .lgtrig{min-height:40px}
+    .flinks a{display:inline-block;padding:8px 10px}
     section,[id]{scroll-margin-top:112px}
     .hdr{flex-wrap:wrap;gap:8px 10px;padding:8px 16px}
     .hdr .brand{order:1}
@@ -205,10 +209,10 @@
   .eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.02em;color:var(--blue-deep);background:var(--blue-soft);border-radius:999px;padding:6px 13px}
   .panel{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;box-shadow:0 2px 0 rgba(43,38,32,.04),0 20px 40px -26px rgba(43,38,32,.28)}
   section{margin-top:clamp(46px,10vw,72px)}
-  h2.head{font-family:var(--sans);font-weight:800;font-size:clamp(21px,5.2vw,27px);line-height:1.45;letter-spacing:-.01em;margin-top:14px}
+  h1.head,h2.head{font-family:var(--sans);font-weight:800;font-size:clamp(21px,5.2vw,27px);line-height:1.45;letter-spacing:-.01em;margin-top:14px}
   /* 이 페이지는 카드가 --page 폭을 다 쓰므로 제목도 --read 로 묶지 않습니다.
      묶어 두면 제목만 안쪽으로 들어가 알약·카드와 왼쪽 끝이 어긋납니다. */
-  section > h2.head{max-width:none;margin-left:0;margin-right:0}
+  section > h1.head, section > h2.head{max-width:none;margin-left:0;margin-right:0}
 
   /* 형광펜 강조 — 원본 bio의 시그니처를 사이트 팔레트로 옮긴 것 */
   .mk{font-weight:700;background:linear-gradient(transparent 58%, var(--gold-soft) 0);padding:0 2px;border-radius:2px}
@@ -276,7 +280,7 @@
   .excard:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
   .excard img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
   .exmeta{padding:16px 17px 18px;display:flex;flex-direction:column;gap:6px;flex:1 1 auto}
-  .exmeta h3{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.4;color:var(--ink)}
+  .exmeta h2{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.4;color:var(--ink)}
   .exmeta p{font-size:12.5px;color:var(--ink-soft);line-height:1.6}
   .exgo{margin-top:auto;padding-top:8px;font-size:12.5px;font-weight:700;color:var(--blue-deep)}
 

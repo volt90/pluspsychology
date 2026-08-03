@@ -36,6 +36,8 @@ api/account.js      # 내 정보 조회 — 토큰 검증 후 본인 것만
 supabase/schema-admin.sql # campaigns 표 + 캠페인 컬럼 + 집계 뷰
 assets/img/char-simri.png # 김심리 캐릭터 (Store 판매처 준비중 안내에 사용)
 exhibitions/*.html  # 전시별 상세 페이지 (/exhibitions/<slug>) — projects.html 에서 생성
+topics.html         # 마음 이야기 허브 (/topics)
+topics/*.html       # 키워드별 랜딩페이지 (/topics/<slug>) — index.html 에서 생성
 og.png              # 링크 미리보기 이미지 1200×630 (기본)
 og-store.png        # 링크 미리보기 — Store 탭 (굿즈)
 og-projects.png     # 링크 미리보기 — Projects 탭 (전시)
@@ -109,6 +111,32 @@ sitemap.xml
   굿즈 사진과 같은 방식이라 `onerror` 로 `placeholder.svg` 를 대신 띄웁니다.
 - 알림 신청 같은 **약속은 넣지 않았습니다.** 굿즈 출시 알림을 받는 장치가 아직 없어서,
   "열리면 알려드릴게요" 라고 쓰면 지키지 못할 말이 됩니다.
+
+### 키워드 랜딩페이지 — /topics
+검색에서 들어올 자리입니다. 주제 6개 + 허브 1개.
+
+| 주소 | 노리는 검색어 |
+|---|---|
+| `/topics` | (허브 — 6개를 모아 링크) |
+| `/topics/psychological-test` | 심리검사 |
+| `/topics/psychology` | 심리 |
+| `/topics/mindfulness` | 마음챙김 |
+| `/topics/self-care` | 마음돌봄 |
+| `/topics/depression` | 우울 |
+| `/topics/anxiety` | 불안 |
+
+- **본문 폭만 660px** 입니다 (보관해 둔 좁은 레이아웃). 🚨 헤더(`.hdr`)는 960px 그대로 두세요 —
+  좁히면 탭이 잘리고 탭을 옮길 때 로고가 들썩입니다.
+- 🚨 **모든 페이지에 `.notice`(의료행위 아님 고지)가 들어갑니다.** 지우지 마세요.
+  `우울`·`불안` 두 페이지에는 `.crisis`(위기상담 전화)까지 있습니다. 번호는
+  `terms.html` 제8조와 같은 것을 씁니다 — 다른 번호를 새로 쓰지 마세요.
+- **효과·완화·치료 같은 표현을 쓰지 마세요.** 의료법·표시광고법에 걸립니다.
+  지금 문구는 전부 '교육·자기이해' 범위로 맞춰져 있습니다.
+- `FAQPage` + `Article` 구조화 데이터가 있습니다. 저자는 김심리(심리학 박사·임상심리사 1급) —
+  건강 주제는 저자 정보가 검색 신뢰도에 직접 영향을 줍니다.
+- 🚨 **`index.html` 에서 머리말을 떼어 쓰므로 생성기가 title·canonical·og 를 걷어냅니다.**
+  안 걷어내면 canonical 이 전부 `/` 로 잡혀 **한 페이지도 색인되지 않습니다.**
+- 페이지를 더할 때: 생성기의 `TOPICS` 에 항목을 넣고 `sitemap.xml` 에 주소를 더하세요.
 
 ## 디자인 규칙
 - 색: 크림 `#FBF6EA` 배경 / 신뢰의 파랑 `#4C8CCB` / 골드 `#F2B620` / 코랄 `#E86B5E`
