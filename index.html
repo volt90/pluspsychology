@@ -329,6 +329,15 @@
   .cred .c .ch svg{width:18px;height:18px;flex:0 0 auto}
   .cred .c p{font-size:12.5px;color:var(--ink-soft);margin-top:7px;line-height:1.6}
   @media(max-width:440px){.cred{grid-template-columns:1fr}}
+  /* 후기 — 지금 화면에 나오지 않습니다.
+     띄워 두었던 후기 3개가 실제 후기가 아니라 제가 지어낸 예시여서 지웠습니다
+     (별점과 함께 걸어두면 표시광고법 위반 소지).
+     실제 후기가 생기면 .proof 섹션 안에 아래 모양으로 넣으면 그대로 보입니다:
+       <div class="revs rv">
+         <div class="rev"><div class="stars">★★★★★</div>
+           <q data-en="…">…</q><div class="who" data-en="…">…</div></div>
+       </div>
+     🚨 옛 문구를 커밋 이력에서 꺼내 되살리지 마세요. 지어낸 문장입니다. */
   .revs{margin-top:16px;display:flex;flex-direction:column;gap:12px}
   .rev{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 14px 30px -24px rgba(43,38,32,.4)}
   .rev .stars{color:var(--gold);font-size:14px;letter-spacing:2px}
@@ -550,24 +559,6 @@
         <div class="c">
           <div class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6FA8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10Z"/></svg><span data-en="Healthy relationships">건강한 관계</span></div>
           <p data-en="Caring for yourself builds healthier relationships, and the strength to grow together.">나를 돌보는 변화는 더 건강한 관계를 만들고, 함께 성장할 수 있는 힘이 됩니다.</p>
-        </div>
-      </div>
-
-      <div class="revs rv">
-        <div class="rev">
-          <div class="stars">★★★★★</div>
-          <q data-en="Writing along with the questions, I could finally name what I was feeling. The anxiety that used to be vague feels a little clearer now.">질문을 따라 쓰다 보니 내 감정에 이름을 붙일 수 있게 됐어요. 막연하던 불안이 조금은 선명해진 느낌이에요.</q>
-          <div class="who" data-en="High school student · Kim">고등학생 · 김OO</div>
-        </div>
-        <div class="rev">
-          <div class="stars">★★★★★</div>
-          <q data-en="Counseling felt like a lot, but this I could do at my own pace. I have built a habit of caring for myself a little every day.">상담은 부담스러웠는데, 이건 내 속도로 할 수 있어서 좋았어요. 매일 조금씩 나를 돌보는 습관이 생겼습니다.</q>
-          <div class="who" data-en="University student · Lee">대학생 · 이OO</div>
-        </div>
-        <div class="rev">
-          <div class="stars">★★★★★</div>
-          <q data-en="I used it with my students in class and they were really engaged. It took little prep, and the students expressed their feelings well.">수업에서 학생들과 함께 썼는데 몰입도가 정말 높았어요. 준비 부담도 적고, 아이들이 자기 마음을 잘 표현하더라고요.</q>
-          <div class="who" data-en="Middle school teacher · Park">중학교 교사 · 박OO</div>
         </div>
       </div>
     </section>
