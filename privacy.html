@@ -102,11 +102,21 @@
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 2px}
   .home{font-family:var(--display);font-size:17px;color:var(--ink);text-decoration:none;letter-spacing:.01em}
   .home:hover{color:var(--blue-deep)}
-  .langsw{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:#fff;flex:0 0 auto}
-  .langsw button{font-family:var(--sans);font-size:12px;font-weight:700;line-height:1.4;padding:6px 11px;border:0;background:transparent;color:var(--ink-faint);cursor:pointer;transition:background .16s,color .16s}
-  .langsw button.on{background:var(--blue);color:#fff}
-  .langsw button:not(.on):hover{color:var(--blue-deep)}
-  .langsw button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  /* ---------- 언어 선택 ----------
+     지구본 + 지금 언어 이름을 보여주고, 누르면 아래로 목록이 펼쳐집니다.
+     선택된 언어는 목록에서 진한 글씨 + 연파랑 배경으로 표시합니다. */
+  .langsw{position:relative;flex:0 0 auto}
+  .lgtrig{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:12.5px;font-weight:700;line-height:1.4;color:var(--ink-soft);background:transparent;border:0;border-radius:9px;padding:7px 8px;cursor:pointer;transition:color .16s,background .16s}
+  .lgtrig:hover{color:var(--blue-deep);background:var(--paper)}
+  .lgglobe{width:15px;height:15px;flex:0 0 auto}
+  .lgchev{width:11px;height:11px;flex:0 0 auto;transition:transform .18s}
+  .langsw.open .lgchev{transform:rotate(180deg)}
+  .lgmenu{position:absolute;top:calc(100% + 6px);right:0;min-width:136px;padding:5px;background:#fff;border:1.5px solid var(--line);border-radius:13px;box-shadow:0 16px 34px -16px rgba(43,38,32,.5);z-index:90}
+  .lgmenu[hidden]{display:none}
+  .lgmenu button{display:flex;align-items:center;width:100%;min-height:44px;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink-faint);background:transparent;border:0;border-radius:9px;padding:0 12px;cursor:pointer;white-space:nowrap;transition:background .14s,color .14s}
+  .lgmenu button:hover{background:var(--paper);color:var(--blue-deep)}
+  .lgmenu button.on{background:var(--blue-soft);color:var(--ink)}
+  .lgtrig:focus-visible,.lgmenu button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
   .doc{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:30px 26px;margin-top:20px}
   h1{font-family:var(--display);font-size:26px;line-height:1.35;font-weight:400;margin-bottom:10px}
@@ -174,9 +184,12 @@
 
   <div class="topbar">
     <a class="home" href="/" data-en="&larr; Kim Simri World">&larr; 김심리월드</a>
-    <div class="langsw" role="group" aria-label="Language / 언어 선택">
-      <button type="button" data-lang="ko" class="on" aria-pressed="true">한국어</button>
-      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    <div class="langsw">
+      <button type="button" class="lgtrig" aria-haspopup="true" aria-expanded="false" aria-label="언어 선택" data-en-aria="Choose language"><svg class="lgglobe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.2 9h17.6M3.2 15h17.6"/><path d="M12 3c2.4 2.4 3.6 5.4 3.6 9s-1.2 6.6-3.6 9c-2.4-2.4-3.6-5.4-3.6-9S9.6 5.4 12 3Z"/></svg><span class="lgnow">한국어</span><svg class="lgchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9.5 6 6 6-6"/></svg></button>
+      <div class="lgmenu" role="menu" hidden>
+        <button type="button" role="menuitemradio" data-lang="ko" class="on" aria-checked="true">한국어</button>
+        <button type="button" role="menuitemradio" data-lang="en" aria-checked="false">English</button>
+      </div>
     </div>
   </div>
 
@@ -445,7 +458,8 @@ var BUSINESS = {
 (function(){
   var TITLE = {ko:'개인정보처리방침 · 김심리월드', en:'Privacy Policy · Kim Simri World'};
   var nodes = Array.prototype.slice.call(document.querySelectorAll('[data-en]'));
-  var langBtns = Array.prototype.slice.call(document.querySelectorAll('.langsw button'));
+  var langBtns = Array.prototype.slice.call(document.querySelectorAll('.lgmenu button[data-lang]'));
+  var lgNow = document.querySelector('.lgnow');
   nodes.forEach(function(el){ el.setAttribute('data-ko', el.innerHTML); });
 
   function setLang(lang){
@@ -456,12 +470,27 @@ var BUSINESS = {
     langBtns.forEach(function(b){
       var on = (b.getAttribute('data-lang') === lang);
       b.classList.toggle('on', on);
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
+      // 접힌 버튼에는 지금 언어 이름이 그대로 보입니다.
+      if (on && lgNow) lgNow.textContent = b.textContent;
     });
   }
   langBtns.forEach(function(b){
     b.addEventListener('click', function(){ setLang(b.getAttribute('data-lang')); });
   });
+
+  // 언어 메뉴 — 버튼을 누르면 펼치고, 바깥을 누르거나 Esc 를 누르면 닫습니다.
+  (function(){
+    var sw = document.querySelector('.langsw');
+    if (!sw) return;
+    var trig = sw.querySelector('.lgtrig'), menu = sw.querySelector('.lgmenu');
+    function shut(){ sw.classList.remove('open'); menu.hidden = true; trig.setAttribute('aria-expanded','false'); }
+    function show(){ sw.classList.add('open'); menu.hidden = false; trig.setAttribute('aria-expanded','true'); }
+    trig.addEventListener('click', function(e){ e.stopPropagation(); menu.hidden ? show() : shut(); });
+    menu.addEventListener('click', shut);
+    document.addEventListener('click', function(e){ if (!sw.contains(e.target)) shut(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !menu.hidden){ shut(); trig.focus(); } });
+  })();
 })();
 </script>
 </body>

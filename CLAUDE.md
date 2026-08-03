@@ -67,7 +67,7 @@ sitemap.xml
 **한 줄짜리 `<header class="siteheader">` 하나**이며, 안쪽 순서가 고정입니다:
 
 ```
-[로고] [Home About Projects Store Contact] ······ [로그인] [한국어|EN]
+[로고] [Home About Projects Store Contact] ······ [로그인] [🌐 한국어 ⌄]
  .brand            nav.tabs                        .tbright
 ```
 
@@ -136,7 +136,13 @@ sitemap.xml
   같은 규칙이 `index.html`과 `about.html` 양쪽에 있습니다 — 함께 고치세요.
 
 ## 다국어 (한/영 토글)
-- 상단 우측 `한국어 | EN` 버튼. JS가 아래 속성을 바꿔치기합니다.
+- 상단 우측 **`🌐 한국어 ⌄` 버튼 → 누르면 목록(한국어 / English)이 펼쳐집니다.**
+  - 접힌 버튼(`.lgtrig`)의 글자는 **지금 언어 이름**입니다. `setLang` 이 `.lgnow` 를 갱신합니다.
+  - 실제 전환 버튼은 메뉴 안(`.lgmenu button[data-lang]`)에 있습니다.
+    🚨 JS 의 선택자가 `.langsw button` 이 아니라 **`.lgmenu button[data-lang]`** 입니다.
+    `.langsw button` 으로 되돌리면 접는 버튼까지 잡혀 `data-lang` 이 없는 클릭이 섞입니다.
+  - 바깥을 누르거나 `Esc` 를 누르면 닫힙니다. 7개 공개 페이지에 같은 코드가 복사돼 있습니다.
+- JS가 아래 속성을 바꿔치기합니다.
   - `data-en`      : 요소 내부 HTML (영문)
   - `data-en-alt`  : 이미지 alt
   - `data-en-href` : 링크 (메일 제목 영문판)
