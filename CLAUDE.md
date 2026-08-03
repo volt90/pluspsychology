@@ -190,12 +190,13 @@ sitemap.xml
 | 도구 | 상태 | 값 |
 |---|---|---|
 | GA4 | ✅ 완료 | `G-7HK4CQK6ZW` |
-| Meta Pixel | ⏳ 미완 | `YOUR_PIXEL_ID` 교체 필요 — **index.html 2곳 + contact.html 2곳** |
+| Meta Pixel | ✅ 완료 | `2057112328550152` — 공개 페이지 전부 + checkout·confirm |
 | 네이버 전환추적 | ⏳ 미완 | `YOUR_NAVER_KEY`, `YOUR_DOMAIN` 교체 필요 — **index.html + contact.html** |
 
-> 추적 스크립트가 들어간 페이지: `index.html`(GA4+Meta+네이버) ·
-> `contact.html`(GA4+Meta+네이버 — 핵심 전환인 문의 접수가 여기서 일어나므로) ·
-> `about.html`(GA4만). 나머지 페이지에는 넣지 않았습니다.
+> - **GA4**: 공개 페이지 8개 (index·about·projects·store·contact·exhibitions/*)
+> - **Meta Pixel**: 위 8개 + privacy·terms·checkout·checkout-result·confirm
+> - **네이버 전환추적**: `index.html` · `contact.html` 두 곳뿐 (전환이 일어나는 자리)
+> - `admin`·`login`·`account`·`guardian` 에는 넣지 않았습니다 — 내 방문이 통계를 오염시키므로.
 
 ### 이벤트는 퍼널 역할별로 분리되어 있음 (뭉치지 말 것)
 | 시점 | GA4 | Meta | 네이버 |
@@ -425,7 +426,6 @@ var BUSINESS = {
 - [ ] **문의 폼 켜기** — `RESEND_API_KEY` · `FROM_EMAIL` · `CONTACT_TO_EMAIL` 설정.
       그 전까지 `/api/contact`는 503을 돌려주고 화면은 "이메일로 보내주세요" 안내가 뜹니다
       (Resend 도메인 인증이 선행되어야 합니다)
-- [ ] Meta 픽셀 ID 발급 후 `YOUR_PIXEL_ID` 교체 (**index.html·contact.html 두 파일**)
 - [ ] 네이버 전환추적 신청 → 네이버공통키 발급 후 `YOUR_NAVER_KEY` / `YOUR_DOMAIN` 교체
       (**index.html·contact.html 두 파일**)
       (새 광고주센터: 도구 → 전환 추적 관리. 비즈채널 등록·검수 선행 필요)
