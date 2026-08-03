@@ -34,6 +34,7 @@ supabase/schema-guardian.sql # 생년월일 + 보호자 동의 표
 account.html        # 내 정보·구매·이용권한 (noindex · 로그인 필요)
 api/account.js      # 내 정보 조회 — 토큰 검증 후 본인 것만
 supabase/schema-admin.sql # campaigns 표 + 캠페인 컬럼 + 집계 뷰
+assets/img/char-simri.png # 김심리 캐릭터 (Store 판매처 준비중 안내에 사용)
 og.png              # 링크 미리보기 이미지 1200×630 (기본)
 og-store.png        # 링크 미리보기 — Store 탭 (굿즈)
 og-projects.png     # 링크 미리보기 — Projects 탭 (전시)
@@ -97,6 +98,16 @@ sitemap.xml
 
 ### Home(index.html) 섹션 순서 (고정)
 히어로 → 문제 정의 → 해결 방법(3단계) → 가격 → 증거 → CTA(이메일 수집 + 문의)
+
+### Store 하단 '판매처 준비중' 안내
+굿즈 목록 아래·푸터 위에 `<div class="soonbox panel">` 이 있습니다 —
+`준비중` 알약 + "네이버 스마트스토어 준비중입니다." + 김심리 캐릭터.
+
+- 스토어가 열리면 **이 상자를 스마트스토어 링크로 바꾸면** 됩니다.
+- 캐릭터는 `assets/img/char-simri.png` 파일입니다 (index·about 처럼 base64 인라인이 아님).
+  굿즈 사진과 같은 방식이라 `onerror` 로 `placeholder.svg` 를 대신 띄웁니다.
+- 알림 신청 같은 **약속은 넣지 않았습니다.** 굿즈 출시 알림을 받는 장치가 아직 없어서,
+  "열리면 알려드릴게요" 라고 쓰면 지키지 못할 말이 됩니다.
 
 ## 디자인 규칙
 - 색: 크림 `#FBF6EA` 배경 / 신뢰의 파랑 `#4C8CCB` / 골드 `#F2B620` / 코랄 `#E86B5E`

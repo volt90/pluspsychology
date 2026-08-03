@@ -267,6 +267,24 @@
     .gcard figcaption{font-size:11.5px}
   }
 
+  /* ---------- 판매처 준비중 안내 ----------
+     굿즈 목록 아래, 푸터 바로 위. 스토어가 열리면 이 상자를 링크로 바꾸면 됩니다. */
+  .soonbox{margin-top:34px;padding:22px 24px;display:flex;align-items:center;gap:20px}
+  .soonchar{flex:0 0 auto;width:78px;height:auto;display:block;
+            filter:drop-shadow(0 6px 6px rgba(43,38,32,.14))}
+  .soontxt{min-width:0}
+  .soonpill{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-weight:700;
+            font-size:11.5px;letter-spacing:.02em;color:#9A6E0B;background:var(--gold-soft);
+            border-radius:999px;padding:5px 11px}
+  .soonh{font-family:var(--display);font-weight:400;font-size:clamp(17px,4.4vw,20px);
+         color:var(--ink);margin-top:9px;line-height:1.45}
+  .soonp{font-size:13px;color:var(--ink-soft);margin-top:7px;line-height:1.75}
+  /* 휴대폰에서는 캐릭터를 글 위로 올립니다 — 옆에 두면 글줄이 너무 좁아집니다 */
+  @media(max-width:520px){
+    .soonbox{flex-direction:column;align-items:center;text-align:center;gap:12px;padding:22px 18px}
+    .soonchar{width:70px}
+  }
+
   @media (prefers-reduced-motion: reduce){
     *{scroll-behavior:auto!important}
     .rv{opacity:1!important;transform:none!important;transition:none!important}
@@ -405,6 +423,18 @@
           <li class="gcard"><figure><img src="/assets/img/goods/mirror-b.jpg" alt="손거울B" data-en-alt="Hand mirror B" loading="lazy"
                  onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Mirror B">손거울B</figcaption></figure></li>
         </ul>
+      </div>
+
+      <!-- 판매처 안내 — 스마트스토어가 열리면 이 상자를 스토어 링크로 바꾸세요 -->
+      <div class="soonbox panel rv">
+        <img class="soonchar" src="/assets/img/char-simri.png" alt="김심리 캐릭터가 수첩을 들고 준비하는 모습"
+             data-en-alt="Simri getting things ready with a notepad" loading="lazy"
+             onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
+        <div class="soontxt">
+          <span class="soonpill" data-en="Coming soon">준비중</span>
+          <p class="soonh" data-en="Our Naver Smart Store is being set up.">네이버 스마트스토어 준비중입니다.</p>
+          <p class="soonp" data-en="You&rsquo;ll be able to buy the goods once the store opens.">굿즈는 스토어가 열리는 대로 만나보실 수 있어요.</p>
+        </div>
       </div>
     </section>
 
