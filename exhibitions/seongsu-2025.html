@@ -206,6 +206,9 @@
   .panel{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;box-shadow:0 2px 0 rgba(43,38,32,.04),0 20px 40px -26px rgba(43,38,32,.28)}
   section{margin-top:clamp(46px,10vw,72px)}
   h2.head{font-family:var(--sans);font-weight:800;font-size:clamp(21px,5.2vw,27px);line-height:1.45;letter-spacing:-.01em;margin-top:14px}
+  /* 이 페이지는 카드가 --page 폭을 다 쓰므로 제목도 --read 로 묶지 않습니다.
+     묶어 두면 제목만 안쪽으로 들어가 알약·카드와 왼쪽 끝이 어긋납니다. */
+  section > h2.head{max-width:none;margin-left:0;margin-right:0}
 
   /* 형광펜 강조 — 원본 bio의 시그니처를 사이트 팔레트로 옮긴 것 */
   .mk{font-weight:700;background:linear-gradient(transparent 58%, var(--gold-soft) 0);padding:0 2px;border-radius:2px}
@@ -396,7 +399,7 @@
       <p class="exlede rv" data-en="A pop-up held in the container space at Understand Avenue, next to Seoul Forest.">서울숲 옆 언더스탠드에비뉴의 컨테이너 공간에서 팝업행사를 진행했습니다.</p>
 
       <dl class="facts panel rv">
-        <dt data-en="Dates">일시</dt><dd data-en="21–28 September 2025 &middot; 10:00–22:00 (packing up after 20:00 on the last day)">2025년 9월 21일 ~ 28일 · 10:00–22:00 (마지막 날은 20:00 이후 철수)</dd>
+        <dt data-en="Dates">일시</dt><dd data-en="21–28 September 2025 &middot; 10:00–22:00">2025년 9월 21일 ~ 28일 · 10:00–22:00</dd>
         <dt data-en="Venue">장소</dt><dd data-en="Understand Avenue, 63 Wangsimni-ro, Seongdong-gu, Seoul &middot; container zone D24-2">서울 성동구 왕십리로 63 언더스탠드에비뉴 · D24-2구역 컨테이너</dd>
         <dt data-en="Getting there">가는 길</dt><dd data-en="Seoul Forest Stn. exit 3 &middot; Ttukseom Stn. exit 8">서울숲역 3번 출구 · 뚝섬역 8번 출구</dd>
         <dt data-en="Hosted within">함께한 곳</dt><dd data-en="Incheon Content Korea Lab pop-up store">인천콘텐츠코리아랩 팝업스토어</dd>

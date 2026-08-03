@@ -207,6 +207,9 @@
   .panel{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;box-shadow:0 2px 0 rgba(43,38,32,.04),0 20px 40px -26px rgba(43,38,32,.28)}
   section{margin-top:clamp(46px,10vw,72px)}
   h2.head{font-family:var(--sans);font-weight:800;font-size:clamp(21px,5.2vw,27px);line-height:1.45;letter-spacing:-.01em;margin-top:14px}
+  /* 이 페이지는 카드가 --page 폭을 다 쓰므로 제목도 --read 로 묶지 않습니다.
+     묶어 두면 제목만 안쪽으로 들어가 알약·카드와 왼쪽 끝이 어긋납니다. */
+  section > h2.head{max-width:none;margin-left:0;margin-right:0}
 
   /* 형광펜 강조 — 원본 bio의 시그니처를 사이트 팔레트로 옮긴 것 */
   .mk{font-weight:700;background:linear-gradient(transparent 58%, var(--gold-soft) 0);padding:0 2px;border-radius:2px}
