@@ -1,6 +1,7 @@
 # 전시 사진
 
-projects.html 이 아래 파일명을 가리킵니다. 같은 이름으로 넣으면 그 칸이 채워지고,
+`exhibitions/*.html` (전시 상세 페이지)와 `projects.html` (카드 목록)이
+아래 파일명을 가리킵니다. 같은 이름으로 넣으면 그 칸이 채워지고,
 없는 파일은 자리표시 이미지로 보입니다.
 
 | 파일명 | 전시 | 페이지 캡션 |
@@ -17,19 +18,22 @@ projects.html 이 아래 파일명을 가리킵니다. 같은 이름으로 넣�
 
 ## 사진을 더 넣거나 뺄 때
 
-한 전시에 사진을 추가하려면 파일을 넣는 것만으로는 안 되고, `projects.html` 에
-칸을 하나 늘려야 합니다. 같은 전시의 `data-lb` 값을 그대로 쓰면 확대 화면에서
-그 전시 사진끼리 넘겨보게 됩니다.
+파일만 넣어서는 화면에 나오지 않습니다. 그 전시의 상세 페이지
+(`exhibitions/<slug>.html`) 의 `.shots` 안에 칸을 하나 늘려야 합니다.
 
 ```html
-<li class="gcard"><figure data-lb="seongsu" data-lb-cap="성수동 언더스탠드 애비뉴 팝업(2025) · 전시 4">
-  <img src="/assets/img/exhibitions/seongsu-2025-4.jpg" alt="…" loading="lazy"
+<figure data-lb="seongsu-2025" data-lb-cap="성수동 언더스탠드 애비뉴 팝업(2025) · 전시 4">
+  <img src="/assets/img/exhibitions/seongsu-2025-4.jpg" alt="…" data-en-alt="…" loading="lazy"
        onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
-  <figcaption data-en="Exhibition 4">전시 4</figcaption></figure></li>
+  <figcaption data-en="Exhibition 4">전시 4</figcaption>
+</figure>
 ```
 
-- `data-lb` — 같은 값끼리 한 묶음 (확대 화면에서 ← → 로 이동)
+- `data-lb` — 같은 값끼리 한 묶음 (확대 화면에서 ← → 로 이동). 전시 slug 를 씁니다
 - `data-lb-cap` — 확대 화면 제목. 없으면 figcaption 을 씁니다
+- 목록(`projects.html`)의 카드에 적힌 **사진 장수 문구**도 함께 고쳐주세요
+
+새 사진의 톤은 기존 5장과 맞춰야 합니다 — 기준값은 CLAUDE.md 의 '전시 부스 사진의 톤' 참고.
 
 ## 올리실 때
 

@@ -35,6 +35,7 @@ account.html        # 내 정보·구매·이용권한 (noindex · 로그인 필
 api/account.js      # 내 정보 조회 — 토큰 검증 후 본인 것만
 supabase/schema-admin.sql # campaigns 표 + 캠페인 컬럼 + 집계 뷰
 assets/img/char-simri.png # 김심리 캐릭터 (Store 판매처 준비중 안내에 사용)
+exhibitions/*.html  # 전시별 상세 페이지 (/exhibitions/<slug>) — projects.html 에서 생성
 og.png              # 링크 미리보기 이미지 1200×630 (기본)
 og-store.png        # 링크 미리보기 — Store 탭 (굿즈)
 og-projects.png     # 링크 미리보기 — Projects 탭 (전시)
@@ -122,6 +123,30 @@ sitemap.xml
   크기가 달라도 이름·설명 줄이 나란히 맞습니다. 칸 높이를 줄이면 정렬이 깨집니다.
   휴대폰(≤440px)에서는 4칸을 유지하면 폭이 모자라 1.5배가 잘리므로 **2×2로 접힙니다.**
   같은 규칙이 `index.html`과 `about.html` 양쪽에 있습니다 — 함께 고치세요.
+
+### 전시는 목록(projects) + 상세(exhibitions/*) 두 층입니다
+`/projects` 는 전시 세 개를 카드로 보여주고, 카드를 누르면 **각 전시의 실제 페이지**로 갑니다.
+
+| 주소 | 파일 |
+|---|---|
+| `/projects` | `projects.html` — 카드 목록 |
+| `/exhibitions/busan-2025` | `exhibitions/busan-2025.html` |
+| `/exhibitions/seongsu-2025` | `exhibitions/seongsu-2025.html` |
+| `/exhibitions/squareone-2025` | `exhibitions/squareone-2025.html` |
+
+- 🚨 **주소가 `/projects/...` 가 아니라 `/exhibitions/...` 입니다.** `projects.html` 과
+  `projects/` 폴더가 같은 이름으로 겹치는 걸 피하려고 일부러 다른 이름을 썼습니다.
+  breadcrumb 은 그래도 `Home / Projects / 전시명` 입니다 (구조화 데이터가 관계를 알려줍니다).
+- 예전에는 사진을 **겹쳐 뜨는 창(lightbox)** 으로 보여줬습니다. 그 화면은 주소가 없어
+  검색에 잡히지 않았습니다. 그래서 전시마다 페이지를 따로 두었습니다.
+  lightbox 는 이제 **상세 페이지에서 사진 한 장을 크게 볼 때만** 씁니다 (`data-lb`).
+- 각 상세 페이지에는 `BreadcrumbList` + **`ExhibitionEvent`** 구조화 데이터가 있습니다.
+  🚨 **모르는 값은 넣지 마세요.** 날짜를 아는 건 성수 팝업뿐이라 나머지에는
+  `startDate` 를 넣지 않았습니다. 지어내면 검색결과에 틀린 날짜가 표시됩니다.
+- `og:image` 는 그 전시의 대표 사진(실제 파일)입니다. 1200×630 이 아니라 잘려 보이지만,
+  전시마다 다른 카드가 뜨는 편이 낫다고 판단했습니다.
+- **전시를 추가할 때**: 상세 페이지 하나를 만들고, `projects.html` 의 `.exlist` 에 카드를
+  더하고, `sitemap.xml` 에 주소를 넣으세요. 셋을 함께 고쳐야 합니다.
 
 ### 전시 부스 사진의 톤 (projects.html)
 `assets/img/exhibitions/` 의 **부스 운영사진 5장**은 서로 톤이 달라서 한 번 맞춰 두었습니다
