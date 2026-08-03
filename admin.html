@@ -104,6 +104,58 @@
   .rate{font-weight:800}
   .dim{color:var(--ink-faint)}
 
+  /* ───── 퍼널 ─────
+     단계마다 한 줄, 그 사이에 '직전 대비 몇 %가 남았는지'를 끼워 넣습니다.
+     막대 길이는 첫 단계(방문) 대비 비율입니다. */
+  .fn{margin-top:4px}
+  .fnrow{display:grid;grid-template-columns:150px 1fr 92px;align-items:center;gap:12px}
+  @media(max-width:620px){.fnrow{grid-template-columns:1fr;gap:4px}}
+  .fnrow .lab{font-size:12.5px;font-weight:700;line-height:1.35}
+  .fnrow .src{display:block;font-size:10.5px;font-weight:400;color:var(--ink-faint)}
+  .fnrow .track{position:relative;display:block;height:34px;background:var(--paper-2);
+    border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+  .fnrow .fill{display:block;height:100%;background:var(--blue);opacity:.85}
+  .fnrow.closed .fill{background:var(--line);opacity:1}
+  .fnrow .inbar{position:absolute;inset:0;display:flex;align-items:center;padding:0 11px;
+    font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .fnrow .oftop{text-align:right;font-size:12.5px;font-weight:700;color:var(--ink-soft);
+    font-variant-numeric:tabular-nums}
+  @media(max-width:620px){.fnrow .oftop{text-align:left}}
+  .fngap{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-faint);
+    padding:5px 0 5px 6px;margin-left:150px}
+  @media(max-width:620px){.fngap{margin-left:0}}
+  .fngap b{color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .fngap.worst{color:#a8412f}
+  .fngap.worst b{color:#a8412f}
+  .fngap .arw{color:var(--line);font-size:13px;line-height:1}
+  .fnclosed{font-size:11.5px;color:#6b5410;background:var(--gold-soft);border-radius:8px;
+    padding:2px 8px;display:inline-block}
+  .fncav{font-size:11.5px;color:#6b5410;line-height:1.6;margin:4px 0 0 150px}
+  @media(max-width:620px){.fncav{margin-left:0}}
+
+  /* 진단 · 스위치 */
+  .diag{background:var(--coral-soft);border:1.5px solid #F0C3BC;border-radius:14px;
+    padding:13px 15px;font-size:12.5px;line-height:1.7;margin-top:14px}
+  .diag b{color:#a8412f}
+  .sw{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px;margin-top:4px}
+  .swi{display:flex;align-items:center;gap:9px;background:var(--paper-2);border:1.5px solid var(--line);
+    border-radius:12px;padding:10px 12px;font-size:12.5px}
+  .swi .led{width:9px;height:9px;border-radius:50%;flex:0 0 auto;background:var(--ink-faint)}
+  .swi.on .led{background:var(--green)}
+  .swi.off .led{background:var(--ink-faint)}
+  .swi .st{margin-left:auto;font-size:11px;font-weight:700;color:var(--ink-faint)}
+  .swi.on .st{color:#2f7d61}
+
+  /* 개선 과제 */
+  .task{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);
+    font-size:12.5px;line-height:1.6}
+  .task:last-child{border-bottom:0}
+  .task .why{display:block;font-size:11.5px;color:var(--ink-faint);margin-top:1px}
+  .task .pill{flex:0 0 auto;margin-top:1px}
+  .pill.done{background:var(--green-soft);color:#2f7d61}
+  .pill.hold{background:var(--gold-soft);color:#6b5410}
+  .pill.todo{background:var(--coral-soft);color:#a8412f}
+
   .empty{text-align:center;color:var(--ink-faint);font-size:12.5px;padding:26px 10px;line-height:1.8}
   .spin{display:inline-block;width:15px;height:15px;border:2.5px solid var(--line);
     border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px}
@@ -158,6 +210,22 @@
       <div class="cards" id="kpiCards"></div>
       <div class="panel">
         <div id="dailyChart"></div>
+      </div>
+    </section>
+
+    <!-- 퍼널 -->
+    <section>
+      <h2 class="sec">퍼널 현황 <span class="hint">방문에서 결제까지, 단계마다 몇 %가 남는지</span></h2>
+      <div class="panel" id="funnelBody"></div>
+      <div class="panel">
+        <h2 class="sec" style="margin-bottom:12px">퍼널을 여는 스위치
+          <span class="hint">꺼져 있으면 그 단계는 구조적으로 0입니다</span></h2>
+        <div id="switchBody"></div>
+      </div>
+      <div class="panel">
+        <h2 class="sec" style="margin-bottom:6px">개선 과제
+          <span class="hint">손으로 관리하는 목록 — 항목이 바뀌면 admin.html 의 TASKS 를 고치세요</span></h2>
+        <div id="taskBody"></div>
       </div>
     </section>
 
@@ -300,6 +368,32 @@
     {key:'appSignups',  label:'앱 회원가입',     color:'var(--violet)', raw:'#8A7BC8'}
   ];
 
+  // 퍼널을 여는 스위치 — 서버가 켜짐/꺼짐만 내려줍니다 (키 값은 오지 않습니다)
+  var SWITCHES = [
+    {key:'ga4',            label:'GA4 방문 통계',      off:'앞 3단계를 셀 수 없습니다'},
+    {key:'emailCapture',   label:'이메일 알림신청',    off:'신청이 저장되지 않습니다'},
+    {key:'resendAudience', label:'출시 메일 명단',     off:'확인메일·출시 발송이 나가지 않습니다'},
+    {key:'contactForm',    label:'문의 폼',            off:'문의가 접수되지 않습니다'},
+    {key:'payments',       label:'결제',               off:'아직 판매를 시작하지 않았습니다'}
+  ];
+
+  // 퍼널 개선 과제 — 여기는 자동으로 갱신되지 않습니다.
+  // 항목을 끝내거나 새로 만들면 이 배열을 직접 고치세요.
+  var TASKS = [
+    {s:'done', t:'비밀번호 규칙 안내', w:'8자·숫자·특수문자를 조건별로 실시간 표시 (login.html)'},
+    {s:'done', t:'확인메일 재발송 (60초 쿨다운)', w:'가입 이탈이 가장 큰 지점'},
+    {s:'done', t:'“주소를 잘못 입력했어요” → 폼으로 되돌아가기', w:'오타 입력 후 막다른 길을 없앰'},
+    {s:'done', t:'이메일 도메인 오타 제안', w:'gmial.com → gmail.com'},
+    {s:'done', t:'빈 화면에 다음 행동 버튼', w:'구매·이용권한이 없을 때 갈 곳을 안내 (account.html)'},
+    {s:'done', t:'생년월일 수집 + 만 14세 미만 가입 차단', w:'개인정보보호법 제22조의2'},
+    {s:'done', t:'보호자(법정대리인) 동의 페이지', w:'민법 제5조 — 미성년 결제 전 /guardian'},
+    {s:'hold', t:'가입 이유를 로그인 화면에 보이기', w:'논의 후 진행하기로 미뤄둔 항목'},
+    {s:'hold', t:'구매 → 가입 연결', w:'checkout-result 에서 “계정에 연결하면 앱에서 열려요”'},
+    {s:'todo', t:'로그인·가입 화면에 전환 이벤트 심기', w:'지금은 가입 퍼널의 단계별 이탈을 측정할 수 없습니다'},
+    {s:'todo', t:'Supabase 이메일 확인(Confirm email) 켜기', w:'꺼져 있으면 남의 이메일로 가입해 구매 권한을 가로챌 수 있습니다'}
+  ];
+  var TASK_LABEL = {done:'적용됨', hold:'보류', todo:'미착수'};
+
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function n(v){ return (Number(v)||0).toLocaleString('ko-KR'); }
@@ -388,6 +482,9 @@
 
     document.getElementById('dailyChart').innerHTML = lineChart(d.daily, SERIES, 'day');
 
+    // ── 퍼널 ──
+    renderFunnel(d);
+
     // ── GA4 ──
     var ga = d.ga || {};
     var gaEl = document.getElementById('gaBody');
@@ -456,6 +553,101 @@
               + '<span class="dim">'+esc(shortDate(q.created_at))+'</span></div>';
           }).join('') + '</div>' : '<div class="empty">아직 없어요.</div>')
       + '</div></div>';
+  }
+
+  // ─────────────────────────────────────────────────────────
+  //  퍼널 — 단계 막대 + 사이사이 '직전 대비 몇 %가 남았는지'
+  //  값을 모르는 단계(GA4 미연결)는 0 으로 채우지 않고 '—' 로 둡니다.
+  //  기능이 꺼져 있어 0 인 단계는 이탈이 아니라 '아직 열지 않음' 입니다.
+  // ─────────────────────────────────────────────────────────
+  function renderFunnel(d){
+    var f = d.funnel || {};
+    var steps = f.steps || [];
+    var sw = d.switches || {};
+    var el = document.getElementById('funnelBody');
+
+    if (!steps.length){ el.innerHTML = '<div class="empty">퍼널을 그릴 데이터가 없어요.</div>'; return; }
+
+    // 방문자를 모르면 첫 단계 대비 비율을 못 내므로, 아는 값 중 가장 큰 것에 맞춰 그립니다.
+    var maxKnown = 1;
+    steps.forEach(function(s){ if (s.value != null && !s.closed) maxKnown = Math.max(maxKnown, s.value); });
+
+    var html = '<div class="fn">';
+    steps.forEach(function(s, i){
+      if (i){
+        var worst = f.bottleneck && f.bottleneck.to === s.label;
+        var txt;
+        if (s.closed) txt = '아직 열지 않은 단계라 이탈로 보지 않습니다';
+        else if (s.fromPrev == null) txt = '직전 단계를 몰라 비율을 낼 수 없습니다';
+        // 이탈 수는 '직전 단계에서 빠진 만큼'이므로 단위도 직전 단계의 것을 씁니다.
+        else txt = '직전 대비 <b>' + pct(s.fromPrev) + '</b>'
+                 + (s.lost ? ' · <b>' + n(s.lost) + steps[i-1].unit + '</b> 이탈' : '')
+                 + (worst ? ' — 여기가 가장 크게 샙니다' : '');
+        html += '<div class="fngap' + (worst ? ' worst' : '') + '">'
+              + '<span class="arw">&#9660;</span><span>' + txt + '</span></div>';
+      }
+      var known = s.value != null;
+      var ratio = s.closed ? null : (s.ofTop != null ? s.ofTop : (known ? s.value / maxKnown : null));
+      var w = ratio == null ? 0 : Math.max(s.value > 0 ? 2 : 0, ratio * 100);
+      html += '<div class="fnrow' + (s.closed ? ' closed' : '') + '">'
+        + '<div><span class="lab">' + esc(s.label)
+          + '<span class="src">' + esc(s.source) + '</span></span></div>'
+        + '<span class="track"><span class="fill" style="width:' + w.toFixed(1) + '%"></span>'
+          + '<span class="inbar">' + (known ? n(s.value) + esc(s.unit) : '—')
+          + (s.closed ? ' <span class="fnclosed">아직 열지 않음</span>' : '') + '</span></span>'
+        // 닫아둔 단계에 '방문의 0%' 를 적으면 다 빠져나간 것처럼 읽힙니다.
+        + '<div class="oftop">' + (s.closed || s.ofTop == null ? '<span class="dim">—</span>'
+            : '방문의 ' + pct(s.ofTop)) + '</div>'
+        + '</div>';
+      if (s.caveat) html += '<p class="fncav">' + esc(s.caveat) + '</p>';
+    });
+    html += '</div>';
+
+    // 진단 한 줄
+    if (!sw.ga4){
+      html += '<div class="warn"><b>GA4가 연결되지 않아 앞 3단계가 비어 있습니다.</b><br>'
+            + '방문자를 모르면 “몇 %가 남았는지”를 계산할 수 없어 비율을 지어내지 않고 비워둡니다.</div>';
+    } else if (f.bottleneck){
+      html += '<div class="diag">지금 가장 크게 새는 구간은 '
+            + '<b>' + esc(f.bottleneck.from) + ' → ' + esc(f.bottleneck.to) + '</b> 입니다. '
+            + '직전 단계의 <b>' + pct(f.bottleneck.rate) + '</b>만 넘어왔고 '
+            + '<b>' + n(f.bottleneck.lost) + esc(f.bottleneck.unit || '') + '</b>이 여기서 빠졌습니다.</div>';
+    } else {
+      html += '<p class="note">아직 이탈을 계산할 만큼 숫자가 쌓이지 않았습니다.</p>';
+    }
+
+    html += '<p class="note">앞 3단계는 GA4의 <b>사람 수</b>, 뒤 2단계는 Supabase의 <b>건수</b>입니다. '
+          + '단위가 달라 정확한 개인 추적이 아니라 <b>규모의 비교</b>로 읽어주세요.<br>'
+          + '앱 회원가입은 유입 경로가 기록되지 않아 이 퍼널에 넣지 않았습니다 — '
+          + '랜딩이 만든 가입인지 알 수 없기 때문입니다.</p>';
+
+    el.innerHTML = html;
+
+    // ── 스위치 ──
+    document.getElementById('switchBody').innerHTML = '<div class="sw">' + SWITCHES.map(function(x){
+      var on = Boolean(sw[x.key]);
+      return '<div class="swi ' + (on ? 'on' : 'off') + '" title="' + esc(on ? '' : x.off) + '">'
+        + '<i class="led"></i><span>' + esc(x.label) + '</span>'
+        + '<span class="st">' + (on ? '켜짐' : '꺼짐') + '</span></div>';
+    }).join('') + '</div>'
+      + (SWITCHES.filter(function(x){ return !sw[x.key]; }).length
+          ? '<p class="note">' + SWITCHES.filter(function(x){ return !sw[x.key]; }).map(function(x){
+              return '<b>' + esc(x.label) + '</b> — ' + esc(x.off);
+            }).join('<br>') + '</p>'
+          : '<p class="note">모두 켜져 있습니다.</p>');
+
+    // ── 개선 과제 ──
+    var order = {todo:0, hold:1, done:2};
+    var sorted = TASKS.slice().sort(function(a,b){ return order[a.s] - order[b.s]; });
+    var counts = {done:0, hold:0, todo:0};
+    TASKS.forEach(function(t){ counts[t.s]++; });
+    document.getElementById('taskBody').innerHTML =
+      '<p class="note" style="margin:0 0 8px">적용 ' + counts.done + ' · 보류 ' + counts.hold
+      + ' · 미착수 ' + counts.todo + '</p>'
+      + sorted.map(function(t){
+          return '<div class="task"><span class="pill ' + t.s + '">' + TASK_LABEL[t.s] + '</span>'
+            + '<span>' + esc(t.t) + '<span class="why">' + esc(t.w) + '</span></span></div>';
+        }).join('');
   }
 
   function card(label, value, color, spark){

@@ -96,6 +96,8 @@ export default async function handler(req, res) {
     ]);
 
     const campaigns = joinCampaigns(supa.campaigns, ga);
+    const switches = readSwitches(ga);
+    const funnel = buildFunnel(ga, supa, switches);
 
     return res.status(200).json({
       ok: true,
@@ -106,7 +108,9 @@ export default async function handler(req, res) {
       daily: supa.daily,
       recent: supa.recent,
       inquiryTypes: supa.inquiryTypes,
-      campaigns
+      campaigns,
+      switches,
+      funnel
     });
   } catch (err) {
     console.error('admin-stats error:', err);
@@ -284,10 +288,13 @@ async function loadGa4(since, until) {
       orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
       limit: 8
     }),
+    // 이벤트는 '몇 번'과 '몇 명'을 함께 받습니다.
+    // 퍼널은 사람 수로 세야 하므로 activeUsers 가 필요합니다 —
+    // 한 사람이 가격을 세 번 보면 eventCount 는 3, activeUsers 는 1 입니다.
     gaReport(token, {
       dateRanges: range,
       dimensions: [{ name: 'eventName' }],
-      metrics: [{ name: 'eventCount' }],
+      metrics: [{ name: 'eventCount' }, { name: 'activeUsers' }],
       orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
       limit: 20
     }),
@@ -320,7 +327,7 @@ async function loadGa4(since, until) {
     },
     pages: rows(pages).map(r => ({ path: dim(r, 0), views: met(r, 0), users: met(r, 1) })),
     channels: rows(channels).map(r => ({ name: dim(r, 0) || '(기타)', sessions: met(r, 0) })),
-    events: rows(events).map(r => ({ name: dim(r, 0), count: met(r, 0) })),
+    events: rows(events).map(r => ({ name: dim(r, 0), count: met(r, 0), users: met(r, 1) })),
     usersByPath: users
   };
 }
@@ -354,6 +361,78 @@ function joinCampaigns(list, ga) {
       conversionRate: visitors ? conversions / visitors : null
     };
   });
+}
+
+// ── 퍼널이 실제로 열려 있는지 ────────────────────────────────
+//
+//  퍼널 뒷단은 '사람이 안 와서' 가 아니라 '기능이 꺼져 있어서' 0 인 경우가
+//  많습니다. 그걸 이탈로 읽으면 엉뚱한 곳을 고치게 되므로, 스위치 상태를
+//  함께 내려보내 화면이 '아직 열지 않음' 으로 표시하게 합니다.
+//  ⚠️ 값이 아니라 켜짐/꺼짐만 내려보냅니다. 키 자체는 절대 내보내지 마세요.
+function readSwitches(ga) {
+  return {
+    emailCapture: Boolean(SUPABASE_URL && SERVICE_KEY),
+    resendAudience: Boolean(process.env.RESEND_API_KEY && process.env.RESEND_AUDIENCE_ID),
+    contactForm: Boolean(process.env.RESEND_API_KEY && process.env.FROM_EMAIL),
+    payments: process.env.PAYMENTS_ENABLED === 'true',
+    ga4: Boolean(ga && ga.available)
+  };
+}
+
+// ── 퍼널 ────────────────────────────────────────────────────
+//
+//  방문 → 가격 확인 → 문의 버튼 클릭 까지는 GA4 의 '사람 수',
+//  실제 접수 → 결제 는 Supabase 의 '건수' 입니다.
+//  단위가 다르므로 단계마다 출처를 함께 내려보내고, 화면에도 적습니다.
+//
+//  🚨 앱 회원가입은 이 퍼널에 넣지 않습니다. 앱 가입에는 유입 경로가
+//     기록되지 않아 랜딩에서 온 사람인지 알 수 없습니다. 넣으면 랜딩이
+//     만든 성과처럼 보입니다.
+function buildFunnel(ga, supa, sw) {
+  const has = Boolean(ga && ga.available);
+  const evUsers = {};
+  if (has) for (const e of ga.events || []) evUsers[e.name] = e.users;
+  const period = supa.totals.period;
+
+  const steps = [
+    { key: 'visit', label: '방문', source: 'GA4 · 활성 사용자', unit: '명',
+      value: has ? ga.totals.users : null },
+    { key: 'price', label: '가격 확인', source: 'GA4 · view_price', unit: '명',
+      value: has ? (evUsers.view_price || 0) : null },
+    { key: 'cta', label: '문의 버튼 클릭', source: 'GA4 · cta_click', unit: '명',
+      value: has ? (evUsers.cta_click || 0) : null },
+    // 문의 폼이 꺼져 있어도 알림신청은 들어오므로 '닫힘' 은 아닙니다.
+    // 절반만 막힌 상태라 caveat 로만 알립니다.
+    { key: 'receipt', label: '실제 접수', source: 'Supabase · 알림신청 + 문의', unit: '건',
+      value: period.subscribers + period.inquiries,
+      caveat: sw.contactForm ? null : '문의 폼이 꺼져 있어 이 숫자에는 알림신청만 들어 있습니다' },
+    { key: 'paid', label: '결제 완료', source: 'Supabase · orders(paid)', unit: '건',
+      value: period.orders,
+      closed: sw.payments ? null : '아직 판매를 시작하지 않았습니다' }
+  ];
+
+  const top = steps[0].value;
+  let prev = null;
+  for (const s of steps) {
+    s.ofTop = (top && s.value != null) ? s.value / top : null;
+    // 직전 단계를 모르거나 0이면 비율을 지어내지 않고 비웁니다.
+    s.fromPrev = (prev != null && prev > 0 && s.value != null) ? s.value / prev : null;
+    s.lost = (prev != null && s.value != null) ? Math.max(0, prev - s.value) : null;
+    prev = s.value;
+  }
+
+  // 가장 크게 새는 구간 — 닫아둔 단계는 이탈이 아니므로 제외합니다.
+  let worst = null;
+  for (let i = 1; i < steps.length; i++) {
+    const s = steps[i];
+    if (s.closed || s.fromPrev == null || !s.lost) continue;
+    if (!worst || s.fromPrev < worst.rate) {
+      worst = { from: steps[i - 1].label, to: s.label, rate: s.fromPrev,
+                lost: s.lost, unit: steps[i - 1].unit };
+    }
+  }
+
+  return { steps, bottleneck: worst };
 }
 
 function clampDays(v) {
