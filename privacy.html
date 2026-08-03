@@ -86,7 +86,7 @@
   /* ── breadcrumb ───────────────────────────────────────────
      지금 어디에 있는지 한 줄로 보여줍니다.
      탭 이름(Home/About/…)은 사이트 규칙대로 영어 그대로 둡니다 — data-en 을 붙이지 마세요. */
-  .crumb{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-top:14px;
+  .crumb{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-top:10px;
     font-size:12px;color:var(--ink-faint);line-height:1.6}
   .crumb a{color:var(--ink-soft);text-decoration:none;border-radius:6px;padding:2px 3px}
   .crumb a:hover{color:var(--blue-deep);text-decoration:underline;text-underline-offset:3px}
@@ -178,13 +178,13 @@
       <button type="button" data-lang="ko" class="on" aria-pressed="true">한국어</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
-
-    <nav class="crumb" aria-label="현재 위치">
-      <a href="/">Home</a>
-      <span class="sep" aria-hidden="true">/</span>
-      <span aria-current="page" data-en="Privacy Policy">개인정보처리방침</span>
-    </nav>
   </div>
+
+  <nav class="crumb" aria-label="현재 위치">
+    <a href="/">Home</a>
+    <span class="sep" aria-hidden="true">/</span>
+    <span aria-current="page" data-en="Privacy Policy">개인정보처리방침</span>
+  </nav>
 
   <main class="doc">
     <h1 data-en="Privacy Policy">개인정보처리방침</h1>

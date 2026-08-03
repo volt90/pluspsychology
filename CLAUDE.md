@@ -62,8 +62,26 @@ sitemap.xml
 
 ## 페이지 구성
 
-### 상단 탭 (Home / About / Contact)
-세 페이지가 같은 상단바 + 탭 내비게이션을 공유합니다 (`.topbar` → `nav.tabs`).
+### 상단 헤더 — 로고가 맨 왼쪽, 그 오른쪽에 탭
+다섯 페이지(index·about·projects·store·contact)가 같은 헤더를 공유합니다.
+**한 줄짜리 `<header class="siteheader">` 하나**이며, 안쪽 순서가 고정입니다:
+
+```
+[로고] [Home About Projects Store Contact] ······ [로그인] [한국어|EN]
+ .brand            nav.tabs                        .tbright
+```
+
+- 🚨 **헤더는 `.page` 바깥에 있습니다.** 띠(`.siteheader`)는 화면 끝까지 가고,
+  안쪽 `.hdr` 만 `--page` 폭으로 묶여 본문과 왼쪽 끝이 맞습니다.
+  그래서 좌우 여백(20px)을 `.hdr` 이 따로 갖고 있습니다.
+- 로고는 `flex:0 0 auto` 로 **항상 제일 왼쪽**, 오른쪽 도구는 `margin-left:auto` 로
+  항상 줄 끝입니다. 순서를 바꾸지 마세요.
+- 좁은 화면(≤760px)에서는 `flex-wrap` + `order` 로 **윗줄 = 로고·오른쪽 도구,
+  아랫줄 = 탭** 으로 접힙니다. 이때도 로고가 제일 왼쪽·제일 위입니다.
+- 헤더가 `position:sticky` 이므로 앵커 이동용 `scroll-margin-top:70px` 이
+  헤더 높이와 짝입니다. **헤더 높이를 바꾸면 이 값도 함께** 고치세요.
+- 옛 `.topbar` + `.tabsbar` 2단 구조는 없어졌습니다. 두 클래스는 이제
+  **탭이 없는 페이지(privacy·terms·checkout·login 등)에만** 남아 있습니다.
 
 | 탭 | 파일 | 내용 |
 |---|---|---|
@@ -499,8 +517,8 @@ consents  : { user_id, consent_type:'service', granted:true }
 | `--page` | `960px` | 화면 전체 폭 (`.page`) |
 | `--read` | `660px` | 글이 담긴 요소의 최대 폭 |
 
-- 🚨 **`--page` 를 페이지마다 다르게 두지 마세요.** 상단 탭바가 모든 페이지에 있어서,
-  값이 다르면 탭을 옮길 때 탭바 폭이 들썩입니다.
+- 🚨 **`--page` 를 페이지마다 다르게 두지 마세요.** 헤더 안쪽(`.hdr`)도 같은 값을 쓰므로,
+  값이 다르면 탭을 옮길 때 로고 위치와 헤더 폭이 들썩입니다.
 - 제목·본문·`.lede` 는 `--read` 로 묶여 가운데 정렬됩니다. 카드·그리드·사진은
   `--page` 폭을 그대로 씁니다. **컨테이너를 넓혔다고 글줄까지 길어지면 읽기 어려워집니다.**
 - `privacy` · `terms` 는 글이 전부이므로 `.doc` 자체를 `--read` 로 묶었습니다.
@@ -517,8 +535,12 @@ consents  : { user_id, consent_type:'service', granted:true }
 - 비교해 보기: `git diff layout/narrow-660 -- index.html`
 
 ## 페이지 위치 표시 (breadcrumb)
-상단바 아래에 `Home / 현재페이지` 한 줄이 있습니다. **홈에는 없습니다** (자기 자신이므로).
+헤더 바로 아래, **본문과 같은 왼쪽 끝에서 시작하는** `Home / 현재페이지` 한 줄입니다.
+**홈에는 없습니다** (자기 자신이므로).
 
+- 🚨 `<nav class="crumb">` 는 헤더 **바깥**, `.page` 의 첫 줄에 두세요.
+  헤더 안(`.tbright`·`.topbar`)에 들어가면 오른쪽 도구들과 같은 줄에 끼어
+  **오른쪽으로 밀립니다** (실제로 그렇게 들어가 있던 것을 고쳤습니다).
 - 탭이 있는 페이지(About·Projects·Store·Contact)는 **탭 이름 그대로 영어**입니다 —
   사이트 규칙대로 `data-en` 을 붙이지 마세요.
 - 약관·방침은 한글 이름이라 `data-en` 이 있습니다 (`이용약관` ↔ `Terms of Service`).
