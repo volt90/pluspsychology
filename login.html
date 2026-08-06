@@ -159,7 +159,10 @@
           <span class="unit"><input type="number" id="bm" inputmode="numeric" placeholder="3" min="1" max="12" aria-label="출생 월"><span>월</span></span>
           <span class="unit"><input type="number" id="bd" inputmode="numeric" placeholder="15" min="1" max="31" aria-label="출생 일"><span>일</span></span>
         </div>
-        <p class="hint" id="ageHint">만 나이에 따라 이용할 수 있는 기능이 달라집니다. 만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요.</p>
+        <!-- 입력한 생년월일로 계산한 만 나이는 화면에 띄우지 않습니다.
+             나이 판정 자체는 그대로 살아 있고(제출할 때 검사), 만 14세 미만이면
+             그때 사유를 알려줍니다. -->
+        <p class="hint">만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요.</p>
 
         <div class="consent">
           <input type="checkbox" id="agree">
@@ -221,9 +224,10 @@
     $('resetBtn').classList.toggle('hidden', signup);
     $('submitBtn').textContent = signup ? '가입하고 시작하기' : '로그인';
     $('pw').setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
-    $('lead').textContent = signup
-      ? '한 번 가입하면 앱과 웹에서 함께 쓸 수 있어요'
-      : '앱과 같은 계정으로 로그인합니다';
+    // 가입 화면에서는 안내 문구를 아예 감춥니다 (사용자 요청).
+    // 로그인 화면으로 돌아오면 다시 보입니다.
+    $('lead').textContent = signup ? '' : '앱과 같은 계정으로 로그인합니다';
+    $('lead').classList.toggle('hidden', signup);
     say('');
   }
   $('tabLogin').addEventListener('click', function(){ setMode('login'); });
@@ -287,21 +291,9 @@
   // 웹만 정확한 만 나이로 판정하면 앱과 결과가 갈릴 수 있습니다.
   function isTeen(birthYear){ return (new Date().getFullYear() - birthYear) < 19; }
 
-  function showAgeHint(){
-    var dt = birthDate();
-    var el = $('ageHint');
-    if (!dt){ el.textContent = '만 나이에 따라 이용할 수 있는 기능이 달라집니다. 만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요.';
-              el.style.color=''; return; }
-    var age = koreanAge(dt);
-    if (age < 14){ el.textContent = '만 ' + age + '세 — 만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요.';
-                   el.style.color='var(--coral)'; }
-    else if (age < 19){ el.textContent = '만 ' + age + '세 — 가입할 수 있어요. 결제할 때는 보호자 동의가 한 번 더 필요합니다.';
-                        el.style.color='var(--blue-deep)'; }
-    else { el.textContent = '만 ' + age + '세'; el.style.color='var(--ink-faint)'; }
-  }
-  ['by','bm','bd'].forEach(function(id){
-    $(id).addEventListener('input', showAgeHint);
-  });
+  // 🚨 입력하는 동안 만 나이를 띄우던 코드는 뺐습니다 (사용자 요청).
+  //    koreanAge 는 지우지 마세요 — 아래 가입 처리에서 만 14세 미만을
+  //    막고(개인정보보호법 제22조의2), 만 19세 미만 보호자 동의 판정에도 씁니다.
 
   // ── 이메일 오타 감지 ───────────────────────────────────
   var DOMAINS = ['gmail.com','naver.com','daum.net','hanmail.net','nate.com',
@@ -366,7 +358,8 @@
     // 개인정보보호법 제22조의2 — 만 14세 미만은 법정대리인 동의가 필요합니다.
     // 웹에서 그 절차를 받을 수 없으므로 가입을 막습니다.
     if (age < 14){
-      say('만 ' + age + '세는 보호자 동의가 필요해 가입할 수 없어요. 문의하기로 연락 주시면 안내해 드릴게요.','err');
+      // 계산한 만 나이는 문구에 넣지 않습니다 — 화면에 나이를 띄우지 않기로 했습니다.
+      say('만 14세 미만은 보호자 동의가 필요해 가입할 수 없어요. 문의하기로 연락 주시면 안내해 드릴게요.','err');
       $('by').focus(); return;
     }
     if (!$('agree').checked){ say('약관과 개인정보처리방침에 동의해 주세요.','err'); $('agree').focus(); return; }
@@ -548,7 +541,6 @@
       $('bm').value = lastSignup.dt.getMonth()+1;
       $('bd').value = lastSignup.dt.getDate();
       $('agree').checked = true;
-      showAgeHint();
     }
     $('em').focus(); $('em').select();
     say('주소를 고치고 다시 보내주세요.','');
