@@ -1,4 +1,6 @@
-/* 배경음악 — index / about / contact 공용
+/* 배경음악 — 공개 페이지 공용
+   곡은 페이지가 고릅니다 (window.KSW_BGM — 아래 상수 자리 참고).
+   갤러리는 방마다 곡이 다르고, 나머지 페이지는 랜딩 곡 하나를 함께 씁니다.
    ────────────────────────────────────────────────────────────────
    1) 끊김 없는 루프
       <audio loop> 는 끝에서 처음으로 되감을 때 브라우저마다 수십 ms 의
@@ -31,8 +33,18 @@
   if (window.__kswBgm) return;
   window.__kswBgm = true;
 
-  var SRC       = '/assets/bgm/landing-loop.mp3';
-  var LOOP      = 15.73771;   // 초 — 8마디 @ 122.000 BPM
+  // 곡은 페이지가 정합니다 — 이 파일을 부르기 전에 아래처럼 선언하면 그 곡을 씁니다.
+  //
+  //   <script>window.KSW_BGM = {src:'/assets/bgm/rooms/seru.mp3', loop:12.5};</script>
+  //   <script src="/assets/bgm/bgm.js" defer></script>
+  //
+  // 선언이 없으면 아래 기본값(랜딩 곡)을 씁니다. 그래서 기존 페이지는 그대로 둡니다.
+  // ※ 곡을 바꿀 때 loop 값(한 바퀴 길이)을 반드시 함께 고치세요. 파일만 바꾸면
+  //   이어붙인 자리가 어긋나 루프마다 "툭" 끊깁니다.
+  var DEF_SRC   = '/assets/bgm/landing-loop.mp3';
+  var CFG       = window.KSW_BGM || {};
+  var SRC       = CFG.src  || DEF_SRC;
+  var LOOP      = CFG.loop || 15.73771;   // 초 — 8마디 @ 122.000 BPM
   var GAIN      = 0.28;       // 배경음이라 낮게 (원본 대비 약 -11dB)
   var FADE      = 0.45;       // 켜고 끌 때 페이드 (초)
   var KEY_ON    = 'ksw_bgm';      // 켜짐/꺼짐 선택 (localStorage — 방문 사이 유지)
@@ -117,11 +129,17 @@
   // 멈춘 적 없는 것처럼 이어 붙입니다. 반대로 로딩이 오래 걸렸다면 이미
   // 이어지는 느낌은 깨진 뒤라, 굳이 한 바퀴 가까이 건너뛰지 않고 멈췄던
   // 자리에서 다시 시작합니다.
+  //
+  // ※ 이어 붙이는 건 같은 곡일 때만입니다. 갤러리는 방마다 곡이 다르고
+  //   한 바퀴 길이도 달라서, 앞 페이지의 위치를 그대로 가져다 쓰면 새 곡이
+  //   엉뚱한 자리에서 시작합니다 (에러가 나지 않아 알아채기 어렵습니다).
+  //   그래서 저장할 때 곡 이름을 함께 적어두고, 다르면 처음부터 켭니다.
   function resumeOffset() {
     try {
       var raw = sessionStorage.getItem(KEY_POS);
       if (!raw) return 0;
       var p = JSON.parse(raw);
+      if ((p.s || DEF_SRC) !== SRC) return 0;   // 다른 곡 → 처음부터
       var gap = Date.now() - p.t;
       if (!(gap >= 0) || gap > POS_TTL) return 0;
       var advance = gap <= MAX_ADVANCE ? gap / 1000 : 0;
@@ -137,7 +155,8 @@
   function savePos() {
     if (!playing) return;
     try {
-      sessionStorage.setItem(KEY_POS, JSON.stringify({ o: currentOffset(), t: Date.now() }));
+      sessionStorage.setItem(KEY_POS,
+        JSON.stringify({ o: currentOffset(), t: Date.now(), s: SRC }));
     } catch (e) {}
   }
 

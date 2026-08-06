@@ -27,36 +27,35 @@
 <noscript><img height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=2057112328550152&ev=PageView&noscript=1" alt=""></noscript>
 <!-- ════════════════════ Meta Pixel 끝 ════════════════════ -->
-<title>Store · 김심리월드</title>
+<title>아르의 방 · 김심리월드 갤러리</title>
 <meta name="theme-color" content="#FBF6EA">
-<meta name="description" content="김심리월드 굿즈 — 메모지·스티커·키링·엽서·손거울. 김심리월드 친구들을 굿즈로 만나보세요.">
-<link rel="canonical" href="https://www.pluspsychology.ai/store">
+<meta name="description" content="김심리월드 가상 갤러리 아르의 방. 가장 작은 전시실과 캐릭터 아르의 그림.">
+<link rel="canonical" href="https://www.pluspsychology.ai/rooms/ar">
 
 <!-- ══════════════════════════════════════════════════════════════
-     Open Graph · Twitter Card — 카카오톡·페이스북·슬랙 등에서
-     링크를 붙였을 때 보이는 미리보기 카드입니다.
-     ▸ og:image는 반드시 실제 파일의 절대 URL이어야 합니다.
-       base64(data:)는 크롤러가 읽지 못합니다.
-     ▸ 크롤러는 JS를 실행하지 않으므로 언어 전환(data-en)과 무관하게
-       항상 한국어 값이 쓰입니다. 문구를 고칠 때 함께 고치세요.
+     Open Graph · Twitter Card
+     ▸ og:image 는 반드시 실제 파일의 절대 URL 이어야 합니다.
+       base64(data:) 는 크롤러가 읽지 못합니다.
+     ▸ 크롤러는 JS 를 실행하지 않으므로 항상 한국어 값이 쓰입니다.
+       문구를 고칠 때 title·description 과 함께 고치세요.
      ══════════════════════════════════════════════════════════════ -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="김심리월드">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:locale:alternate" content="en_US">
-<meta property="og:url" content="https://www.pluspsychology.ai/store">
-<meta property="og:title" content="Store · 김심리월드">
-<meta property="og:description" content="김심리월드 굿즈 — 메모지·스티커·키링·엽서·손거울. 김심리월드 친구들을 굿즈로 만나보세요.">
-<meta property="og:image" content="https://www.pluspsychology.ai/og-store.png">
+<meta property="og:url" content="https://www.pluspsychology.ai/rooms/ar">
+<meta property="og:title" content="아르의 방 · 김심리월드 갤러리">
+<meta property="og:description" content="김심리월드 가상 갤러리 아르의 방. 가장 작은 전시실과 캐릭터 아르의 그림.">
+<meta property="og:image" content="https://www.pluspsychology.ai/og-gallery.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="김심리월드 굿즈 — 엽서·키링·메모지·손거울·스티커">
+<meta property="og:image:alt" content="김심리월드 가상 갤러리">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Store · 김심리월드">
-<meta name="twitter:description" content="김심리월드 굿즈 — 메모지·스티커·키링·엽서·손거울. 김심리월드 친구들을 굿즈로 만나보세요.">
-<meta name="twitter:image" content="https://www.pluspsychology.ai/og-store.png">
-<meta name="twitter:image:alt" content="김심리월드 굿즈 — 엽서·키링·메모지·손거울·스티커">
+<meta name="twitter:title" content="아르의 방 · 김심리월드 갤러리">
+<meta name="twitter:description" content="김심리월드 가상 갤러리 아르의 방. 가장 작은 전시실과 캐릭터 아르의 그림.">
+<meta name="twitter:image" content="https://www.pluspsychology.ai/og-gallery.png">
+<meta name="twitter:image:alt" content="김심리월드 가상 갤러리">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -211,6 +210,9 @@
   .panel{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;box-shadow:0 2px 0 rgba(43,38,32,.04),0 20px 40px -26px rgba(43,38,32,.28)}
   section{margin-top:clamp(46px,10vw,72px)}
   h1.head,h2.head{font-family:var(--sans);font-weight:800;font-size:clamp(21px,5.2vw,27px);line-height:1.45;letter-spacing:-.01em;margin-top:14px}
+  /* 이 페이지는 카드가 --page 폭을 다 쓰므로 제목도 --read 로 묶지 않습니다.
+     묶어 두면 제목만 안쪽으로 들어가 알약·카드와 왼쪽 끝이 어긋납니다. */
+  section > h1.head, section > h2.head{max-width:none;margin-left:0;margin-right:0}
 
   /* 형광펜 강조 — 원본 bio의 시그니처를 사이트 팔레트로 옮긴 것 */
   .mk{font-weight:700;background:linear-gradient(transparent 58%, var(--gold-soft) 0);padding:0 2px;border-radius:2px}
@@ -236,71 +238,183 @@
   footer .flinks a:hover{color:var(--blue-deep);text-decoration:underline}
   footer .fnote{font-size:11.5px;color:var(--ink-faint);letter-spacing:.03em;line-height:1.7}
   .heart{color:var(--coral)}
-  /* ---------- 갤러리 (굿즈) ----------
+  .gsub{font-family:var(--display);font-weight:400;font-size:clamp(17px,4.4vw,20px);
+        margin:34px 0 2px;color:var(--ink)}
+  /* ---------- 갤러리 (전시) ----------
      사진은 아직 없어 자리표시용 SVG 가 들어가 있습니다.
      실제 사진을 받으면 각 <img> 의 src 만 바꾸면 됩니다 —
      비율·자르기는 CSS 가 잡아주므로 원본 크기는 신경 쓰지 않아도 됩니다. */
-  .gsub{font-family:var(--display);font-weight:400;font-size:clamp(17px,4.4vw,20px);
-        margin:34px 0 2px;color:var(--ink)}
-  .gsub:first-of-type{margin-top:20px}
-  .glead{font-size:14px;color:var(--ink-soft);line-height:1.8;margin-top:10px}
-  /* 이 페이지는 굿즈 그리드가 --page 폭을 다 쓰므로, 제목과 리드문도
-     알약·그리드와 같은 왼쪽 끝에서 시작하게 둡니다.
-     읽기 폭(--read) 자체는 그대로라 긴 문장이 화면 끝까지 늘어나지는 않습니다. */
-  section > h1.head, section > h2.head, section > .glead{margin-left:0;margin-right:auto}
-
-  /* ---------- 워크북 구매 상자 ----------
-     Store에서 결제로 이어지는 유일한 자리입니다. */
-  .buybox{margin-top:18px;padding:26px 22px;text-align:center}
-  .bb-price{font-family:var(--display);font-size:clamp(30px,8vw,38px);line-height:1.2;color:var(--ink)}
-  .bb-price .won{font-size:.62em;margin-right:2px;color:var(--ink-soft)}
-  .bb-after{display:block;font-family:var(--sans);font-size:12.5px;font-weight:500;
-            color:var(--ink-faint);margin-top:6px}
-  .buybox .btn{margin-top:18px}
-  .bb-note{font-size:12.5px;color:var(--ink-faint);margin-top:14px;line-height:1.7}
   /* 항목이 1개든 6개든 카드 크기는 같게 — 3열 고정.
      개수에 따라 열을 바꾸면 스티커 1장이 메모지 3장보다 커집니다. */
   .grid{list-style:none;display:grid;gap:14px 12px;margin-top:16px;
         grid-template-columns:repeat(3,1fr);align-items:start}
   .gcard{margin:0}
-  /* 사진은 틀에 맞추지 않고 원래 비율 그대로 둡니다. 그래야 흰 여백이 생기지 않고,
-     모서리 라운드가 이미지 상자가 아니라 사진 자체에 걸립니다.
-     그래서 같은 줄이라도 사진 높이가 다를 수 있어 위쪽으로 정렬합니다.
-     (키링 6장은 파일 자체를 키링A와 같은 979×1024 로 맞춰뒀습니다) */
   .gcard img{width:100%;height:auto;display:block;border-radius:14px}
+  /* 전시 목록은 대표 사진 한 장만 크게 보여줍니다. 나머지 사진도 마크업에는
+     그대로 있어서, 자바스크립트가 없으면 전부 그냥 나열돼 보입니다. */
+  .grid.ex{grid-template-columns:1fr}
+  .grid.ex .gcard:not(.lead){display:none}
+  .grid.ex .lead figcaption{color:var(--blue-deep)}
   .gcard figcaption{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--ink-soft);
                     line-height:1.5;text-align:center}
   @media(max-width:560px){
     .grid{grid-template-columns:repeat(2,1fr);gap:12px 10px}
     .gcard figcaption{font-size:11.5px}
   }
-
-  /* ---------- 판매처 준비중 안내 ----------
-     굿즈 목록 아래, 푸터 바로 위. 스토어가 열리면 이 상자를 링크로 바꾸면 됩니다. */
-  .soonbox{margin-top:34px;padding:22px 24px;display:flex;align-items:center;gap:20px}
-  .soonchar{flex:0 0 auto;width:78px;height:auto;display:block;
-            filter:drop-shadow(0 6px 6px rgba(43,38,32,.14))}
-  .soontxt{min-width:0;flex:1 1 auto}   /* 남는 자리를 글이 차지해 캐릭터가 오른쪽 끝에 섭니다 */
-  .soonpill{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-weight:700;
-            font-size:11.5px;letter-spacing:.02em;color:#9A6E0B;background:var(--gold-soft);
-            border-radius:999px;padding:5px 11px}
-  .soonh{font-family:var(--display);font-weight:400;font-size:clamp(17px,4.4vw,20px);
-         color:var(--ink);margin-top:9px;line-height:1.45}
-  .soonp{font-size:13px;color:var(--ink-soft);margin-top:7px;line-height:1.75}
-  /* 휴대폰에서는 캐릭터를 글 위로 올립니다 — 옆에 두면 글줄이 너무 좁아집니다 */
-  @media(max-width:520px){
-    .soonbox{flex-direction:column;align-items:center;text-align:center;gap:12px;padding:22px 18px}
-    /* 세로로 쌓일 때는 캐릭터를 글 위로 — 아래에 두면 푸터와 붙어 보입니다 */
-    .soonchar{width:70px;order:-1}
+  @media(max-width:360px){
+    .grid{grid-template-columns:repeat(2,1fr)}
   }
+
+  /* ---------- 전시 목록 ----------
+     한 칸을 통째로 누르면 그 전시의 상세 페이지(/exhibitions/…)로 갑니다.
+     예전에는 겹쳐 뜨는 창(lightbox)으로 보여줬는데, 그 화면은 주소가 없어
+     검색에 잡히지 않았습니다. 그래서 전시마다 실제 페이지를 두었습니다. */
+  .exlist{list-style:none;display:grid;gap:16px;margin-top:20px}
+  @media(min-width:720px){.exlist{grid-template-columns:repeat(3,1fr)}}
+  .excard{display:flex;flex-direction:column;height:100%;text-decoration:none;color:inherit;
+          background:var(--surface);border:1.5px solid var(--line);border-radius:20px;overflow:hidden;
+          box-shadow:0 2px 0 rgba(43,38,32,.04),0 20px 40px -30px rgba(43,38,32,.3);
+          transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+  .excard:hover{transform:translateY(-2px);border-color:var(--blue);
+                box-shadow:0 4px 0 rgba(43,38,32,.05),0 26px 44px -28px rgba(43,38,32,.45)}
+  .excard:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+  .excard img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+  .exmeta{padding:16px 17px 18px;display:flex;flex-direction:column;gap:6px;flex:1 1 auto}
+  .exmeta h2{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.4;color:var(--ink)}
+  .exmeta p{font-size:12.5px;color:var(--ink-soft);line-height:1.6}
+  .exgo{margin-top:auto;padding-top:8px;font-size:12.5px;font-weight:700;color:var(--blue-deep)}
 
   @media (prefers-reduced-motion: reduce){
     *{scroll-behavior:auto!important}
     .rv{opacity:1!important;transform:none!important;transition:none!important}
-    .btn,.cline,.tabs a{transition:none!important}
+    .btn,.cline,.tabs a,.excard{transition:none!important}
   }
+
+  /* 말풍선 — about.html 의 시그니처 (굵은 잉크 테두리 + 골드 배경) */
+  .bubble{position:relative;max-width:330px;margin:20px auto 0;
+    background:var(--gold-soft);border:2.5px solid var(--ink);border-radius:18px;padding:12px 18px;
+    font-family:var(--display);font-weight:400;font-size:clamp(15px,4vw,17.5px);line-height:1.6}
+  .bubble::after{content:"";position:absolute;left:50%;bottom:-11px;width:16px;height:16px;
+    background:var(--gold-soft);border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);
+    transform:translateX(-50%) rotate(45deg);border-radius:0 0 4px 0}
+
+  /* 의료행위 아님 고지 — topics/*.html 과 같은 값. 지우지 마세요. */
+  .notice{margin-top:20px;padding:14px 16px;background:var(--blue-soft);border-radius:14px;
+          font-size:12.5px;color:#2d5c85;line-height:1.75}
+  .notice b{color:#1d4f77}
+
+  /* 이 페이지는 방·카드가 --page 폭을 다 쓰므로 소개문도 --read 로 묶지 않습니다.
+     묶어 두면 제목만 왼쪽 끝에 붙고 소개문은 안쪽으로 들어가 어긋나 보입니다
+     (projects.html 이 h1.head 에 같은 예외를 두고 있습니다). */
+  section > .lede{max-width:none;margin-left:0;margin-right:0}
+  .lede{font-size:clamp(14.5px,3.7vw,16.5px);color:var(--ink-soft);line-height:1.8;margin-top:12px}
+  /* ══════════════════════════════════════════════════════════════
+     전시실 — 배경 한 장 위에 액자를 겁니다.
+
+     🚨 액자 좌표는 전부 % 입니다 (--x / --y / --w).
+        px 로 잡으면 화면 폭이 바뀔 때 액자가 벽 밖으로 나갑니다.
+        .room 이 16/9 로 고정돼 있어서, % 로만 두면 폭이 320이든
+        1600이든 액자와 벽의 관계가 그대로 유지됩니다.
+
+     배경 그림이 아직 없어 CSS 로 벽·바닥·조명을 그려 두었습니다.
+     실제 배경(assets/img/gallery/room-<slug>.jpg)이 들어오면
+     .room-bg 가 이 위를 덮으므로 아래 CSS 는 그대로 둬도 됩니다.
+     파일이 없으면 onerror 가 그 <img> 를 지워서 벽이 그대로 보입니다.
+     ══════════════════════════════════════════════════════════════ */
+  .room{position:relative;width:100%;aspect-ratio:16/9;margin-top:20px;
+        border:1.5px solid var(--line);border-radius:20px;overflow:hidden;
+        background:
+          radial-gradient(78% 40% at 50% -6%, rgba(255,249,230,.92) 0%, rgba(255,249,230,0) 72%),
+          linear-gradient(180deg,
+            var(--wall-a) 0%, var(--wall-b) 72%,
+            var(--floor-a) 72%, var(--floor-b) 100%);
+        box-shadow:inset 0 -26px 46px -34px rgba(43,38,32,.65),
+                   0 2px 0 rgba(43,38,32,.04), 0 22px 44px -30px rgba(43,38,32,.34)}
+  /* 바닥과 벽이 만나는 자리에 걸레받이 한 줄 — 공간처럼 보이게 하는 건 이 선입니다 */
+  .room::after{content:"";position:absolute;left:0;right:0;top:72%;height:1.5px;
+               background:rgba(43,38,32,.16)}
+  .room-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+  .frame{position:absolute;left:var(--x);top:var(--y);width:var(--w);margin:0;z-index:1}
+  .frame img{width:100%;aspect-ratio:var(--ar,3/4);object-fit:contain;display:block;
+             background:#FFFDF7;padding:6%;
+             border:3px solid #C6A02E;border-radius:3px;
+             box-shadow:0 14px 28px -16px rgba(43,38,32,.85)}
+  /* 미술관 명패 — 액자 아래 작은 이름표 */
+  .frame figcaption{margin-top:5%;text-align:center;line-height:1.35;
+                    font-size:clamp(8.5px,1.08vw,11.5px);font-weight:700;color:var(--ink-soft);
+                    background:rgba(255,253,247,.92);border:1px solid var(--line);
+                    border-radius:6px;padding:3px 5px}
+
+  /* 좁은 화면 — 액자를 벽에 그대로 두면 손톱만 해집니다.
+     절대배치를 풀고 세로로 넘겨보는 그리드로 바꿉니다. 벽 색은 그대로 두어
+     '전시실 안'이라는 느낌은 남깁니다. */
+  @media(max-width:700px){
+    .room{aspect-ratio:auto;padding:16px 14px 18px;
+          display:grid;grid-template-columns:repeat(2,1fr);gap:16px 12px;align-items:start}
+    .room::after{display:none}
+    .room-bg{display:none}
+    .frame{position:static;left:auto;top:auto;width:auto}
+    .frame figcaption{font-size:11px;margin-top:8px}
+  }
+  @media(max-width:380px){
+    .room{grid-template-columns:1fr}
+  }
+
+  /* ── 도슨트 — 캐릭터가 방을 소개합니다 ──────────────────────
+     말풍선은 about.html 의 .bubble 을 그대로 쓰되, 옆에 세우므로
+     꼬리만 왼쪽을 보게 돌렸습니다. */
+  .docent{display:flex;align-items:flex-start;gap:14px;margin-top:24px}
+  .docent .dchar{width:clamp(62px,11vw,92px);height:auto;flex:0 0 auto;align-self:flex-end}
+  /* 한 줄짜리 대사가 화면 끝까지 늘어나면 말풍선처럼 안 보입니다 — 읽기 폭에 묶습니다 */
+  .docent .bubble{margin:0;max-width:var(--read);flex:0 1 auto}
+  .docent .bubble::after{left:-11px;top:26px;bottom:auto;
+    border-right:0;border-left:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);
+    transform:rotate(45deg);border-radius:0 0 0 4px}
+  @media(max-width:520px){
+    .docent{flex-direction:column;align-items:center}
+    .docent .dchar{align-self:center}
+    .docent .bubble::after{left:50%;top:auto;bottom:-11px;
+      border-left:0;border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);
+      transform:translateX(-50%) rotate(45deg);border-radius:0 0 4px 0}
+  }
+
+  /* ── 방 이동 ──────────────────────────────────────────────
+     주소가 있는 진짜 페이지 이동입니다 (검색에 잡히게 하려고). */
+  .roomnav{display:flex;align-items:stretch;gap:9px;margin-top:26px;flex-wrap:wrap}
+  .rnav{flex:1 1 0;min-width:132px;display:inline-flex;align-items:center;justify-content:center;
+        gap:6px;text-align:center;font-size:13px;font-weight:700;text-decoration:none;
+        color:var(--ink-soft);background:var(--surface);border:1.5px solid var(--line);
+        border-radius:14px;padding:12px 14px;min-height:48px;
+        transition:border-color .18s,color .18s,transform .18s}
+  .rnav:hover{border-color:var(--blue);color:var(--blue-deep);transform:translateY(-1px)}
+  .rnav:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+  .rnav-mid{background:var(--blue-soft);border-color:var(--blue-soft);color:var(--blue-deep)}
+
+  /* ── 방에 들어설 때 짧게 밝아집니다 ────────────────────────── */
+  .room{animation:roomin .5s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes roomin{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
+
+  /* 비전관 — 연도별 이야기 목록 */
+  .years{list-style:none;margin-top:18px;display:grid;gap:10px}
+  .years li{display:flex;gap:11px;align-items:flex-start;font-size:14px;line-height:1.75;
+            background:var(--surface);border:1.5px solid var(--line);border-radius:14px;
+            padding:13px 15px}
+  .years li::before{content:"";flex:0 0 auto;width:9px;height:9px;margin-top:8px;
+                    border-radius:50%;background:var(--gold)}
+  .draft{margin-top:18px;padding:13px 15px;background:var(--gold-soft);
+         border:1.5px solid #E8D49A;border-radius:14px;
+         font-size:12.5px;color:#6B551C;line-height:1.75}
+  .draft b{color:#4E3D10}
+
+  @media (prefers-reduced-motion: reduce){
+    .room{animation:none!important}
+    .rnav{transition:none!important}
+  }
+
 </style>
 <link rel="stylesheet" href="/assets/bgm/bgm.css">
+<link rel="stylesheet" href="/assets/lightbox/lightbox.css">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/assets/img/favicon-512.png" sizes="512x512">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -318,8 +432,14 @@
     {
       "@type": "ListItem",
       "position": 2,
-      "name": "Store",
-      "item": "https://www.pluspsychology.ai/store"
+      "name": "Gallery",
+      "item": "https://www.pluspsychology.ai/gallery"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "아르의 방",
+      "item": "https://www.pluspsychology.ai/rooms/ar"
     }
   ]
 }
@@ -334,9 +454,9 @@
       <nav class="tabs" aria-label="Sections">
         <a href="/">Home</a>
         <a href="/about">About</a>
-        <a href="/gallery">Gallery</a>
+        <a href="/gallery" class="on" aria-current="page">Gallery</a>
         <a href="/projects">Projects</a>
-        <a href="/store" class="on" aria-current="page">Store</a>
+        <a href="/store">Store</a>
         <a href="/contact">Contact</a>
       </nav>
       <div class="tbright">
@@ -357,95 +477,59 @@
     <nav class="crumb" aria-label="현재 위치">
       <a href="/">Home</a>
       <span class="sep" aria-hidden="true">/</span>
-      <span aria-current="page">Store</span>
+      <a href="/gallery">Gallery</a>
+      <span class="sep" aria-hidden="true">/</span>
+      <span aria-current="page" data-en="Ar's Room">아르의 방</span>
     </nav>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         워크북 — 출시 전까지 숨겨둡니다.
-
-         되살리는 법: 바로 아래 '숨김시작' 줄과 저 아래 '숨김끝' 줄,
-         이 두 줄만 통째로 지우면 그대로 다시 보입니다.
-         안쪽 내용은 손대지 마세요.
-
-         이 안의 버튼이 결제 페이지(checkout.html)로 가는 사이트 안의
-         유일한 입구입니다. 숨겨 두는 동안에는 링크로 닿을 길이 없으므로
-         메타픽셀의 Purchase 전환도 계속 0 으로 남습니다.
-         ═══════════════════════════════════════════════════════════ -->
-    <!-- 숨김시작
     <section>
-      <span class="eyebrow rv" data-en="Workbook">워크북</span>
-      <h2 class="head rv" data-en="A User&rsquo;s Manual<br>for Your Mind">마음 사용 설명서</h2>
-      <p class="glead rv" data-en="A psychology-based workbook for looking at your feelings and days,<br>and building the strength to understand and care for yourself.">심리학을 기반으로 내 감정과 하루를 살펴보며<br>나를 이해하고 돌보는 힘을 기르는 워크북</p>
-      <div class="buybox panel rv">
-        <div class="bb-price"><span class="won">₩</span>16,900<span class="bb-after" data-en="Shipping not included &middot; per copy">배송비 별도 · 1권 기준</span></div>
-        <a class="btn btn-primary" href="/checkout"><span data-en="Ask about buying">구매 문의하기</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
-        <p class="bb-note" data-en="Domestic delivery only for now. If you have questions before ordering, <a href='/contact'>send us a message</a>.">현재는 국내 배송만 가능합니다. 주문 전 궁금한 점은 <a href="/contact">문의하기</a>로 알려주세요.</p>
-      </div>
-    </section>
-    숨김끝 -->
+      <span class="eyebrow rv" data-en="Room four">네 번째 방</span>
+      <h1 class="head rv" data-en="Ar's Room">아르의 방</h1>
+      <p class="lede rv" data-en="Small, but the one that stays to the end. The smallest room, and the longest visit.">작지만 끝까지 남아 있는 쪽. 가장 작은 방이자 가장 오래 머무는 방.</p>
 
-    <section>
-      <span class="eyebrow rv" data-en="Things we made">만든 것들</span>
-      <h1 class="head rv" data-en="Goods">굿즈</h1>
-      <p class="glead rv" data-en="Meet the Kim Simri World friends as goods.">김심리월드 친구들을 굿즈로 만나보세요.</p>
-      <div class="rv">
-        <h2 class="gsub" data-en="Notepads">메모지</h2>
-        <ul class="grid">
-          <li class="gcard"><figure><img src="/assets/img/goods/memo-a.jpg" alt="메모지A" data-en-alt="Notepad A" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Notepad A">메모지A</figcaption></figure></li>
-          <li class="gcard"><figure><img src="/assets/img/goods/memo-b.jpg" alt="메모지B" data-en-alt="Notepad B" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Notepad B">메모지B</figcaption></figure></li>
-          <li class="gcard"><figure><img src="/assets/img/goods/memo-c.jpg" alt="메모지C" data-en-alt="Notepad C" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Notepad C">메모지C</figcaption></figure></li>
-        </ul>
-        <h2 class="gsub" data-en="Stickers">스티커</h2>
-        <ul class="grid">
-          <li class="gcard"><figure><img src="/assets/img/goods/sticker-a.jpg" alt="스티커A" data-en-alt="Sticker A" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Sticker A">스티커A</figcaption></figure></li>
-        </ul>
-        <h2 class="gsub" data-en="Keyrings">키링</h2>
-        <ul class="grid">
-          <li class="gcard"><figure><img src="/assets/img/goods/keyring-a.jpg" alt="키링A" data-en-alt="Keyring A" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Keyring A">키링A</figcaption></figure></li>
-          <li class="gcard"><figure><img src="/assets/img/goods/keyring-b.jpg" alt="키링B" data-en-alt="Keyring B" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Keyring B">키링B</figcaption></figure></li>
-          <li class="gcard"><figure><img src="/assets/img/goods/keyring-c.jpg" alt="키링C" data-en-alt="Keyring C" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Keyring C">키링C</figcaption></figure></li>
-          <li class="gcard"><figure><img src="/assets/img/goods/keyring-d.jpg" alt="키링D" data-en-alt="Keyring D" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Keyring D">키링D</figcaption></figure></li>
-          <li class="gcard"><figure><img src="/assets/img/goods/keyring-e.jpg" alt="키링E" data-en-alt="Keyring E" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Keyring E">키링E</figcaption></figure></li>
-          <li class="gcard"><figure><img src="/assets/img/goods/keyring-f.jpg" alt="키링F" data-en-alt="Keyring F" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Keyring F">키링F</figcaption></figure></li>
-        </ul>
-        <h2 class="gsub" data-en="Postcards">엽서</h2>
-        <ul class="grid">
-          <li class="gcard"><figure><img src="/assets/img/goods/postcard-a.png" alt="엽서A" data-en-alt="Postcard A" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Postcard A">엽서A</figcaption></figure></li>
-          <li class="gcard"><figure><img src="/assets/img/goods/postcard-b.png" alt="엽서B" data-en-alt="Postcard B" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Postcard B">엽서B</figcaption></figure></li>
-        </ul>
-        <h2 class="gsub" data-en="Hand mirrors">손거울</h2>
-        <ul class="grid">
-          <li class="gcard"><figure><img src="/assets/img/goods/mirror-a.jpg" alt="손거울A" data-en-alt="Hand mirror A" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Mirror A">손거울A</figcaption></figure></li>
-          <li class="gcard"><figure><img src="/assets/img/goods/mirror-b.jpg" alt="손거울B" data-en-alt="Hand mirror B" loading="lazy"
-                 onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'"><figcaption data-en="Mirror B">손거울B</figcaption></figure></li>
-        </ul>
-      </div>
-
-      <!-- 판매처 안내 — 스마트스토어가 열리면 이 상자를 스토어 링크로 바꾸세요 -->
-      <div class="soonbox panel rv">
-        <div class="soontxt">
-          <span class="soonpill" data-en="Coming soon">준비중</span>
-          <p class="soonh" data-en="Our Naver Smart Store is being set up.">네이버 스마트스토어 준비중입니다.</p>
-          <p class="soonp" data-en="You&rsquo;ll be able to buy the goods once the store opens.">굿즈는 스토어가 열리는 대로 만나보실 수 있어요.</p>
-        </div>
-        <img class="soonchar" src="/assets/img/char-simri.png" alt="김심리 캐릭터가 수첩을 들고 준비하는 모습"
-             data-en-alt="Simri getting things ready with a notepad" loading="lazy"
+      <div class="docent rv">
+        <img class="dchar" src="/assets/img/gallery/ar.png" alt="아르의 방 도슨트 캐릭터"
+             data-en-alt="Docent character for Ar's Room" loading="lazy"
              onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
+        <p class="bubble" data-en="Small does not mean absent. I have been here the whole time.">작다고 없는 건 아니에요. 여기 계속 있었어요.</p>
       </div>
+
+      <div class="room" style="--wall-a:#E9EBDD;--wall-b:#DBDEC9;--floor-a:#B4B99C;--floor-b:#9AA083">
+        <img class="room-bg" src="/assets/img/gallery/room-ar.jpg" alt="" aria-hidden="true"
+             onerror="this.remove()">
+        <figure class="frame" style="--x:10%;--y:14%;--w:16%;--ar:3/4"
+                data-lb="room-ar" data-lb-cap="아르">
+          <img src="/assets/img/gallery/ar.png" alt="캐릭터 아르" data-en-alt="The character Ar" loading="lazy"
+               onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
+          <figcaption data-en="Ar">아르</figcaption>
+        </figure>
+        <figure class="frame" style="--x:31%;--y:10%;--w:20%;--ar:1/1"
+                data-lb="room-ar" data-lb-cap="준비 중">
+          <img src="/assets/img/placeholder.svg" alt="아직 걸리지 않은 액자" data-en-alt="An empty frame, waiting" loading="lazy"
+               onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
+          <figcaption data-en="Coming soon">준비 중</figcaption>
+        </figure>
+        <figure class="frame" style="--x:55%;--y:14%;--w:18%;--ar:4/3"
+                data-lb="room-ar" data-lb-cap="준비 중">
+          <img src="/assets/img/placeholder.svg" alt="아직 걸리지 않은 액자" data-en-alt="An empty frame, waiting" loading="lazy"
+               onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
+          <figcaption data-en="Coming soon">준비 중</figcaption>
+        </figure>
+        <figure class="frame" style="--x:77%;--y:17%;--w:15%;--ar:3/4"
+                data-lb="room-ar" data-lb-cap="준비 중">
+          <img src="/assets/img/placeholder.svg" alt="아직 걸리지 않은 액자" data-en-alt="An empty frame, waiting" loading="lazy"
+               onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
+          <figcaption data-en="Coming soon">준비 중</figcaption>
+        </figure>
+      </div>
+
+      <div class="notice" data-en="<b>The gallery is part of an educational brand world.</b> Nothing here is medical practice, diagnosis or psychotherapy, and it does not replace professional treatment or counselling. If you are struggling, please speak with a psychiatrist or a qualified clinical psychologist."><b>이 갤러리는 자기 이해를 돕는 브랜드 세계관의 일부입니다.</b> 의료행위·진단·심리치료가 아니며, 전문적인 치료나 상담을 대체하지 않습니다. 지금 어려움이 크다면 정신건강의학과 전문의나 자격을 갖춘 임상심리전문가와 상의해 주세요.</div>
+
+      <nav class="roomnav" aria-label="전시실 이동" data-en-aria="Move between rooms">
+        <a class="rnav" href="/rooms/ruby" data-en="&larr; Ruby's Room">&larr; 루비의 방</a>
+        <a class="rnav rnav-mid" href="/gallery" data-en="Back to the lobby">로비로</a>
+        <a class="rnav" href="/rooms/vision-2031" data-en="Five years on — 2031 &rarr;">5년 후 — 2031 &rarr;</a>
+      </nav>
     </section>
 
     <footer>
@@ -478,8 +562,8 @@
     //    한국어 화면에서도 영어 이름 그대로 유지됩니다.
     // ─────────────────────────────────────────────────────────
     var TITLE = {
-      ko: 'Store · 김심리월드',
-      en: 'Store · Kim Simri World'
+      ko: '아르의 방 · 김심리월드 갤러리',
+      en: 'Ar\'s Room · Kim Simri World Gallery'
     };
     var nodes    = Array.prototype.slice.call(document.querySelectorAll('[data-en]'));
     var altNodes = Array.prototype.slice.call(document.querySelectorAll('[data-en-alt]'));
@@ -527,8 +611,22 @@
       document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !menu.hidden){ shut(); trig.focus(); } });
     })();
   })();
+    if (typeof gtag === 'function') gtag('event', 'gallery_room_view', {room: 'ar'});
 </script>
-<!-- 배경음악 — 전 페이지 공용. 페이지를 넘어가도 재생 위치가 이어집니다 -->
+<!-- ══════════════════════════════════════════════════════════════
+     배경음악 — 이 방의 곡입니다.
+
+     이 방에 넣을 곡:  /assets/bgm/rooms/ar.mp3
+     아직 그 파일이 없어서 랜딩 곡을 대신 가리키고 있습니다.
+     mp3 를 넣은 뒤 아래 src 를 위 경로로 바꾸세요.
+
+     🚨 곡을 바꿀 때 loop(한 바퀴 길이, 초) 도 반드시 함께 고치세요.
+        파일만 바꾸면 이어붙인 자리가 어긋나 루프마다 "툭" 끊깁니다.
+        지금 값 15.73771 은 랜딩 곡(8마디 @122BPM) 전용입니다.
+     ══════════════════════════════════════════════════════════════ -->
+<script>window.KSW_BGM = {src:'/assets/bgm/landing-loop.mp3', loop:15.73771};</script>
 <script src="/assets/bgm/bgm.js" defer></script>
+<!-- 사진 클릭 확대 — 이 태그가 없으면 액자를 눌러도 아무 일도 일어나지 않습니다 -->
+<script src="/assets/lightbox/lightbox.js" defer></script>
 </body>
 </html>

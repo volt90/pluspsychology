@@ -36,6 +36,10 @@ api/account.js      # 내 정보 조회 — 토큰 검증 후 본인 것만
 supabase/schema-admin.sql # campaigns 표 + 캠페인 컬럼 + 집계 뷰
 assets/img/char-simri.png # 김심리 캐릭터 (Store 판매처 준비중 안내에 사용)
 exhibitions/*.html  # 전시별 상세 페이지 (/exhibitions/<slug>) — projects.html 에서 생성
+gallery.html        # Gallery 탭 — 가상 갤러리 로비 (/gallery)
+rooms/*.html        # 전시실 6개 (/rooms/<slug>) — 캐릭터 4 + 비전관 2
+assets/img/gallery/ # 갤러리 그림·전시실 배경 (README.md 에 파일명 표가 있습니다)
+og-gallery.png      # 링크 미리보기 — Gallery 탭
 topics.html         # 마음 이야기 허브 (/topics)
 topics/*.html       # 키워드별 랜딩페이지 (/topics/<slug>) — index.html 에서 생성
 og.png              # 링크 미리보기 이미지 1200×630 (기본)
@@ -67,12 +71,13 @@ sitemap.xml
 ## 페이지 구성
 
 ### 상단 헤더 — 로고가 맨 왼쪽, 그 오른쪽에 탭
-다섯 페이지(index·about·projects·store·contact)가 같은 헤더를 공유합니다.
+**탭이 있는 페이지 22장**이 같은 헤더를 공유합니다 —
+index·about·gallery·projects·store·contact·topics + `rooms/*`(6) + `exhibitions/*`(3) + `topics/*`(6).
 **한 줄짜리 `<header class="siteheader">` 하나**이며, 안쪽 순서가 고정입니다:
 
 ```
-[로고] [Home About Projects Store Contact] ······ [로그인] [🌐 한국어 ⌄]
- .brand            nav.tabs                        .tbright
+[로고] [Home About Gallery Projects Store Contact] ······ [로그인] [🌐 한국어 ⌄]
+ .brand              nav.tabs                              .tbright
 ```
 
 - 🚨 **헤더는 `.page` 바깥에 있습니다.** 띠(`.siteheader`)는 화면 끝까지 가고,
@@ -91,13 +96,21 @@ sitemap.xml
 |---|---|---|
 | Home | `index.html` | 워크북 랜딩 (기존 페이지 그대로) |
 | About | `about.html` | 김심리월드 브랜드 소개 (원본 `김심리월드_bio.html` 내용 재배치) |
+| Gallery | `gallery.html` | 가상 갤러리 로비 → 전시실 `rooms/*` |
+| Projects | `projects.html` | 다녀온 오프라인 전시 → 상세 `exhibitions/*` |
+| Store | `store.html` | 굿즈 |
 | Contact | `contact.html` | 문의 폼 |
 
-> ⚠️ **탭 이름은 한국어 화면에서도 영어(Home/About/Contact)로 고정입니다.**
+> ⚠️ **탭 이름은 한국어 화면에서도 영어(Home/About/Gallery…)로 고정입니다.**
 > 그래서 `nav.tabs`의 `<a>`에는 **`data-en`을 붙이지 않았습니다.** 붙이는 순간
 > 언어 전환 JS가 문구를 바꿔치기하므로, 번역을 추가하지 마세요.
 > 활성 탭에는 `class="on"` + `aria-current="page"` 를 둡니다.
-> 탭은 세 파일에 각각 복사돼 있으므로 **항목을 추가·변경하면 세 파일을 함께** 고치세요.
+> 🚨 **탭 마크업은 22개 파일에 각각 복사돼 있습니다. 항목을 더하거나 바꾸면 22곳을 함께** 고치세요.
+> 빠뜨린 곳이 없는지는 이렇게 셉니다:
+> `grep -lc 'href="/gallery"' *.html rooms/*.html exhibitions/*.html topics/*.html | wc -l`
+>
+> **Gallery 와 Projects 는 다릅니다.** Projects 는 실제로 다녀온 오프라인 전시 기록이고,
+> Gallery 는 온라인에만 있는 상설 전시입니다. 둘을 합치지 마세요.
 
 ### Home(index.html) 섹션 순서 (고정)
 히어로 → 문제 정의 → 해결 방법(3단계) → 가격 → 증거 → CTA(이메일 수집 + 문의)
@@ -196,6 +209,62 @@ sitemap.xml
 - 🚨 **`og-projects.png` 안에도 같은 사진 3장이 들어 있습니다.** 사진 톤을 다시 바꾸면
   이 카드도 함께 고치세요. 안 그러면 링크 미리보기만 옛 톤으로 남습니다.
 
+### 가상 갤러리 — 로비(gallery) + 전시실(rooms/*) 두 층
+`/gallery` 가 방 여섯 개를 카드로 보여주고, 카드를 누르면 **각 방의 실제 페이지**로 갑니다.
+전시를 `projects` + `exhibitions/*` 로 쪼갠 것과 같은 구조이고, 같은 이유입니다 —
+겹쳐 뜨는 창은 주소가 없어 검색에 안 잡힙니다.
+
+| 주소 | 파일 | 방 |
+|---|---|---|
+| `/gallery` | `gallery.html` | 로비 |
+| `/rooms/simri` · `/rooms/seru` · `/rooms/ruby` · `/rooms/ar` | `rooms/*.html` | 캐릭터 넷 |
+| `/rooms/vision-2031` · `/rooms/vision-2036` | `rooms/vision-*.html` | 5년 후 · 10년 후 예상도 |
+
+- 🚨 **주소가 `/gallery/...` 가 아니라 `/rooms/...` 입니다.** `gallery.html` 과
+  `gallery/` 폴더가 겹치면 `cleanUrls` 가 꼬입니다 (`projects` ↔ `exhibitions` 와 같은 회피).
+  breadcrumb 은 그래도 `Home / Gallery / 방 이름` 입니다.
+- 방은 **배경 한 장 + 그 위에 절대배치된 액자**입니다.
+  🚨 **액자 좌표(`--x`·`--y`·`--w`)는 반드시 `%`.** px 로 바꾸면 화면 폭이 달라질 때
+  액자가 벽 밖으로 나갑니다. `.room` 이 `16/9` 로 고정돼 있어 % 로만 두면 안전합니다.
+- **≤700px 에서는 절대배치를 풀고 2열 그리드로 접힙니다.** 좁은 화면에서 액자를
+  벽에 그대로 두면 손톱만 해지기 때문입니다. 벽 색은 그대로 두어 전시실 느낌은 남깁니다.
+- 배경 그림이 아직 없어 **CSS 로 벽·바닥·조명**을 그려 두었습니다. 실제 배경을
+  `assets/img/gallery/room-<slug>.jpg` 로 넣으면 `.room-bg` 가 그 위를 덮습니다
+  (`onerror="this.remove()"` 라 파일이 없어도 깨지지 않습니다). **16:9 가 아니면 잘립니다.**
+- 액자 확대는 `assets/lightbox/lightbox.js` 의 `data-lb` 를 그대로 씁니다.
+  🚨 **자리표시(`placeholder.svg`)만 있는 액자는 눌러도 열리지 않습니다** — 일부러 그렇습니다.
+- 캐릭터 그림은 `about.html` 의 base64 를 파일로 꺼낸 사본입니다.
+  **캐릭터를 바꾸면 `about.html` 과 `assets/img/gallery/` 둘 다** 고치세요.
+  자세한 표는 [assets/img/gallery/README.md](assets/img/gallery/README.md).
+- 🚨 **비전관(`vision-*`)은 문구를 조심해야 합니다.** 매출·투자·수익 전망처럼 읽히면
+  약속이 됩니다. "무엇을 만들고 싶은가" 라는 브랜드 비전의 언어로만 쓰고,
+  `.draft` 상자(바람이지 약속이 아니라는 고지)를 **지우지 마세요.**
+  구조화 데이터는 `BreadcrumbList` 만 넣습니다 — `Event` 류를 붙이면 검색결과에
+  있지도 않은 일정이 표시됩니다 (`exhibitions/*` 에서 날짜를 안 넣은 것과 같은 원칙).
+
+**방을 추가할 때는 네 곳을 함께** 고칩니다:
+방 파일 한 장 복사 → `gallery.html` 의 `.exlist` 에 카드 → 앞뒤 방의 `.roomnav` 링크 →
+`sitemap.xml`. (원래 이 7장은 생성 스크립트로 한 번에 찍어냈습니다. `topics/*` 와 같은 방식으로,
+스크립트는 저장소에 두지 않고 결과 HTML 만 커밋했습니다.)
+
+### 배경음악은 페이지가 곡을 고릅니다
+`assets/bgm/bgm.js` 를 부르기 **전에** 아래를 두면 그 곡을 씁니다. 선언이 없으면 랜딩 곡입니다.
+
+```html
+<script>window.KSW_BGM = {src:'/assets/bgm/rooms/seru.mp3', loop:12.5};</script>
+<script src="/assets/bgm/bgm.js" defer></script>
+```
+
+- 방 = 페이지라서 **페이지를 옮기면 곡도 바뀝니다.** 크로스페이드 같은 건 없습니다.
+- 🚨 **곡을 바꿀 때 `loop`(한 바퀴 길이, 초)도 반드시 함께** 고치세요.
+  파일만 바꾸면 이어붙인 자리가 어긋나 루프마다 "툭" 끊깁니다.
+- 🚨 **존재하지 않는 파일을 가리키지 마세요.** 불러오기에 실패하면 스피커 단추가
+  통째로 비활성화돼 소리가 하나도 안 납니다. 그래서 **지금은 일곱 장 모두 랜딩 곡을
+  가리키고 있고**, 넣을 자리는 각 파일 아래쪽 주석에 적어 두었습니다.
+- 재생 위치는 `sessionStorage` 로 페이지 사이를 잇는데, **곡이 다르면 처음부터** 켭니다
+  (`bgm.js` 의 `resumeOffset`). 이걸 빼면 앞 방의 위치가 길이가 다른 새 곡에 적용돼
+  엉뚱한 자리에서 시작합니다 — 에러가 안 나서 알아채기 어렵습니다.
+
 ## 다국어 (한/영 토글)
 - 상단 우측 **`🌐 한국어 ⌄` 버튼 → 누르면 목록(한국어 / English)이 펼쳐집니다.**
   - 접힌 버튼(`.lgtrig`)의 글자는 **지금 언어 이름**입니다. `setLang` 이 `.lgnow` 를 갱신합니다.
@@ -221,8 +290,8 @@ sitemap.xml
 | Meta Pixel | ✅ 완료 | `2057112328550152` — 공개 페이지 전부 + checkout·confirm |
 | 네이버 전환추적 | ⏳ 미완 | `YOUR_NAVER_KEY`, `YOUR_DOMAIN` 교체 필요 — **index.html + contact.html** |
 
-> - **GA4**: 공개 페이지 8개 (index·about·projects·store·contact·exhibitions/*)
-> - **Meta Pixel**: 위 8개 + privacy·terms·checkout·checkout-result·confirm
+> - **GA4**: 공개 페이지 (index·about·gallery·rooms/*·projects·store·contact·exhibitions/*·topics·topics/*)
+> - **Meta Pixel**: 위 전부 + privacy·terms·checkout·checkout-result·confirm
 > - **네이버 전환추적**: `index.html` · `contact.html` 두 곳뿐 (전환이 일어나는 자리)
 > - `admin`·`login`·`account`·`guardian` 에는 넣지 않았습니다 — 내 방문이 통계를 오염시키므로.
 
@@ -446,6 +515,17 @@ var BUSINESS = {
       `orders.buyer_email` 로 이미 매칭되는 구조라 데이터는 준비돼 있습니다.
 
 ## 남은 작업 (TODO)
+- [ ] **갤러리에 걸 그림** — 지금 액자 대부분이 "준비 중" 자리표시입니다.
+      `assets/img/gallery/README.md` 의 파일명대로 넣으면 그 자리가 바로 채워집니다.
+      전시실 배경(`room-<slug>.jpg`, 16:9)도 넣으면 CSS 로 그린 벽을 대신합니다.
+- [ ] **방마다 다른 음악** — 지금은 일곱 장 모두 랜딩 곡을 가리킵니다.
+      `assets/bgm/rooms/<slug>.mp3` 를 넣고 각 파일의 `KSW_BGM` 을 바꾸세요.
+      🚨 `loop` 값(한 바퀴 길이)을 **반드시 함께** 고쳐야 합니다.
+- [ ] **비전관 문구 검수** — `/rooms/vision-2031` · `/rooms/vision-2036` 의 다섯 줄은
+      저장소에 있는 사실만으로 쓴 **초안**입니다. 김심리 님 손을 거쳐야 합니다.
+- [ ] **`topics.html` 과 `topics/*.html` 의 `TITLE` 이 index 값 그대로입니다** —
+      언어를 바꾸면 브라우저 탭 제목이 홈 제목으로 바뀝니다.
+      (`projects`·`store` 는 About 값이 박혀 있던 것을 2026-08-06 에 고쳤습니다)
 - [ ] **후기(`.revs`)가 화면에서 빠져 있습니다** — 있던 후기 3개가 지어낸 예시였고
       별점과 함께 걸면 표시광고법 위반 소지가 있어 2026-08-03 에 지웠습니다.
       **실제 후기가 생기면** `index.html` 의 `.proof` 섹션에 다시 넣으세요 (스타일은 그대로 있습니다).
@@ -712,13 +792,14 @@ Site URL 이 기본값(`http://localhost:3000`)이면 링크를 눌러도 확인
 
 ## 링크 미리보기 (Open Graph · Twitter Card)
 카카오톡·페이스북·슬랙 등에 주소를 붙였을 때 보이는 카드입니다.
-`index` · `about` · `projects` · `store` · `contact` · `privacy` · `terms` 일곱 페이지에
-들어 있습니다 (`confirm`·`checkout`은 noindex라 넣지 않았습니다).
+`index` · `about` · `gallery` · `rooms/*` · `projects` · `store` · `contact` ·
+`privacy` · `terms` 에 들어 있습니다 (`confirm`·`checkout`은 noindex라 넣지 않았습니다).
 
 | 페이지 | og:image |
 |---|---|
 | Store | `og-store.png` (굿즈 6종) |
 | Projects | `og-projects.png` (전시 사진 3장) |
+| Gallery · rooms/* | `og-gallery.png` (전시실 벽 + 액자에 걸린 캐릭터 4종) |
 | 나머지 | `og.png` (워크북 표지 + 로고 + 캐릭터) |
 
 - 🚨 **`og:image`는 반드시 실제 파일의 절대 URL이어야 합니다.** 이 사이트는 캐릭터·표지를

@@ -7,3 +7,6 @@
 CLAUDE.md
 docs/
 supabase/
+
+# 자산 폴더의 안내문 (exhibitions · goods · gallery) — 파일명 표라 배포할 필요가 없습니다
+assets/img/*/README.md
