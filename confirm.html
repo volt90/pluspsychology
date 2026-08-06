@@ -40,8 +40,8 @@
     --paper:#FBF6EA; --surface:#FFFFFF;
     --ink:#2B2620; --ink-soft:#6E6658; --ink-faint:#A79E8E;
     --line:#ECE2CD;
-    --blue:#4C8CCB; --blue-deep:#2F6FA8;
-    --coral:#E86B5E; --green:#54B491;
+    --blue:#4C8CCB; --blue-deep:#2F6FA8; --blue-soft:#EAF1F9;
+    --coral:#E86B5E; --green:#54B491; --gold:#F2B620;
     --display:'Jua','Noto Sans KR',sans-serif;
     --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
   }
@@ -95,6 +95,10 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/assets/img/favicon-512.png" sizes="512x512">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- 배경음악 — 페이지를 넘어가도 끊기지 않게 공개 페이지에 모두 넣습니다.
+     bgm.js 가 sessionStorage 에 재생 위치를 남겨 다음 페이지에서 이어 붙입니다.
+     여기에 없으면 그 페이지에서만 음악이 툭 끊깁니다. -->
+<link rel="stylesheet" href="/assets/bgm/bgm.css">
 </head>
 <body>
 
@@ -281,5 +285,6 @@
   }
 })();
 </script>
+<script src="/assets/bgm/bgm.js" defer></script>
 </body>
 </html>
