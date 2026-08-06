@@ -574,6 +574,29 @@ consents  : { user_id, consent_type:'service', granted:true }
 - 🚨 **`auth.users` 에 프로필 생성 트리거를 걸지 마세요.** 앱이 `profiles.insert` 를
   직접 하므로 트리거가 먼저 만들면 중복키로 **앱 가입이 깨집니다.**
 
+### 🚨 확인메일 복귀 주소는 쿼리스트링입니다 (본문에 넣으면 무시됩니다)
+`/auth/v1/signup` 을 REST 로 직접 부르므로 **JS SDK 문법이 통하지 않습니다.**
+
+```js
+// ❌ SDK 문법 — GoTrue 가 본문의 options 를 통째로 무시합니다
+body: { email, password, options: { emailRedirectTo: '.../confirm' } }
+
+// ✅ REST 문법 — 쿼리스트링으로 보냅니다
+fetch(url + '/auth/v1/signup?redirect_to=' + encodeURIComponent(origin + '/confirm'), …)
+```
+
+틀리면 **오류 없이 조용히** 확인메일 링크가 Supabase 의 **Site URL** 로 갑니다.
+Site URL 이 기본값(`http://localhost:3000`)이면 링크를 눌러도 확인이 끝나지 않아
+"가입이 안 된다"로 보입니다. `login.html` 의 `RETURN_TO` 상수 한 곳에 모아뒀습니다.
+
+**Supabase 쪽에도 두 가지가 맞아야 합니다** (Authentication → URL Configuration):
+- **Site URL** = `https://www.pluspsychology.ai`
+- **Redirect URLs** 에 `https://www.pluspsychology.ai/confirm` 등록
+  — 등록되지 않은 주소는 무시되고 Site URL 로 대체됩니다.
+
+⚠️ **비밀번호 재설정은 아직 미완성입니다.** `/auth/v1/recover` 는 복귀 주소를 보내지
+않고, 새 비밀번호를 입력받을 화면도 없습니다. 재설정 링크는 Site URL 로만 갑니다.
+
 ### 이메일 확인이 켜지면 가입 순서가 달라집니다
 확인이 켜져 있으면 `signup` 응답에 **세션이 없습니다.** 그 시점에는 RLS
 (`profiles_insert_own`)가 막아 프로필을 만들 수 없습니다. 그래서 웹은:
