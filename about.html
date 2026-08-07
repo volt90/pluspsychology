@@ -343,7 +343,16 @@
         <a href="/contact">Contact</a>
       </nav>
       <div class="tbright">
-        <a class="acct" href="/login" aria-label="로그인" data-en-aria="Sign in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span data-en="Sign in">로그인</span></a>
+        <!--
+             🚧 로그인 숨김 (2026-08-07) — 회원 기능이 아직 안정적이지 않아 헤더에서 내렸습니다.
+                되살리려면 이 주석을 여는 표시와 닫는 표시만 지우면 됩니다.
+                🚨 아래 15개 공개 페이지에 같은 줄이 복사돼 있으니 반드시 함께 고치세요:
+                   index · about · projects · store · contact · topics ·
+                   topics/(6개) · exhibitions/(3개)
+                /login · /account · /guardian 페이지 자체는 살아 있습니다 (주소로는 들어갈 수 있음).
+
+             <a class="acct" href="/login" aria-label="로그인" data-en-aria="Sign in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span data-en="Sign in">로그인</span></a>
+        -->
         <div class="langsw">
           <button type="button" class="lgtrig" aria-haspopup="true" aria-expanded="false" aria-label="언어 선택" data-en-aria="Choose language"><svg class="lgglobe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.2 9h17.6M3.2 15h17.6"/><path d="M12 3c2.4 2.4 3.6 5.4 3.6 9s-1.2 6.6-3.6 9c-2.4-2.4-3.6-5.4-3.6-9S9.6 5.4 12 3Z"/></svg><span class="lgnow">한국어</span><svg class="lgchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9.5 6 6 6-6"/></svg></button>
           <div class="lgmenu" role="menu" hidden>
