@@ -138,8 +138,18 @@
      한 줄이 길어지면 눈이 다음 줄 첫 글자를 찾기 어려워집니다. */
   .hero > h1, .hero > .sub, .hero > p,
   section > .eyebrow, section > h2, section > h3,
-  section > p, section > .lede, section > .sub{
+  section > p, section > .lede, section > .sub, section > .body{
     max-width:var(--read); margin-left:auto; margin-right:auto;
+  }
+
+  /* 🚨 글은 **왼쪽 끝**에 맞춥니다 — 가운데로 밀지 마세요.
+     알약(.eyebrow)은 inline 요소라 margin:auto 가 듣지 않아 늘 왼쪽 끝(0)에 섭니다.
+     제목·본문만 가운데 열로 밀면 알약과 왼쪽 끝이 130px 어긋나 보입니다.
+     projects·store 도 같은 규칙을 쓰고 있으니, 여기만 바꾸면 페이지끼리 어긋납니다.
+     히어로(.hero)는 일부러 가운데 정렬입니다 — 여기 규칙과 무관합니다. */
+  section > h2, section > h3, section > p,
+  section > .lede, section > .sub, section > .body{
+    margin-left:0; margin-right:auto;
   }
   a{color:inherit}
   ::selection{background:var(--gold-soft)}
@@ -265,7 +275,9 @@
     .mate{width:62px;top:40px;right:0}
     .problem .head{padding-right:72px}
   }
-  .problem .body{margin-top:16px;font-size:15px;color:var(--ink-soft);line-height:1.9;text-align:center}
+  /* 가운데 정렬이었는데, 제목·알약은 왼쪽이라 이 문단만 오른쪽으로 밀려 보였습니다.
+     solution 섹션의 .lede 와 같은 자리·같은 정렬로 맞춰 둡니다. */
+  .problem .body{margin-top:16px;font-size:15px;color:var(--ink-soft);line-height:1.9}
   .problem .body p+p{margin-top:13px}
   .stat{margin-top:22px;display:flex;gap:14px;flex-wrap:wrap}
   .stat .card{flex:1 1 210px;background:var(--blue-soft);border:1.5px solid #D9E6F3;border-radius:18px;padding:20px 20px 16px}
@@ -273,7 +285,9 @@
   .stat .cap{font-size:13.5px;color:var(--ink);font-weight:700;margin-top:9px;line-height:1.5}
   .stat .src{font-size:11px;color:var(--ink-faint);margin-top:8px;line-height:1.45}
   .sit{margin-top:20px;background:var(--paper-2);border:1.5px dashed var(--line);border-radius:16px;padding:14px 16px}
-  .sit p{font-size:13.5px;color:var(--ink-soft);line-height:1.65;text-align:center}
+  /* 테두리 있는 상자 안의 글은 상자 자기 여백에 맞춥니다 (.stat 카드와 같은 방식).
+     가운데 정렬이면 바로 위 카드들의 글과 시작점이 달라 보입니다. */
+  .sit p{font-size:13.5px;color:var(--ink-soft);line-height:1.65}
   .sit b{color:var(--ink)}
 
   /* ---------- solution ---------- */
