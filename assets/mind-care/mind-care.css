@@ -1,0 +1,97 @@
+@font-face{font-family:'Cafe24Anemone';src:url('https://cdn.jsdelivr.net/gh/fonts-archive/Cafe24Ohsquare/Cafe24Ohsquare.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;unicode-range:U+0020-007E,U+1100-11FF,U+3130-318F,U+AC00-D7A3}
+#simri-care{--sc-paper:#FBF6EA;--sc-ink:#2B2620;--sc-muted:#71685F;--sc-white:#FFFFFF;--sc-line:#E7DDD0;--sc-yellow:#F6D473;--sc-blue:#4C8CCB;--sc-radius:24px;color:var(--sc-ink);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;width:100%;padding:4px 0 16px}
+#simri-care *{box-sizing:border-box}
+#simri-care button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#simri-care button:focus-visible{outline:3px solid #4C8CCB;outline-offset:3px}
+#simri-care button:disabled{cursor:default;opacity:.42}
+#simri-care button:active:not(:disabled){transform:scale(.96)}
+#simri-care .sc-phone{width:100%;max-width:390px;margin:0 auto;background:var(--sc-paper);overflow:hidden;min-height:100svh}
+#simri-care .sc-top{display:flex;align-items:center;justify-content:space-between;padding:15px 22px 10px;border-bottom:1px solid var(--sc-line);gap:10px}
+#simri-care .sc-brand{display:block;flex:0 0 118px;width:118px;line-height:0}
+#simri-care .sc-brand img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
+#simri-care .sc-top small{font-size:11px;color:var(--sc-muted);text-align:right;word-break:keep-all;min-width:0}
+#simri-care .sc-content{padding:22px 22px 20px}
+#simri-care h1,#simri-care h2,#simri-care h3,#simri-care p{margin:0}
+#simri-care h1,#simri-care h2{font-family:'Jua',sans-serif;font-weight:400;letter-spacing:-.7px;text-wrap:balance}
+#simri-care h1{font-size:32px;line-height:1.27;margin:8px 0 12px}
+#simri-care h2{font-size:28px;line-height:1.35;margin:12px 0}
+#simri-care h3{font-size:16px;font-weight:700;line-height:1.5}
+#simri-care .sc-kicker{font-size:11px;font-weight:700;letter-spacing:1.6px;color:var(--sc-muted)}
+#simri-care .sc-lead{color:var(--sc-muted);font-size:13px;line-height:1.7;word-break:keep-all}
+#simri-care .sc-center{text-align:center}
+#simri-care .sc-yellow{background:var(--sc-yellow);color:#2B2620;padding:0 3px;border-radius:5px}
+#simri-care .sc-ensemble{position:relative;aspect-ratio:2505 / 1000;overflow:hidden;margin:18px 0 14px;background:transparent}
+#simri-care .sc-ensemble img{position:absolute;width:100%;max-width:none;left:0;top:-215.5%;display:block}
+#simri-care .sc-heart-ribbon{display:flex;justify-content:center;gap:10px;margin:24px 0 8px;font-size:18px;line-height:1}
+#simri-care .sc-choice{width:max-content;max-width:100%;display:grid;grid-template-columns:minmax(0,1fr);align-items:center;text-align:center;border:3px solid var(--sc-line);background:var(--sc-white);border-radius:var(--sc-radius);padding:17px 22px;margin:10px auto 0}
+#simri-care .sc-choice:first-of-type{background:#FFF1C7;border-color:#EACD86}
+#simri-care .sc-choice strong{display:block;font-size:18px;line-height:1.5;letter-spacing:-.5px}
+#simri-care .sc-choice small{display:block;font-size:12px;color:var(--sc-muted);margin-top:3px}
+#simri-care .sc-step{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--sc-muted);margin-bottom:8px}
+#simri-care .sc-step-with-tag{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px}
+#simri-care .sc-step-with-tag>button{justify-self:start;white-space:nowrap}
+#simri-care .sc-step-with-tag>.sc-tag{justify-self:center;color:var(--sc-ink);white-space:nowrap}
+#simri-care .sc-step-with-tag>.sc-step-count{justify-self:end;white-space:nowrap}
+#simri-care .sc-text-button{border:0;background:transparent;padding:8px 0;min-height:44px;font-size:12px;color:var(--sc-muted)}
+#simri-care .sc-track{height:5px;border-radius:5px;background:var(--sc-line);overflow:hidden;margin-bottom:23px}
+#simri-care .sc-track span{height:100%;display:block;background:var(--sc-blue);border-radius:5px}
+#simri-care .sc-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;background:var(--sc-white);border:1px solid var(--sc-line);padding:5px 11px;border-radius:30px}
+#simri-care .sc-question{margin:16px 0 19px;min-height:126px}
+#simri-care .sc-question h2{font-family:'Noto Sans KR',sans-serif;font-size:23px;font-weight:700;line-height:1.55;letter-spacing:-.7px;text-wrap:pretty}
+#simri-care .sc-quiz-question{min-height:0;margin:16px 0 0}
+#simri-care .sc-quiz-question h2{margin:0}
+#simri-care .sc-quiz-question+.sc-ox{margin-top:39px}
+#simri-care .sc-answers{display:grid;gap:8px}
+#simri-care .sc-answer{display:flex;align-items:center;justify-content:space-between;text-align:left;border:1px solid var(--sc-line);background:var(--sc-white);border-radius:14px;min-height:48px;padding:10px 15px;font-size:14px}
+#simri-care .sc-answer[aria-pressed=true]{background:#E9F2FB;border:2px solid #4C8CCB;padding:9px 14px}
+#simri-care .sc-radio{width:18px;height:18px;border:1px solid var(--sc-line);border-radius:50%;display:grid;place-items:center;font-size:11px}
+#simri-care .sc-answer[aria-pressed=true] .sc-radio{color:#fff;background:#4C8CCB;border-color:#4C8CCB}
+#simri-care .sc-primary{width:100%;border:0;border-radius:15px;background:var(--sc-ink);color:var(--sc-paper);min-height:52px;font-size:15px;font-weight:700;padding:12px 14px;margin-top:12px}
+#simri-care .sc-secondary{width:100%;border:1px solid var(--sc-line);border-radius:15px;background:var(--sc-white);min-height:48px;font-size:13px;padding:10px 14px;margin-top:8px}
+#simri-care .sc-note{font-size:11px;color:var(--sc-muted);line-height:1.75;margin-top:14px;word-break:keep-all}
+#simri-care .sc-hearts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 5px;margin:20px 0}
+#simri-care .sc-heart-button{min-width:0;min-height:88px;padding:5px 1px;border:1px solid transparent;border-radius:13px;background:transparent;display:flex;flex-direction:column;align-items:center;position:relative}
+#simri-care .sc-heart-button[data-selected=true]{background:var(--sc-white);border-color:var(--sc-ink)}
+#simri-care .sc-heart-button svg{width:58px;height:53px;max-width:100%;overflow:visible}
+#simri-care .sc-heart-button strong{font-size:12px;margin-top:5px;white-space:nowrap}
+#simri-care .sc-heart-button small{font-size:11px;color:var(--sc-muted);word-break:keep-all;text-wrap:balance}
+#simri-care .sc-heart-button .sc-more{position:absolute;top:-5px;right:0;font-size:11px;background:var(--sc-ink);color:var(--sc-paper);padding:0 4px;border-radius:10px}
+#simri-care .sc-result-card{padding:16px;border-radius:20px;background:var(--sc-white);border:1px solid var(--sc-line)}
+#simri-care .sc-result-card .sc-tag{border:0;padding:0;background:transparent;color:var(--sc-muted);font-size:11px;margin-bottom:5px}
+#simri-care .sc-result-card p{font-size:13px;line-height:1.7;margin-top:8px;word-break:keep-all}
+#simri-care .sc-avatar{position:relative;overflow:hidden;width:80px;height:86px;background:transparent;flex:none;clip-path:polygon(0 0,74% 0,74% 12%,91% 12%,91% 38%,84% 38%,97% 50%,97% 69%,86% 77%,91% 100%,12% 100%,12% 41%,0 37%)}
+#simri-care .sc-avatar img{position:absolute;width:290px;max-width:none;left:-192px;top:-260px;display:block}
+#simri-care .sc-friend{display:flex;gap:12px;align-items:center;margin:16px 0}
+#simri-care .sc-friend p{font-size:12px;line-height:1.65;color:var(--sc-muted)}
+#simri-care .sc-friend strong{display:block;color:var(--sc-ink);font-size:11px;margin-bottom:2px}
+#simri-care .sc-ox{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:23px}
+#simri-care .sc-ox button{position:relative;overflow:hidden;border:1px solid var(--sc-line);border-radius:22px;min-height:210px;padding:14px 8px 109px;background:var(--sc-white);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px}
+#simri-care .sc-ox button:first-child{background:#E3EEDD;color:#2B2620}
+#simri-care .sc-ox button:last-child{background:#FBE1DB;color:#2B2620}
+#simri-care .sc-ox button span{font-size:55px;line-height:1.1;font-family:'Jua',sans-serif}
+#simri-care .sc-ox button small{font-size:12px}
+#simri-care .sc-ox-art{position:absolute;bottom:0;width:105px;height:105px;object-fit:contain;pointer-events:none;mask-image:linear-gradient(to right,transparent,#000 12%,#000 88%,transparent),linear-gradient(to bottom,transparent,#000 3%,#000 97%,transparent);mask-composite:intersect}
+#simri-care .sc-ox-art.seru{left:1px}
+#simri-care .sc-ox-art.rhuby{right:1px}
+#simri-care .sc-ox button[aria-pressed=true]{border:2px solid var(--sc-ink)}
+#simri-care .sc-ox button:disabled{opacity:1}
+#simri-care .sc-feedback{margin-top:18px;padding:17px;border:1px solid var(--sc-line);background:var(--sc-white);border-radius:20px}
+#simri-care .sc-feedback h3{font-family:'Jua',sans-serif;font-size:22px;font-weight:400;margin-bottom:7px;word-break:keep-all;text-wrap:balance}
+#simri-care .sc-feedback p{font-size:13px;line-height:1.75;word-break:keep-all}
+#simri-care .sc-postcard{margin:12px auto 24px;width:100%;max-width:290px}
+#simri-care .sc-postcard img{display:block;width:100%;height:auto;object-fit:contain;border-radius:4px;background:var(--sc-white)}
+#simri-care .sc-question h2{word-break:keep-all}
+#simri-care .sc-choice strong{font-family:'Cafe24Anemone','Noto Sans KR',sans-serif;font-weight:400;font-synthesis:none}
+#simri-care .sc-choice strong,#simri-care .sc-choice small{word-break:keep-all}
+#simri-care .sc-header-tools{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0}
+#simri-care .sc-music-control{display:inline-flex;align-items:center;gap:5px;min-height:44px;border:0;background:transparent;padding:4px 0 4px 8px;font-size:11px;color:var(--sc-muted);white-space:nowrap}
+#simri-care .sc-music-control[aria-checked=true]{color:var(--sc-ink)}
+html{color-scheme:light;background:#FBF6EA}
+body{margin:0}
+#simri-care{padding:0}
+#simri-care .sc-step-count{font-variant-numeric:tabular-nums}
+#simri-care .sc-content{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+#simri-care .sc-noscript{padding:22px}
+#simri-care [data-screen-heading]:focus{outline:none}
+@media(max-width:350px){#simri-care .sc-content{padding:19px 17px max(20px,env(safe-area-inset-bottom))}#simri-care h1{font-size:29px}#simri-care .sc-top{padding-left:17px;padding-right:17px}}
+@media(prefers-reduced-motion:reduce){#simri-care button:active:not(:disabled){transform:none}}
