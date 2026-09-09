@@ -39,6 +39,10 @@
   var KEY_POS   = 'ksw_bgm_pos';  // 재생 위치 (sessionStorage — 이번 방문 안에서만)
   var POS_TTL   = 5 * 60 * 1000;  // 이보다 오래된 위치는 버리고 처음부터
   var MAX_ADVANCE = 2000;         // 페이지 전환이 이보다 오래 걸리면 앞으로 감지 않음
+  var script = document.currentScript;
+  // QR 체험은 매 방문 켜짐으로 시작하되, 다른 페이지의 저장된 선호는 건드리지 않습니다.
+  var visitPreference = script && script.getAttribute('data-preference') === 'visit';
+  var buttonId = script && script.getAttribute('data-button-id');
 
   var AC = window.AudioContext || window.webkitAudioContext;
   if (!AC || !window.fetch) return;
@@ -46,7 +50,14 @@
   var LABEL = { ko: '배경음악', en: 'Background music' };
 
   var actx = null, gainNode = null, buffer = null, node = null;
-  var playing = false, loading = false, failed = false;
+  var playing = false, failed = false, bufferPromise = null;
+  var wanted = true, pageActive = true, requestVersion = 0;
+  if (!visitPreference) {
+    try {
+      var saved = localStorage.getItem(KEY_ON);
+      if (saved !== null) wanted = (saved === '1');
+    } catch (e) {}
+  }
   // pending = 켜기로 돼 있지만 브라우저 자동재생 정책 때문에 아직 소리가
   // 나기 전인 상태. 버튼은 이때도 '켜짐'으로 보여야 합니다 — 꺼져 있는 게
   // 아니라 사용자의 첫 조작을 기다리는 중이기 때문입니다.
@@ -55,12 +66,20 @@
   var startedAt = 0, startedFrom = 0;   // 현재 재생 위치 계산용
 
   // ── 버튼 ───────────────────────────────────────────────
-  var btn = document.createElement('button');
-  btn.className = 'bgm';
-  btn.id = 'bgm';
+  var btn = buttonId && document.getElementById(buttonId);
+  var customButton = !!btn;
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.className = 'bgm';
+    btn.id = 'bgm';
+  }
   btn.type = 'button';
-  btn.setAttribute('aria-pressed', 'false');
-  btn.innerHTML =
+  if (customButton) {
+    btn.setAttribute('role', 'switch');
+    btn.removeAttribute('aria-pressed');
+  } else {
+    btn.setAttribute('aria-pressed', 'false');
+    btn.innerHTML =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"' +
     ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
     '<path d="M4 9.3h3.3L11.5 5.7v12.6L7.3 14.7H4z"/>' +
@@ -68,24 +87,50 @@
     '<path class="wv2" d="M17 7.4a6.7 6.7 0 0 1 0 9.2"/></g>' +
     '<g class="mut"><path d="M15.3 10.1 19.6 13.9"/><path d="M19.6 10.1 15.3 13.9"/></g>' +
     '</svg>';
+  }
 
   // 각 페이지의 언어 전환 코드에 기대지 않고 <html lang> 을 직접 따라갑니다.
   function syncLabel() {
+    if (customButton) {
+      btn.setAttribute('aria-label', wanted ? '배경음악 끄기' : '배경음악 켜기');
+      var label = btn.querySelector('[data-music-label]');
+      if (label) {
+        label.textContent = wanted ? '음악 켜짐' : '음악 꺼짐';
+      } else {
+        label = btn.querySelector('span');
+        if (label) label.textContent = wanted ? '♪ 음악 켜짐' : '♪ 음악 꺼짐';
+      }
+      return;
+    }
     var en = document.documentElement.lang === 'en';
     btn.setAttribute('aria-label', en ? LABEL.en : LABEL.ko);
   }
   syncLabel();
   new MutationObserver(syncLabel).observe(document.documentElement,
     { attributes: true, attributeFilter: ['lang'] });
-  document.body.appendChild(btn);
+  if (!customButton) document.body.appendChild(btn);
 
   function paint() {
-    btn.setAttribute('aria-pressed', (playing || pending) ? 'true' : 'false');
+    if (customButton) {
+      btn.setAttribute('aria-checked', wanted ? 'true' : 'false');
+      syncLabel();
+    } else {
+      btn.setAttribute('aria-pressed', (wanted && !failed) ? 'true' : 'false');
+    }
+    btn.setAttribute('data-playback', failed ? 'error' :
+      playing ? 'playing' : pending ? 'pending' : 'paused');
   }
   function setState(on) {
     playing = on;
     if (on) pending = false;
     paint();
+  }
+  function savePreference() {
+    if (visitPreference) return;
+    try { localStorage.setItem(KEY_ON, wanted ? '1' : '0'); } catch (e) {}
+  }
+  function canPlay() {
+    return wanted && !failed && pageActive && !document.hidden;
   }
 
   // ── 오디오 ─────────────────────────────────────────────
@@ -162,11 +207,11 @@
     gainNode.gain.linearRampToValueAtTime(v, t + FADE);
   }
 
-  function loadBuffer(ok, fail) {
-    if (buffer) { ok(); return; }
-    loading = true; btn.classList.add('is-loading');
-    function done() { loading = false; btn.classList.remove('is-loading'); }
-    fetch(SRC).then(function (r) {
+  function loadBuffer() {
+    if (buffer) return Promise.resolve(buffer);
+    if (bufferPromise) return bufferPromise;
+    btn.classList.add('is-loading');
+    bufferPromise = fetch(SRC).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.arrayBuffer();
     }).then(function (ab) {
@@ -176,102 +221,136 @@
         if (p && p.then) p.then(res, rej);
       });
     }).then(function (b) {
-      buffer = b; done(); ok();
-    })['catch'](function () {
-      done(); fail();
+      buffer = b;
+      btn.classList.remove('is-loading');
+      return b;
+    })['catch'](function (error) {
+      btn.classList.remove('is-loading');
+      failAudio();
+      throw error;
     });
+    return bufferPromise;
+  }
+
+  function failAudio() {
+    // 음원을 못 불러와도 체험 화면 자체는 계속 동작합니다.
+    failed = true;
+    requestVersion++;
+    btn.disabled = true;
+    pending = false;
+    detachArm();
+    setState(false);
   }
 
   function bgmOn(fromOffset) {
-    if (playing || loading || failed) return;
+    if (playing || !canPlay()) return;
+    pending = true;
+    paint();
+    armForInteraction();
+    var version = ++requestVersion;
     var at = (typeof fromOffset === 'number') ? fromOffset : resumeOffset();
-    ensureCtx();
-    loadBuffer(function () {
-      if (actx.state === 'suspended') actx.resume();
+    var resumed;
+    try {
+      ensureCtx();
+      // 사용자 조작 중에 resume을 호출하고 음원 로딩 뒤로 미루지 않습니다.
+      resumed = actx.state === 'running' ? Promise.resolve() : actx.resume();
+    } catch (e) {
+      failAudio();
+      return;
+    }
+    Promise.all([loadBuffer(), resumed]).then(function () {
+      // 끄기, 화면 이탈, 후속 재생 요청보다 오래된 로딩 완료는 무시합니다.
+      if (version !== requestVersion || !canPlay() || actx.state !== 'running') return;
       startNode(at);
       fadeTo(GAIN);
       setState(true);
-      try { localStorage.setItem(KEY_ON, '1'); } catch (e) {}
+      detachArm();
+      savePreference();
       if (typeof gtag === 'function') gtag('event', 'bgm_toggle', { state: 'on' });
-    }, function () {
-      // 파일을 못 불러오면 조용히 버튼을 비활성화합니다 (페이지는 그대로 동작)
-      failed = true;
-      btn.disabled = true;
-      pending = false;
-      setState(false);
+    })['catch'](function () {
+      // 자동재생 거절은 오류가 아닙니다. 다음 조작에서 다시 시도합니다.
+      if (version === requestVersion && canPlay()) {
+        pending = true;
+        paint();
+      }
     });
   }
 
   function bgmOff() {
-    if (!playing) return;
+    wanted = false;
+    requestVersion++;
+    pending = false;
+    detachArm();
     savePos();
-    fadeTo(0);
+    if (actx) fadeTo(0);
     setState(false);
     setTimeout(function () {
-      if (!playing && actx && actx.state === 'running') actx.suspend();
+      if (!canPlay() && actx && actx.state === 'running') actx.suspend();
     }, (FADE + 0.05) * 1000);
-    try { localStorage.setItem(KEY_ON, '0'); } catch (e) {}
+    savePreference();
     try { sessionStorage.removeItem(KEY_POS); } catch (e) {}
     if (typeof gtag === 'function') gtag('event', 'bgm_toggle', { state: 'off' });
   }
 
   btn.addEventListener('click', function () {
-    if (loading || failed) return;
-    if (pending) {                     // 아직 소리가 안 난 상태에서 끄기를 누른 경우
-      pending = false;
-      detachArm();
-      setState(false);
-      try { localStorage.setItem(KEY_ON, '0'); } catch (e) {}
-      if (typeof gtag === 'function') gtag('event', 'bgm_toggle', { state: 'off' });
-      return;
+    if (failed) return;
+    if (wanted) {
+      bgmOff();
+    } else {
+      wanted = true;
+      savePreference();
+      bgmOn();
     }
-    if (playing) bgmOff(); else bgmOn();
   });
+
+  function pauseForPage() {
+    savePos();
+    requestVersion++;
+    pending = false;
+    if (actx) {
+      gainNode.gain.cancelScheduledValues(actx.currentTime);
+      gainNode.gain.value = 0;
+      if (actx.state === 'running') actx.suspend();
+    }
+    setState(false);
+  }
 
   // 탭을 벗어나면 소리를 멈춥니다 (버튼은 켜짐 상태를 유지 → 돌아오면 이어서 재생)
   document.addEventListener('visibilitychange', function () {
-    if (!actx || failed || !playing) return;
     if (document.hidden) {
-      savePos();
-      if (actx.state === 'running') { gainNode.gain.value = 0; actx.suspend(); }
-    } else if (actx.state === 'suspended') {
-      actx.resume(); fadeTo(GAIN);
+      pauseForPage();
+    } else {
+      bgmOn();
     }
   });
 
   // 페이지를 떠나기 직전에 위치를 남깁니다. pagehide 는 bfcache 로 들어갈 때도
   // 불리고 모바일 사파리에서 beforeunload 보다 믿을 만합니다.
-  window.addEventListener('pagehide', savePos);
+  window.addEventListener('pagehide', function () {
+    pageActive = false;
+    pauseForPage();
+  });
+  window.addEventListener('pageshow', function () {
+    pageActive = true;
+    bgmOn();
+  });
   // 브라우저가 종료 직전 이벤트를 건너뛰는 경우를 대비한 보험
   setInterval(savePos, 5000);
 
   // ── 시작 ───────────────────────────────────────────────
-  // 기본값은 '켜짐'입니다. 직접 끈 적이 있는 사람만 그 선택을 유지합니다.
-  var wanted = true;
-  try {
-    var saved = localStorage.getItem(KEY_ON);
-    if (saved !== null) wanted = (saved === '1');
-  } catch (e) {}
-
-  if (wanted) {
-    ensureCtx();
-    if (actx.state === 'running') {
-      bgmOn();                 // 자동재생이 허용된 상태 → 바로 시작
-    } else {
-      pending = true;          // 막혀 있음 → 첫 조작까지 '켜짐'으로 두고 기다립니다
-      paint();
-    }
-
-    var EVTS = ['pointerdown', 'keydown', 'touchstart'];
-    var arm = function (e) {
-      detachArm();
-      // 버튼 자체를 누른 경우엔 위의 click 핸들러가 처리하도록 비켜줍니다
-      if (e && e.target && e.target.closest && e.target.closest('#bgm')) return;
-      bgmOn();   // 이미 재생 중이거나 불러오는 중이면 내부에서 무시됩니다
-    };
+  var EVTS = ['pointerdown', 'keydown', 'touchstart'];
+  function arm(e) {
+    // 음악 버튼의 첫 조작은 click 처리가 맡도록 하여 끄기 의도를 지킵니다.
+    if (e && e.target && btn.contains(e.target)) return;
+    bgmOn();
+  }
+  function armForInteraction() {
+    detachArm();
     detachArm = function () {
       EVTS.forEach(function (t) { document.removeEventListener(t, arm, true); });
     };
     EVTS.forEach(function (t) { document.addEventListener(t, arm, true); });
   }
+  paint();
+  bgmOn();
 })();
