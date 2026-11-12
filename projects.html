@@ -29,7 +29,7 @@
 <!-- ════════════════════ Meta Pixel 끝 ════════════════════ -->
 <title>Projects · 김심리월드</title>
 <meta name="theme-color" content="#FBF6EA">
-<meta name="description" content="김심리월드가 다녀온 전시와 그때의 초대장을 모았습니다. 부산 일러스트레이션 페어, 성수동 언더스탠드 애비뉴 팝업, 스퀘어원 팝업 (2025).">
+<meta name="description" content="김심리월드의 2025–2026년 전시와 만남. 성수동·스퀘어원 팝업의 현장 사진과 2026년 11월 13일 진행 예정인 체험형 전시 미니 쇼케이스 소식을 만나보세요.">
 <link rel="canonical" href="https://www.pluspsychology.ai/projects">
 
 <!-- ══════════════════════════════════════════════════════════════
@@ -46,7 +46,7 @@
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:url" content="https://www.pluspsychology.ai/projects">
 <meta property="og:title" content="Projects · 김심리월드">
-<meta property="og:description" content="김심리월드가 다녀온 전시와 그때의 초대장을 모았습니다. 부산 일러스트레이션 페어, 성수동 언더스탠드 애비뉴 팝업, 스퀘어원 팝업 (2025).">
+<meta property="og:description" content="김심리월드의 2025–2026년 전시와 만남. 성수동·스퀘어원 팝업의 현장 사진과 2026년 11월 13일 진행 예정인 체험형 전시 미니 쇼케이스 소식을 만나보세요.">
 <meta property="og:image" content="https://www.pluspsychology.ai/og-projects.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -54,7 +54,7 @@
 <meta property="og:image:alt" content="김심리월드가 참여한 전시 현장 사진">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Projects · 김심리월드">
-<meta name="twitter:description" content="김심리월드가 다녀온 전시와 그때의 초대장을 모았습니다. 부산 일러스트레이션 페어, 성수동 언더스탠드 애비뉴 팝업, 스퀘어원 팝업 (2025).">
+<meta name="twitter:description" content="김심리월드의 2025–2026년 전시와 만남. 성수동·스퀘어원 팝업의 현장 사진과 2026년 11월 13일 진행 예정인 체험형 전시 미니 쇼케이스 소식을 만나보세요.">
 <meta name="twitter:image" content="https://www.pluspsychology.ai/og-projects.png">
 <meta name="twitter:image:alt" content="김심리월드가 참여한 전시 현장 사진">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -276,14 +276,20 @@
           background:var(--surface);border:1.5px solid var(--line);border-radius:20px;overflow:hidden;
           box-shadow:0 2px 0 rgba(43,38,32,.04),0 20px 40px -30px rgba(43,38,32,.3);
           transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
-  .excard:hover{transform:translateY(-2px);border-color:var(--blue);
+  a.excard:hover{transform:translateY(-2px);border-color:var(--blue);
                 box-shadow:0 4px 0 rgba(43,38,32,.05),0 26px 44px -28px rgba(43,38,32,.45)}
   .excard:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-  .excard img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+  .excard img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block}
   .exmeta{padding:16px 17px 18px;display:flex;flex-direction:column;gap:6px;flex:1 1 auto}
-  .exmeta h2{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.4;color:var(--ink)}
+  .exmeta h3{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.4;color:var(--ink)}
   .exmeta p{font-size:12.5px;color:var(--ink-soft);line-height:1.6}
   .exgo{margin-top:auto;padding-top:8px;font-size:12.5px;font-weight:700;color:var(--blue-deep)}
+  .exyear{font-family:var(--display);font-size:24px;font-weight:400;margin:32px 0 0}
+  .expreview{aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;
+             justify-content:center;gap:12px;padding:24px;text-align:center;
+             background:var(--blue-soft);color:var(--blue-deep)}
+  .expreview svg{width:44px;height:44px;flex:none}
+  .expreview strong{font-size:14px;line-height:1.6}
 
   @media (prefers-reduced-motion: reduce){
     *{scroll-behavior:auto!important}
@@ -361,14 +367,47 @@
 
     <!-- 전시 -->
     <section>
-      <span class="eyebrow rv" data-en="Where we have been">다녀온 자리</span>
+      <span class="eyebrow rv" data-en="Exhibitions and encounters">전시와 만남</span>
       <h1 class="head rv" data-en="Exhibitions">전시</h1>
+      <h2 class="exyear">2026</h2>
+      <ul class="exlist">
+        <li><a class="excard" href="/exhibitions/seongsu-2026">
+          <img src="/assets/img/exhibitions/seongsu-2026-1.jpg" alt="2026년 성수동 팝업의 김심리월드 부스와 캐릭터 굿즈" data-en-alt="The Kim Simri World booth and character goods at the Seongsu pop-up in 2026" width="1200" height="1600" loading="lazy"
+               onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
+          <div class="exmeta">
+            <h3 data-en="Seongsu pop-up">성수동 팝업</h3>
+            <p data-en="Character goods and the booth in Seongsu">성수동에서 만난 김심리월드와 캐릭터 굿즈</p>
+            <span class="exgo" data-en="View 2 photos &rarr;">사진 2장 보기 &rarr;</span>
+          </div>
+        </a></li>
+        <li><a class="excard" href="/exhibitions/squareone-2026">
+          <img src="/assets/img/exhibitions/squareone-2026-1.jpg" alt="2026년 인천 스퀘어원 캐릭터 팝업 전시 전경" data-en-alt="Overview of the character pop-up exhibition at Square One, Incheon, in 2026" width="1600" height="1200" loading="lazy"
+               onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
+          <div class="exmeta">
+            <h3 data-en="Square One pop-up">스퀘어원 팝업</h3>
+            <p data-en="The pop-up exhibition and Kim Simri World booth in Incheon">인천 스퀘어원 팝업 현장과 김심리월드 부스</p>
+            <span class="exgo" data-en="View 2 photos &rarr;">사진 2장 보기 &rarr;</span>
+          </div>
+        </a></li>
+        <li><article class="excard">
+          <div class="expreview">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="9" width="38" height="30" rx="5"/><path d="m20 17 11 7-11 7Z"/></svg>
+            <strong data-en="Upcoming exhibition">진행 예정</strong>
+          </div>
+          <div class="exmeta">
+            <h3 data-en="Interactive exhibition mini showcase">체험형 전시 미니 쇼케이스</h3>
+            <p><time datetime="2026-11-13" data-en="13 November 2026">2026년 11월 13일</time></p>
+            <p data-en="Photos and videos will be added after the exhibition.">전시 후 사진·영상을 업데이트할 예정입니다.</p>
+          </div>
+        </article></li>
+      </ul>
+      <h2 class="exyear">2025</h2>
       <ul class="exlist">
         <li><a class="excard rv" href="/exhibitions/busan-2025">
           <img src="/assets/img/exhibitions/busan-2025.jpg" alt="부산 일러스트레이션 페어(2025) A34 부스에 진열된 김심리월드 캐릭터 굿즈" data-en-alt="Kim Simri World goods at booth A34, Busan Illustration Fair (2025)" loading="lazy"
                onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
           <div class="exmeta">
-            <h2 data-en="Busan Illustration Fair (2025)">부산 일러스트레이션 페어(2025)</h2>
+            <h3 data-en="Busan Illustration Fair (2025)">부산 일러스트레이션 페어(2025)</h3>
             <p data-en="Booth A34 &middot; character goods and the birthday event">부스 A34 · 캐릭터 굿즈와 탄생 기념 이벤트</p>
             <span class="exgo" data-en="3 photos &rarr;">사진 3장 보기 &rarr;</span>
           </div>
@@ -377,7 +416,7 @@
           <img src="/assets/img/exhibitions/seongsu-2025-1.jpg" alt="성수동 언더스탠드에비뉴 팝업스토어 외관" data-en-alt="Exterior of the pop-up store at Understand Avenue, Seongsu" loading="lazy"
                onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
           <div class="exmeta">
-            <h2 data-en="Seongsu Understand Avenue pop-up (2025)">성수동 언더스탠드 애비뉴 팝업(2025)</h2>
+            <h3 data-en="Seongsu Understand Avenue pop-up (2025)">성수동 언더스탠드 애비뉴 팝업(2025)</h3>
             <p data-en="21&ndash;28 September 2025 &middot; Understand Avenue, Seongdong-gu, Seoul">2025년 9월 21일~28일 · 서울 성동구 언더스탠드에비뉴</p>
             <span class="exgo" data-en="5 photos &rarr;">사진 5장 보기 &rarr;</span>
           </div>
@@ -386,7 +425,7 @@
           <img src="/assets/img/exhibitions/squareone-2025.jpg" alt="스퀘어원 팝업에 설치된 김심리월드 부스" data-en-alt="The Kim Simri World booth at the Square One pop-up" loading="lazy"
                onerror="this.onerror=null;this.src='/assets/img/placeholder.svg'">
           <div class="exmeta">
-            <h2 data-en="Square One pop-up (2025)">스퀘어원 팝업(2025)</h2>
+            <h3 data-en="Square One pop-up (2025)">스퀘어원 팝업(2025)</h3>
             <p data-en="Square One &middot; inside the Incheon Content Korea Lab pop-up">스퀘어원 · 인천콘텐츠코리아랩 팝업 안에서</p>
             <span class="exgo" data-en="1 photo &rarr;">사진 크게 보기 &rarr;</span>
           </div>
@@ -424,8 +463,8 @@
     //    한국어 화면에서도 영어 이름 그대로 유지됩니다.
     // ─────────────────────────────────────────────────────────
     var TITLE = {
-      ko: '김심리월드 소개 · About',
-      en: 'About · Kim Simri World'
+      ko: 'Projects · 김심리월드',
+      en: 'Projects · Kim Simri World'
     };
     var nodes    = Array.prototype.slice.call(document.querySelectorAll('[data-en]'));
     var altNodes = Array.prototype.slice.call(document.querySelectorAll('[data-en-alt]'));

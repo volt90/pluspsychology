@@ -239,6 +239,7 @@
 
   function renderBox() {
     var it = cur[curIdx];
+    if (it.captionNode) it.cap = it.captionNode.textContent.trim();
     imgEl.src = it.src;
     imgEl.alt = it.cap;
     capTxt.nodeValue = it.cap;
@@ -272,6 +273,7 @@
       var it = {
         src: img.getAttribute('src') || '',
         cap: (fig.getAttribute('data-lb-cap') || (cap ? cap.textContent : img.alt) || '').trim(),
+        captionNode: fig.hasAttribute('data-lb-cap') ? null : cap,
         group: fig.getAttribute('data-lb') || ('_' + ord),
         ord: ord
       };

@@ -26,7 +26,7 @@ store.html 의 각 칸이 아래 파일명을 **이미 가리키고 있습니다
 | `/assets/mind-care/06-sleep.png` | 수면 | 마음 돌봄 엽서 |
 | `/assets/mind-care/07-movement.png` | 운동 | 마음 돌봄 엽서 |
 | `/assets/mind-care/08-seeking-help.png` | 도움 요청 | 마음 돌봄 엽서 |
-| `poster-mind-care.png` | 마음 건강에는 이런 것들이 필요해요 · A4 | 마음 돌봄 포스터 |
+| `poster-mind-care.png` | 마음 건강에는 이런 것들이 필요해요 | 마음 돌봄 포스터 |
 | `mirror-a.jpg`   | 손거울A | 하늘색 · 책 읽는 세루 (True knowledge is more than knowing…) |
 | `mirror-b.jpg`   | 손거울B | 청록 · 걷는 김심리 (The heart holds wisdom…) |
 
