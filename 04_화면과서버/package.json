@@ -1,0 +1,7 @@
+{
+  "name": "pluspsychology-site",
+  "private": true,
+  "dependencies": {
+    "qrcode-generator": "2.0.4"
+  }
+}
