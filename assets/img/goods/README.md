@@ -18,11 +18,23 @@ store.html 의 각 칸이 아래 파일명을 **이미 가리키고 있습니다
 | `keyring-f.jpg`  | 키링F   | 클립보드 든 김심리 · 회색 백팩 |
 | `postcard-a.png` | 엽서A   | HAPPY BIRTHDAY! · 케이크 위 김심리 |
 | `postcard-b.png` | 엽서B   | HAPPY BIRTHDAY! · 선물기차 탄 세루 |
+| `/assets/mind-care/01-rest.png` | 휴식 | 마음 돌봄 엽서 |
+| `/assets/mind-care/02-connection.png` | 관계 | 마음 돌봄 엽서 |
+| `/assets/mind-care/03-sunlight.png` | 햇빛 | 마음 돌봄 엽서 |
+| `/assets/mind-care/04-self-expression.png` | 자기표현 | 마음 돌봄 엽서 |
+| `/assets/mind-care/05-meals.png` | 식사 | 마음 돌봄 엽서 |
+| `/assets/mind-care/06-sleep.png` | 수면 | 마음 돌봄 엽서 |
+| `/assets/mind-care/07-movement.png` | 운동 | 마음 돌봄 엽서 |
+| `/assets/mind-care/08-seeking-help.png` | 도움 요청 | 마음 돌봄 엽서 |
+| `poster-mind-care.png` | 마음 건강에는 이런 것들이 필요해요 · A4 | 마음 돌봄 포스터 |
 | `mirror-a.jpg`   | 손거울A | 하늘색 · 책 읽는 세루 (True knowledge is more than knowing…) |
 | `mirror-b.jpg`   | 손거울B | 청록 · 걷는 김심리 (The heart holds wisdom…) |
 
 ## 알아두면 좋은 것
 
+- 2026년 9월 성수동 팝업 엽서 8종은 제작 원본과 동일한 `/assets/mind-care/`의
+  PNG를 공유합니다. 엽서는 1205×1772, 새 A4 포스터는 2505×3532입니다.
+  투명 배경 원본이라 Store의 `.print-art` 클래스가 흰 종이 배경을 표시합니다.
 - **확장자가 다르면** (png 등) store.html 의 해당 `<img src>` 도 같이 고쳐야 합니다.
   위 표의 확장자가 곧 store.html 이 찾는 이름입니다.
 - **사진은 자르지 않고 원래 비율 그대로 나옵니다.** 그래서 같은 줄에 놓이는
