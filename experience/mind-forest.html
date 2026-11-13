@@ -178,6 +178,10 @@ button { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) { .finale .photo-return-notice { animation: none; } }
 .photo-actions { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
 .photo-qr { display: block; width: 120px; height: 120px; background: white; border-radius: 4px; image-rendering: pixelated; }
+@media (max-width: 620px) {
+  .finale button, .finale a { font-size: clamp(15px,4.2vw,18px); line-height: 1.25; white-space: nowrap; }
+  #finale-fire-home, #finale-fire-camera { width: calc(50% - 28px); max-width: none; min-height: 48px; padding: 10px 8px; font-size: clamp(18px,4.8vw,24px); }
+}
 @media (max-width: 760px) and (orientation: portrait) {
   #experience[data-stage="photo"] .finale { padding-inline: 12px; }
   #finale-photo-stage { grid-template-columns: 1fr; gap: 14px; }
@@ -194,7 +198,9 @@ h1 { font-family: "Black Han Sans", "Anemone Air"; font-weight: 400; font-size: 
 body.exploring .heading { opacity: .16; }
 body.exploring .heading .intro { opacity: 0; }
 .camera-panel { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(1.5); width: clamp(126px, 22vw, 176px); pointer-events: none; border: 1px solid #3a5156; border-radius: 12px; background: rgba(9,25,31,.92); overflow: hidden; }
-#experience:has(.camera-panel:not([hidden])) .sleeping-notice { top: max(12px, 5svh); }
+.camera-panel { transition: opacity .22s ease; }
+.camera-panel.is-dismissed { opacity: 0; }
+#experience:has(.camera-panel:not([hidden]):not(.is-dismissed)) .sleeping-notice { top: max(12px, 5svh); }
 .camera-preview { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #08151b; }
 #camera-video { width: 100%; height: 100%; object-fit: fill; opacity: .8; display: block; transform: none; }
 .camera-dot { position: absolute; width: 9px; height: 9px; transform: translate(-50%,-50%); border-radius: 50%; background: #fffce5; box-shadow: 0 0 8px #f5f5cd; }
@@ -234,7 +240,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
   .quiet-note { display: none; }
   .controls { left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); justify-content: center; }
   nav { gap: 3px; width: 100%; justify-content: center; }
-  nav button { background: rgba(7,23,29,.7); padding: 5px 6px; min-height: 50px; min-width: 44px; font-size: 11px; flex-direction: column; gap: 4px; }
+  nav button { background: rgba(7,23,29,.7); padding: 5px 6px; min-height: 50px; min-width: 44px; font-size: clamp(10px,2.9vw,11px); flex-direction: column; gap: 4px; white-space: nowrap; }
   #camera-status { font-size: 12px; padding: 8px; }
   .start-content h2 { font-size: 31px; }
   #start-description { font-size: 18px; }
@@ -247,7 +253,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
 @media (max-height: 460px) {
   .camera-panel { top: 50%; width: 116px; transform: translate(-50%, -50%) scale(clamp(1, calc((100svh - 144px) / 154px), 1.5)); }
   #camera-status { font-size: 12px; padding: 6px 8px; }
-  #experience:has(.camera-panel:not([hidden])) .sleeping-notice { padding-block: 8px; font-size: 22px; }
+  #experience:has(.camera-panel:not([hidden]):not(.is-dismissed)) .sleeping-notice { padding-block: 8px; font-size: 22px; }
 }
 @media (max-width: 620px) and (orientation: portrait) {
   #experience[data-stage="forest"] #camera-status { font-size: 12px; line-height: 1.4; padding: 7px 10px; text-align: center; }
@@ -258,7 +264,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
   }
   #experience[data-stage="forest"] .rub-hand { font-size: 22px; animation: none; }
   #experience[data-stage="forest"] .rub-guide p { padding: 0; font-size: 13px; line-height: 1.4; }
-  #experience[data-stage="forest"]:not([data-camera-state="tracking"]):has(.camera-panel:not([hidden])) .rub-guide { visibility: hidden; }
+  #experience[data-stage="forest"]:not([data-camera-state="tracking"]):has(.camera-panel:not([hidden]):not(.is-dismissed)) .rub-guide { visibility: hidden; }
   #experience[data-stage="forest"] .sleeping-notice { display: none; }
   #experience[data-stage="forest"] .encounter {
     top: calc(128px + env(safe-area-inset-top)) !important; left: 50% !important;
@@ -2258,6 +2264,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const compactForest = matchMedia('(max-width: 620px) and (orientation: portrait)');
   let activePointerId = null;
   let hand = null, cameraActive = false, windowBlurred = false, resumeCamera = false;
+  let cameraPreviewDismissed = false, cameraPreviewStartedAt = 0;
+  const cameraPreviewOrigins = new Map();
   const keys = new Set();
   const lightColors = ['#fffef0', '#aef4cd', '#a9dcff', '#ffc6de'];
   function newLight(color) {
@@ -2447,6 +2455,35 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     const tracking = help.hidden && (stage === 'forest' || (stage === 'fire' && !fireTimer));
     hand?.setPaused(!tracking || unavailable, stage === 'photo' && !unavailable);
   }
+  function resetCameraPreview() {
+    cameraPreviewDismissed = false;
+    cameraPreviewStartedAt = performance.now();
+    cameraPreviewOrigins.clear();
+    const panel = document.getElementById('camera-panel');
+    panel.classList.remove('is-dismissed');
+    panel.setAttribute('aria-hidden', 'false');
+  }
+  function updateCameraPreview(points, now) {
+    if (cameraPreviewDismissed || !cameraActive) return;
+    const visibleIds = new Set(points.map(point => point.id));
+    for (const id of cameraPreviewOrigins.keys()) if (!visibleIds.has(id)) cameraPreviewOrigins.delete(id);
+    for (const point of points) {
+      if (point.held || !Number.isFinite(point.x) || !Number.isFinite(point.y)) continue;
+      const origin = cameraPreviewOrigins.get(point.id);
+      if (!origin || point.reset) {
+        cameraPreviewOrigins.set(point.id, {x: point.x, y: point.y});
+        continue;
+      }
+      // Ignore tracking tremor; allow a short first look before clearing the characters.
+      if (now - cameraPreviewStartedAt < 700 || Math.hypot(point.x - origin.x, point.y - origin.y) < .03) continue;
+      cameraPreviewDismissed = true;
+      const panel = document.getElementById('camera-panel');
+      panel.classList.add('is-dismissed');
+      panel.setAttribute('aria-hidden', 'true');
+      // Only hide the display: the video and hand tracker keep running.
+      break;
+    }
+  }
   function cameraPoints(points) {
     // Apply the display preference after filtering, once for every scene.
     if (cameraMirrored) points = points.map(point => ({...point, x: 1 - point.x, rawX: 1 - point.rawX}));
@@ -2460,6 +2497,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     }
     if (!started || stage !== 'forest' || !help.hidden || document.hidden || windowBlurred) return;
     const now = performance.now();
+    updateCameraPreview(points, now);
     for (const point of points) {
       let light = cameraLights.get(point.id);
       if (!light || point.reset) {
@@ -2483,6 +2521,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function cameraState(info){
     const changed=cameraActive!==Boolean(info.active);cameraActive=Boolean(info.active);
+    if (changed || info.status === 'idle' || info.status === 'error') resetCameraPreview();
     if(changed||info.status!=='tracking')releaseLight();
     if (stage === 'fire') updateFireGuide();
     const experience=document.getElementById('experience');experience.dataset.cameraState=info.status;experience.dataset.inputSource=cameraActive?'camera':'pointer';
@@ -2850,6 +2889,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const photoResult = document.getElementById('photo-result');
   const photoQr = document.getElementById('photo-qr');
   const photoDownload = document.getElementById('photo-download');
+  const mobilePhotoLayout = matchMedia('(max-width: 760px), (max-height: 500px) and (pointer: coarse)');
   const photoReturn = document.getElementById('photo-return');
   const photoResultSeconds = 30;
   const photoAutoDelay = 5000;
@@ -3673,6 +3713,15 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       return shared;
     } catch { return null; }
   }
+  function updatePhotoResultPresentation() {
+    if (stage !== 'photo' || photoResult.hidden) return;
+    const hasQr = photoQr.hasAttribute('src');
+    photoQr.hidden = mobilePhotoLayout.matches || !hasQr;
+    photoMessage.textContent = mobilePhotoLayout.matches
+      ? '아래 다운로드 버튼을 눌러\n사진을 저장하세요.'
+      : hasQr ? '휴대폰으로 QR을 찍어\n사진을 저장하세요.'
+      : '웹사이트에 사진을 저장하지 못했어요. 아래 버튼으로 이 기기에 저장할 수 있어요.';
+  }
   async function takePhoto(automatic = false) {
     if (stage !== 'photo' || photoTake.disabled || photoCaptured || !photoResult.hidden || document.hidden || !help.hidden) return;
     clearTimeout(photoAutoTimer);
@@ -3715,10 +3764,9 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       if (flowVersion !== version) return;
       photoCountdown.hidden = photoPrepare.hidden = true;
       photoResult.hidden = false;
-      photoQr.hidden = !shared?.qr;
       if (shared?.qr) photoQr.src = shared.qr;
-      photoMessage.textContent = shared?.qr ? '휴대폰으로 QR을 찍어\n사진을 저장하세요.'
-        : '웹사이트에 사진을 저장하지 못했어요. 아래 버튼으로 이 기기에 저장할 수 있어요.';
+      else photoQr.removeAttribute('src');
+      updatePhotoResultPresentation();
       clearTimeout(idleTimer);
       photoReturn.textContent = photoResultSeconds + '초 후에 처음으로 돌아갑니다.';
       const deadline = performance.now() + photoResultSeconds * 1000;
@@ -3834,6 +3882,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     emberPlayfield.append(cursor); return cursor;
   });
   photoTake.addEventListener('click', () => void takePhoto());
+  mobilePhotoLayout.addEventListener('change', updatePhotoResultPresentation);
   document.getElementById('photo-retake').addEventListener('click', retakePhoto);
   document.getElementById('photo-home').addEventListener('click', returnToOpening);
   document.getElementById('photo-result-home').addEventListener('click', returnToOpening);
