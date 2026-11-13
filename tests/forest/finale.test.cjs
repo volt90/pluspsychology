@@ -65,7 +65,7 @@ function photoSetup() {
   const timers = new Map([[10, 'old return interval'], [11, 'old auto photo'], [12, 'old idle return']]);
   const calls = {stoppedAudio: 0, stoppedCamera: 0, preview: 0, draw: 0, revoked: [], idle: 0, capture: 0};
   const context = vm.createContext({
-    stage: 'photo', flowVersion: 3, photoCaptured: true, photoPreviewReady: true,
+    stage: 'photo', flowVersion: 3, photoCaptured: true, photoPreviewReady: true, photoPersonMode: 'mediapipe',
     photoBackdropIndex: 0, photoBackdropChosen: true, photoBackdropLocked: true, photoBackdropCandidate: 2,
     returnTimer: 10, photoAutoTimer: 11, idleTimer: 12, photoAutoDelay: 7000,
     photoObjectURL: 'blob:previous-photo', document: {hidden: false}, help: {hidden: true},
@@ -128,4 +128,19 @@ test('help and completed results cannot start another automatic or manual captur
   const scheduled = qa.timers.get(qa.api.photoAutoTimer);
   assert.equal(scheduled.delay, 7000);
   await scheduled.callback(); assert.equal(qa.calls.capture, 1, 'a ready preview still receives its normal automatic capture');
+});
+
+test('automatic capture waits for a valid person mask, and a failed manual attempt releases the shutter',async()=>{
+  for(const mode of ['loading','error']){
+    const qa=photoSetup();
+    Object.assign(qa.api,{photoCaptured:false,photoResult:element({hidden:true}),photoTake:element(),photoPersonMode:mode,
+      updateCameraOrientationButtons(){},preparePhotoCamera:async()=>true,refreshPhotoForeground:async()=>false});
+    qa.api.scheduleAutoPhoto();
+    assert.equal([...qa.timers.values()].some(timer=>typeof timer==='object'),false);
+    qa.include('takePhoto');await qa.api.takePhoto();
+    assert.equal(qa.api.photoTake.disabled,false);
+    assert.equal(qa.api.photoCountdown.hidden,true);
+    assert.equal(qa.api.photoCaptured,false);assert.equal(qa.calls.draw,0);
+    assert.equal(qa.api.photoBackdropLocked,false);
+  }
 });

@@ -50,7 +50,7 @@ function setup({stored=new Map(),storageBlocked=false}={}) {
   const context=vm.createContext({console,Map,Boolean,Math,Number,Promise,performance:{now:()=>1000},
     stage:'forest',started:true,windowBlurred:false,cameraActive:true,width:1000,height:800,help:{hidden:true},canvas:{dataset:{}},
     experience:{dataset:{}},document:{hidden:false,getElementById:id=>elements.get(id)},status:{textContent:''},
-    photoTake:{disabled:false},photoCaptured:false,photoResult:{hidden:true},photoPreviewReady:false,
+    photoTake:{disabled:false},photoCaptured:false,photoResult:{hidden:true},photoPreviewReady:false,photoMessage:{textContent:''},
     photoBackdropChosen:true,photoBackdropCandidate:2,photoAutoTimer:0,flowVersion:1,
     photoSegmentationRequest:null,photoSegmenter:null,photoPersonMode:'loading',
     photoWindow:{width:4,height:2},photoCameraLayer:layer,photoCameraContext:layer.getContext(),
@@ -128,18 +128,6 @@ test('help reports the direction while the shortcut cannot change a countdown or
   assert.equal(qa.elements.get('camera-orientation-status').textContent,'현재 웹캠 방향: 반전 없음');
 });
 
-test('chroma-key photos use the same direction as the forest without flipping the photo frame',()=>{
-  const qa=setup();qa.include('updateKeyedPhoto');
-  qa.api.setCameraMirrored(false);
-  const frame=coloredFrame([0,255,0,255],[220,20,40,255]);
-  Object.assign(qa.api.cameraVideo,{...frame,srcObject:{}});
-  qa.api.updateKeyedPhoto();
-  assert.equal(qa.layer.pixels[3],0);assert.equal(qa.layer.pixels[15],255);assert.equal(qa.layer.pixels[12],220);
-  qa.api.setCameraMirrored(true);qa.api.updateKeyedPhoto();
-  assert.equal(qa.layer.pixels[3],255);assert.equal(qa.layer.pixels[0],220);assert.equal(qa.layer.pixels[15],0);
-  qa.api.setCameraMirrored(false);qa.api.updateKeyedPhoto();assert.equal(qa.layer.pixels[3],0);assert.equal(qa.layer.pixels[15],255);
-});
-
 test('the segmentation bitmap and alpha mask flip together rather than moving the cutout to the wrong side',()=>{
   const qa=setup();qa.include('applyPhotoMask');
   qa.api.setCameraMirrored(false);
@@ -148,6 +136,30 @@ test('the segmentation bitmap and alpha mask flip together rather than moving th
   assert.equal(qa.layer.pixels[3],255);assert.equal(qa.layer.pixels[0],220);assert.equal(qa.layer.pixels[15],0);
   qa.api.setCameraMirrored(true);qa.api.applyPhotoMask(frame);
   assert.equal(qa.layer.pixels[3],0);assert.equal(qa.layer.pixels[15],255);assert.equal(qa.layer.pixels[12],220);
+});
+
+test('a segmentation failure clears the camera cutout instead of exposing the real background, and can be retried',async()=>{
+  const qa=setup();qa.include('applyPhotoMask','refreshPhotoForeground');let closed=0,drawn=0;
+  Object.assign(qa.api,{stage:'photo',photoPreviewReady:true,photoPersonMode:'mediapipe',
+    console:{warn(){}},drawGroupPhoto(){drawn++;},
+    photoSegmenter:{process:async()=>{throw Error('Model load or inference failed');},close(){closed++;}}});
+  qa.layer.width=4;qa.layer.height=2;
+  assert.equal(await qa.api.refreshPhotoForeground(1),false);
+  assert.equal(qa.api.photoPersonMode,'error');assert.equal(qa.layer.width,0);assert.equal(qa.layer.height,0);
+  assert.equal(closed,1);assert.equal(drawn,1);assert.match(qa.api.photoMessage.textContent,/배경을 분리하지 못/);
+  const bitmap={...coloredFrame([220,20,40,255],[10,40,230,255]),close(){}};
+  qa.api.window={ForestHandTracking:{createPhotoSegmenter:()=>({process:async()=>({bitmap,alpha:new Uint8ClampedArray([255,255,0,0,255,255,0,0]),width:4,height:2})})}};
+  assert.equal(await qa.api.refreshPhotoForeground(1),true);
+  assert.equal(qa.api.photoPersonMode,'mediapipe');assert.equal(qa.layer.pixels[3],0);assert.equal(qa.layer.pixels[15],255);
+});
+
+test('an invalid mask cannot reuse previous alpha values or draw a raw frame',()=>{
+  const qa=setup();qa.include('applyPhotoMask');
+  const bitmap=coloredFrame([220,20,40,255],[10,40,230,255]);
+  for(const frame of [{bitmap,alpha:new Uint8ClampedArray(7),width:4,height:2},{bitmap,alpha:[],width:0,height:0}]){
+    assert.throws(()=>qa.api.applyPhotoMask(frame),/Invalid person mask/);
+    assert.equal(qa.layer.width,0);
+  }
 });
 
 test('a direction change while segmentation is pending retries a fresh frame for the same awaiting photo request',async()=>{
