@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0c222b">
-  <meta name="description" content="김심리월드 체험전시 ‘서로의 빛을 느낀다는 것’. 작은 빛으로 네 친구를 깨우고 함께 온기를 나누는 인터랙티브 체험입니다.">
+  <meta name="description" content="손끝의 빛으로 친구들을 깨우고, 함께 온기를 나누는 김심리월드 체험전시.">
   <title>서로의 빛을 느낀다는 것</title>
   <link rel="canonical" href="https://www.pluspsychology.ai/experience/mind-forest">
   <meta property="og:type" content="website">
@@ -12,7 +12,7 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:url" content="https://www.pluspsychology.ai/experience/mind-forest">
   <meta property="og:title" content="서로의 빛을 느낀다는 것">
-  <meta property="og:description" content="김심리월드 체험전시 ‘서로의 빛을 느낀다는 것’. 작은 빛으로 네 친구를 깨우고 함께 온기를 나누는 인터랙티브 체험입니다.">
+  <meta property="og:description" content="손끝의 빛으로 친구들을 깨우고, 함께 온기를 나누는 김심리월드 체험전시.">
   <meta property="og:image" content="https://www.pluspsychology.ai/assets/img/experience/mind-forest-campfire-v1.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1672">
@@ -20,7 +20,7 @@
   <meta property="og:image:alt" content="김심리, 세루, 루비, 아르가 숲속 모닥불을 둘러앉아 함께 온기를 나누는 장면">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="서로의 빛을 느낀다는 것">
-  <meta name="twitter:description" content="김심리월드 체험전시 ‘서로의 빛을 느낀다는 것’. 작은 빛으로 네 친구를 깨우고 함께 온기를 나누는 인터랙티브 체험입니다.">
+  <meta name="twitter:description" content="손끝의 빛으로 친구들을 깨우고, 함께 온기를 나누는 김심리월드 체험전시.">
   <meta name="twitter:image" content="https://www.pluspsychology.ai/assets/img/experience/mind-forest-campfire-v1.png">
   <meta name="twitter:image:alt" content="김심리, 세루, 루비, 아르가 숲속 모닥불을 둘러앉아 함께 온기를 나누는 장면">
 <meta name="forest-content-sha256" content="b7cb2e66a77e0a951ab4ebb54191f1dc83754c11fdd366626c7a2cfd39d34d46">
@@ -271,7 +271,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
 </head>
 <body>
   <main id="experience" data-started="false" aria-label="김심리월드, 고요한 숲">
-    <canvas id="forest" tabindex="-1" aria-label="고요한 숲. 카메라 앞에서 검지 끝으로 빛을 옮겨 보세요. 카메라를 끄면 마우스, 화면 터치, 방향키로 조작할 수 있어요.">이 체험에는 Canvas를 지원하는 브라우저가 필요합니다.</canvas>
+    <canvas id="forest" tabindex="-1" aria-label="고요한 숲. 카메라 앞에서 검지 끝으로 빛을 옮겨 보세요. 카메라를 끄면 마우스, 화면 터치, 방향키로 조작할 수 있어요.">손끝의 빛으로 친구들을 깨우고, 함께 온기를 나누는 김심리월드 체험전시.</canvas>
 
     <section id="opening-screen" class="opening-screen" role="dialog" aria-modal="true" aria-labelledby="opening-title">
       <button id="opening-music" class="opening-music" type="button" aria-label="첫 화면 배경음" aria-pressed="false" title="배경음 켜기">
@@ -1745,7 +1745,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     }
     worker.onmessage = ({data}) => settle(data.type === 'error' ? new Error(data.message) : null, data);
     worker.onerror = event => { event.preventDefault(); settle(new Error(event.message)); };
-    const ready = exchange({type: 'init', assets}, [], 6000);
+    const ready = exchange({type: 'init', assets}, [], 30000);
     return {
       async process(video) {
         await ready;
@@ -1753,7 +1753,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         const bitmap = await createImageBitmap(video);
         try {
           if (closed) return null;
-          return await exchange({type: 'frame', bitmap, timestamp: performance.now()}, [bitmap], 2000);
+          return await exchange({type: 'frame', bitmap, timestamp: performance.now()}, [bitmap], 5000);
         } finally { bitmap.close(); }
       },
       close() {
@@ -2761,8 +2761,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     const dt=lastFrame?Math.min(now-lastFrame,60):16;lastFrame=now;
     if (started && stage !== 'forest') {
       if (stage === 'photo' && !photoCaptured && photoPreviewReady && now - lastPhotoPreview >= 80) {
-        if (photoPersonMode === 'chroma') drawGroupPhoto();
-        else if (photoPersonMode === 'mediapipe' && !photoSegmentationRequest) {
+        if (photoPersonMode === 'mediapipe' && !photoSegmentationRequest) {
           void refreshPhotoForeground(flowVersion).then(drawGroupPhotoIfCurrent);
         }
       }
@@ -3413,30 +3412,6 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     c.restore();
     return scene;
   }
-  function updateKeyedPhoto() {
-    if (!cameraVideo.videoWidth || !cameraVideo.srcObject || cameraVideo.readyState < 2) return;
-    // Fit the whole group using the same direction as the forest and fire.
-    const scale = Math.min(photoWindow.width / cameraVideo.videoWidth, photoWindow.height / cameraVideo.videoHeight);
-    const w = Math.max(1, Math.round(cameraVideo.videoWidth * scale));
-    const h = Math.max(1, Math.round(cameraVideo.videoHeight * scale));
-    if (photoCameraLayer.width !== w) photoCameraLayer.width = w;
-    if (photoCameraLayer.height !== h) photoCameraLayer.height = h;
-    const key = photoCameraContext;
-    setPhotoCameraTransform(key, w);
-    key.drawImage(cameraVideo, 0, 0, w, h);
-    const image = key.getImageData(0, 0, w, h);
-    const pixels = image.data;
-    for (let i = 0; i < pixels.length; i += 4) {
-      const green = pixels[i + 1], excess = green - Math.max(pixels[i], pixels[i + 2]);
-      if (excess <= 10) continue;
-      // Feather intermediate green pixels and reduce green spill at the edges.
-      const amount = clamp(Math.min((excess - 10) / 23, (excess / green - .12) / .24), 0, 1);
-      const removal = amount * amount * (3 - 2 * amount);
-      pixels[i + 1] = green - excess * removal;
-      pixels[i + 3] = 255 * (1 - removal);
-    }
-    key.putImageData(image, 0, 0);
-  }
   function drawPhotoForeground(context) {
     if (!photoCameraLayer.width || !photoCameraLayer.height) return;
     // Anchor the camera's bottom edge to the frame so cropped torsos meet its border.
@@ -3486,6 +3461,9 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     }
   }
   function applyPhotoMask({bitmap, alpha, width, height}) {
+    if (!bitmap?.width || !bitmap.height || !Number.isInteger(width) || !Number.isInteger(height)
+      || width <= 0 || height <= 0 || alpha?.length !== width * height)
+      throw new Error('Invalid person mask.');
     if (photoMaskLayer.width !== width || photoMaskLayer.height !== height || !photoMaskPixels) {
       photoMaskLayer.width = width;
       photoMaskLayer.height = height;
@@ -3511,7 +3489,11 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     if (photoSegmentationRequest) return photoSegmentationRequest;
     const orientation = cameraOrientationRevision;
     const isCurrent = () => flowVersion === version && orientation === cameraOrientationRevision && stage === 'photo' && !document.hidden && photoPreviewReady;
-    if (!isCurrent() || photoPersonMode === 'chroma') return Promise.resolve(isCurrent());
+    if (!isCurrent()) return Promise.resolve(false);
+    if (photoPersonMode !== 'mediapipe') {
+      photoPersonMode = 'loading';
+      photoMessage.textContent = '사람과 배경을 구분하고 있어요. 잠시만 기다려 주세요.';
+    }
     const request = (async () => {
       try {
         photoSegmenter ??= window.ForestHandTracking.createPhotoSegmenter();
@@ -3525,8 +3507,15 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         if (!isCurrent()) return false;
         photoSegmenter?.close();
         photoSegmenter = null;
-        photoPersonMode = 'chroma';
-        console.warn('MediaPipe person segmentation is unavailable. Using the green-screen key.', error);
+        // Never substitute an unsegmented camera frame: non-green walls and
+        // furniture would then become part of the saved photo.
+        photoPersonMode = 'error';
+        photoCameraLayer.width = photoCameraLayer.height = 0;
+        clearTimeout(photoAutoTimer);
+        photoMessage.textContent = '배경을 분리하지 못했어요. 잠시 후 단체 사진 찍기를 다시 눌러 주세요.';
+        drawGroupPhoto();
+        console.warn('Person segmentation failed; photo capture is paused.', error);
+        return false;
       }
       return true;
     })().then(current => {
@@ -3550,9 +3539,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     lastPhotoPreview = performance.now();
     photoDecoration ??= makePhotoDecoration();
     photoBackdrops ??= photoBackgroundLayouts.map(makeCampfireBackdrop);
-    const hasForeground = photoPreviewReady && photoPersonMode !== 'loading';
+    const hasForeground = photoPreviewReady && photoPersonMode === 'mediapipe';
     if (hasForeground) {
-      if (photoPersonMode === 'chroma') updateKeyedPhoto();
       selectPhotoBackdrop(lastPhotoPreview);
     }
     c.save();
@@ -3650,7 +3638,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function scheduleAutoPhoto() {
     clearTimeout(photoAutoTimer);
-    if (stage === 'photo' && !document.hidden && help.hidden && !photoCaptured && !photoTake.disabled && photoPreviewReady)
+    if (stage === 'photo' && !document.hidden && help.hidden && !photoCaptured && !photoTake.disabled && photoPreviewReady && photoPersonMode === 'mediapipe')
       photoAutoTimer = setTimeout(() => void takePhoto(true), photoAutoDelay);
   }
   function stopPhotoCamera() {
@@ -3746,7 +3734,16 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       photoCountdown.hidden = true;
       photoTake.disabled = false;
       updateCameraOrientationButtons();
-      photoMessage.textContent = '사진을 찍지 못했어요. 카메라가 켜져 있는지 확인한 뒤 다시 눌러 주세요.';
+      photoMessage.textContent = photoPersonMode === 'error'
+        ? '배경을 분리하지 못했어요. 잠시 후 단체 사진 찍기를 다시 눌러 주세요.'
+        : '사진을 찍지 못했어요. 카메라가 켜져 있는지 확인한 뒤 다시 눌러 주세요.';
+    } finally {
+      if (flowVersion === version && stage === 'photo' && !photoCaptured) {
+        photoBackdropLocked = false;
+        photoCountdown.hidden = true;
+        photoTake.disabled = false;
+        updateCameraOrientationButtons();
+      }
     }
   }
   function returnToOpening() {
