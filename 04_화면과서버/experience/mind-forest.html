@@ -53,7 +53,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .opening-footprint::after { inset: 73% 23% 0 24%; border-radius: 28% 27% 47% 43%; }
 @keyframes opening-footprint { 0% { opacity: 0; } 14% { opacity: .95; } 100% { opacity: .42; } }
 @keyframes opening-darken { 0%, 86% { opacity: 0; } 100% { opacity: 1; } }
-.opening-content, .start-content { zoom: 2; zoom: clamp(1.12,calc(100vw / 405px),2); }
+.opening-content { zoom: 2; zoom: clamp(1.12,calc(100vw / 405px),2); }
 .opening-content { width: min(100%, 740px); text-align: center; }
 .opening-music { position: absolute; top: max(12px,env(safe-area-inset-top)); right: max(12px,env(safe-area-inset-right)); display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #536c61; border-radius: 50%; background: #0c191d; color: #c9dacd; cursor: pointer; }
 .opening-music svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
@@ -111,24 +111,32 @@ button { -webkit-tap-highlight-color: transparent; }
 .video-stage video { display: block; width: 100%; height: 100%; object-fit: contain; }
 .video-placeholder { padding: 18px; }
 #finale-fire-stage { --fire-scale: clamp(.85,min(calc(100vw / 260px),calc((100svh - 180px) / 190px)),1.65); --fire-growth: .38; position: absolute; inset: 0; width: 100%; display: block; padding: 16px; touch-action: none; background: radial-gradient(ellipse at 50% 65%,#382b20 0%,#132125 46%,#0a1518 78%); }
-.fire-content { width: 100%; height: 100%; position: relative; }
-.fire-content h2 { margin: max(2px,env(safe-area-inset-top)) 0 8px; font-size: clamp(24px,3vw,38px); line-height: 1.15; }
-.fire-content p { font-size: clamp(14px,1.6vw,19px); line-height: 1.4; word-break: keep-all; text-wrap: balance; }
-.fire-content #finale-fire-progress { margin: 5px 0; color: #f5d99e; font-family: "Black Han Sans","Anemone Air"; font-size: clamp(13px,1.4vw,17px); }
-.fire-content .fire-keyboard { display: none; position: absolute; bottom: 52px; left: 0; right: 0; margin: 0; color: #aebdaf; font-size: 12px; }
+.fire-content { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; align-items: center; padding-top: clamp(36px,9svh,112px); padding-bottom: 112px; }
+.fire-content h2 { margin: max(2px,env(safe-area-inset-top)) 0 8px; font-size: clamp(48px,6vw,76px); line-height: 1.15; }
+.fire-content p { font-size: clamp(28px,3.2vw,38px); line-height: 1.4; word-break: keep-all; text-wrap: balance; }
+.fire-content #finale-fire-guide { width: min(100%,1360px); min-height: 2.8em; margin: 12px 0 8px; }
+.fire-content #finale-fire-progress { margin: 5px 0; color: #f5d99e; font-family: "Black Han Sans","Anemone Air"; font-size: clamp(26px,2.8vw,34px); }
+.fire-content .fire-keyboard { display: none; position: absolute; bottom: 92px; left: 0; right: 0; margin: 0; color: #aebdaf; font-size: 24px; }
 .fire-content:has(.fire-pad:focus-visible) .fire-keyboard { display: block; }
-.campfire-area { position: absolute; inset: 116px 0 88px; }
-.ember-light { --ember-size: clamp(24px,3vw,40px); position: fixed; z-index: 2; top: 0; left: 0; width: var(--ember-size); height: var(--ember-size); margin: calc(var(--ember-size) * -.5) 0 0 calc(var(--ember-size) * -.5); border-radius: 50%; background: radial-gradient(circle,#fffee3 22%,#ffeb8d 61%,#ffb942 100%); box-shadow: 0 0 var(--ember-size) calc(var(--ember-size) * .32) #ffdc715e,0 0 calc(var(--ember-size) * 2.2) calc(var(--ember-size) * .5) #ffc55335; pointer-events: none; }
+.campfire-area { position: relative; flex: 1; width: 100%; min-height: 0; }
+.ember-light { --ember-size: clamp(48px,6vw,80px); position: fixed; z-index: 2; top: 0; left: 0; width: var(--ember-size); height: var(--ember-size); margin: calc(var(--ember-size) * -.5) 0 0 calc(var(--ember-size) * -.5); border-radius: 50%; background: radial-gradient(circle,#fffee3 22%,#ffeb8d 61%,#ffb942 100%); box-shadow: 0 0 var(--ember-size) calc(var(--ember-size) * .32) #ffdc715e,0 0 calc(var(--ember-size) * 2.2) calc(var(--ember-size) * .5) #ffc55335; pointer-events: none; }
 .ember-light.is-waiting::after { content: ''; position: absolute; inset: -13px; border: 1px dashed #f6dfa77a; border-radius: 50%; }
 .ember-light.is-reachable::after { border: 2px solid #fff5cb; box-shadow: 0 0 14px #fff4b855; }
-.fire-hand-cursor { position: fixed; z-index: 3; top: 0; left: 0; width: 42px; height: 42px; opacity: .96; pointer-events: none; transform: translate(-50%,-12.5%); filter: drop-shadow(0 2px 2px #071514cc) drop-shadow(0 0 3px var(--hand-color,#fff)); }
+.fire-hand-cursor { position: fixed; z-index: 3; top: 0; left: 0; width: 84px; height: 84px; opacity: .96; pointer-events: none; transform: translate(-50%,-12.5%); filter: drop-shadow(0 2px 2px #071514cc) drop-shadow(0 0 3px var(--hand-color,#fff)); }
 .fire-hand-cursor svg { display: block; width: 100%; height: 100%; overflow: visible; fill: #fff7df; stroke: #233a32; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .fire-hand-cursor .hand-detail { fill: none; stroke-width: 1.7; }
 .fire-hand-cursor .hand-cuff { fill: var(--hand-color,#fff); }
 .fire-hand-cursor .hand-pinched, .fire-hand-cursor.is-pinching .hand-open { display: none; }
 .fire-hand-cursor.is-pinching .hand-pinched { display: inline; }
 .fire-hand-cursor.is-held { opacity: .3; }
-@media (max-width: 620px) { .fire-hand-cursor { width: 36px; height: 36px; } }
+@media (max-width: 620px) { .fire-hand-cursor { width: 72px; height: 72px; } }
+@media (max-width: 620px) and (max-height: 680px) {
+  #finale-fire-stage { --fire-scale: .85; padding: 4px; }
+  .fire-content { padding-top: 30px; padding-bottom: 116px; }
+  .fire-content p { line-height: 1.25; }
+  .fire-content #finale-fire-guide { margin: 8px 0 4px; }
+  #finale-fire-home, #finale-fire-camera { padding-inline: 10px; }
+}
 #finale-fire-stage.is-kindled .ember-light { opacity: 0; }
 .finale .fire-pad { position: absolute; top: 50%; left: 50%; width: min(100%,calc(clamp(128px,24vw,220px) * var(--fire-scale))); height: calc(155px * var(--fire-scale)); margin: 0; padding: 0; border: 0; border-radius: 50%; transform: translate(-50%,-50%); background: radial-gradient(ellipse 50% 23% at 50% 84%,#f9984933,transparent); }
 .finale .fire-pad:disabled { opacity: 1; }
@@ -139,12 +147,13 @@ button { -webkit-tap-highlight-color: transparent; }
 .flame { display: block; width: 100%; height: 100%; border-radius: 70% 28% 56% 44% / 78% 63% 38% 28%; transform-origin: 50% 94%; background: radial-gradient(ellipse at 49% 77%,#fff6b8 12%,#ffc263 45%,#e46d38 78%); box-shadow: 0 0 calc(36px * var(--fire-scale)) #e28a45; animation: fire-sway .8s ease-in-out infinite alternate; }
 @keyframes fire-sway { from { transform: rotate(-10deg) scale(.94,1.03); } to { transform: rotate(9deg) scale(1.03,.94); } }
 .fire-spark { position: absolute; top: 45%; left: 50%; width: calc(var(--size) * var(--fire-scale)); height: calc(var(--size) * var(--fire-scale)); border-radius: 50%; background: #ffe29a; box-shadow: 0 0 calc(9px * var(--fire-scale)) #ff994e; pointer-events: none; }
-#finale-fire-home { position: absolute; right: max(14px,env(safe-area-inset-right)); bottom: max(16px,env(safe-area-inset-bottom)); font-size: clamp(16px,2vw,26px); }
-#finale-fire-camera { position: absolute; left: max(14px,env(safe-area-inset-left)); bottom: max(16px,env(safe-area-inset-bottom)); font-size: clamp(16px,2vw,26px); }
+#finale-fire-home { position: absolute; right: max(14px,env(safe-area-inset-right)); bottom: max(16px,env(safe-area-inset-bottom)); max-width: calc(50% - 20px); font-size: clamp(32px,4vw,52px); line-height: 1.2; }
+#finale-fire-camera { position: absolute; left: max(14px,env(safe-area-inset-left)); bottom: max(16px,env(safe-area-inset-bottom)); max-width: calc(50% - 20px); font-size: clamp(32px,4vw,52px); line-height: 1.2; }
 #finale-photo-stage { width: min(100%,1240px); display: grid; grid-template-columns: minmax(0,1fr) minmax(190px,270px); gap: clamp(12px,3vw,40px); align-items: center; }
 .photo-frame { position: relative; width: min(100%,calc(100svh - 64px)); margin: 0 auto; aspect-ratio: 1; }
 .photo-frame canvas { display: block; width: 100%; height: 100%; border-radius: 14px; box-shadow: 0 14px 45px #020907aa; }
 .photo-info { min-width: 0; }
+#photo-message { white-space: pre-line; word-break: keep-all; text-wrap: balance; }
 .photo-countdown { position: fixed; inset: 0; z-index: 2; display: grid; place-items: center; pointer-events: none; font: 400 clamp(70px,16vw,160px) "Black Han Sans","Anemone Air"; color: #fff8d8; text-shadow: 0 3px 18px #121513; }
 .finale .photo-return-notice { display: flex; align-items: center; justify-content: center; gap: .45em; width: fit-content; max-width: 90%; margin: 14px auto 0; color: #ff8a80; font: 400 clamp(17px,2.15vw,27px)/1.25 "Black Han Sans","Anemone Air"; word-break: keep-all; animation: photo-return-pulse 1.35s ease-in-out infinite; }
 .photo-return-notice .warning-icon { flex: 0 0 auto; font: 1em/1 system-ui,sans-serif; }
@@ -224,13 +233,6 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
   #experience:has(.camera-panel:not([hidden])) .sleeping-notice { padding-block: 8px; font-size: 22px; }
 }
 @media (max-width: 620px) and (orientation: portrait) {
-  /* Keep the video running for inference without covering the forest. */
-  #experience[data-stage="forest"] .camera-preview { display: none; }
-  #experience[data-stage="forest"] .camera-panel {
-    top: auto; bottom: calc(76px + env(safe-area-inset-bottom)); left: 50%;
-    transform: translateX(-50%); width: max-content; max-width: calc(100% - 32px);
-  }
-  #experience[data-stage="forest"][data-camera-state="tracking"] .camera-panel { display: none; }
   #experience[data-stage="forest"] #camera-status { font-size: 12px; line-height: 1.4; padding: 7px 10px; text-align: center; }
   #experience[data-stage="forest"] .rub-guide {
     top: auto !important; bottom: calc(76px + env(safe-area-inset-bottom)); left: 50% !important;
@@ -318,7 +320,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
         <button id="sound-toggle" type="button" title="소리 켜기·끄기 (M)" aria-pressed="false" aria-label="소리 끄기">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4ZM16 8c3 2 3 6 0 8M19 5c5 4 5 10 0 14"/></svg><span id="sound-label">소리 끄기</span>
         </button>
-        <button id="reset" type="button" title="처음으로 (R)" aria-label="빛을 지우고 처음으로">
+        <button id="reset" type="button" title="처음으로 (R)" aria-label="첫 인사 화면으로 돌아가기">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9a8 8 0 1 1-1 6M5 4v5h5"/></svg><span>처음으로</span>
         </button>
         <button id="help-toggle" type="button" title="조작 안내 (H)" aria-expanded="false" aria-controls="help-panel">
@@ -336,7 +338,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
       <p>‘카메라 끄기’를 누르고<br>마우스/화면 터치/방향키로<br>빛을 옮길 수 있어요.</p>
       <p>친구의 얼굴과 몸 주변을 빙글빙글 맴돌아 보세요. 잔잔한 소리와 함께 빛이 모여요.<br>충분한 빛이 모이면 친구가 깨어나 인사를 건네요.</p>
       <p>오른쪽으로 움직였을 때 빛도 오른쪽으로 움직이는지 확인해 주세요. 반대로 움직인다면 <strong>N키</strong>를 눌러 웹캠의 좌우 방향을 바꿔 주세요. 숲과 모닥불, 사진에 함께 적용돼요.</p>
-      <p id="camera-orientation-status" role="status">현재 웹캠 방향: 기본</p>
+      <p id="camera-orientation-status" role="status">현재 웹캠 방향: 좌우 반전</p>
       <p>사진 촬영 카운트다운 중에는 좌우 방향이 고정돼요. 방향을 다시 맞추려면 촬영 후 ‘다시 찍기’를 눌러 주세요.</p>
       <dl><dt>방향키</dt><dd>카메라를 끄고 빛 옮기기</dd><dt>C</dt><dd>카메라 켜기·끄기</dd><dt>N</dt><dd>웹캠 좌우 방향 바꾸기</dd><dt>F</dt><dd>전체화면</dd><dt>R</dt><dd>처음으로</dd><dt>H</dt><dd>안내 열기·닫기</dd><dt>M</dt><dd>소리 켜기·끄기</dd></dl>
     </aside>
@@ -1751,9 +1753,25 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     const checkCurrent = () => { if (!isCurrent()) throw Object.assign(new Error('Camera request cancelled.'), {name: 'AbortError'}); };
     async function acquire(video) {
       checkCurrent();
-      let stream;
-      try { stream = await devices.getUserMedia({audio: false, video}); }
-      catch (error) { checkCurrent(); throw error; }
+      let stream, requestTimer, timedOut = false;
+      try {
+        const pending = devices.getUserMedia({audio: false, video}).then(value => {
+          // A browser permission prompt cannot be cancelled. Release a stream
+          // arriving after a timeout instead of leaving the webcam occupied.
+          if (timedOut) {
+            for (const track of value.getTracks()) track.stop();
+            throw Object.assign(new Error('Camera request expired.'), {name: 'AbortError'});
+          }
+          return value;
+        });
+        stream = await Promise.race([pending, new Promise((resolve, reject) => {
+          requestTimer = setTimeout(() => {
+            timedOut = true;
+            reject(Object.assign(new Error('Camera permission or device did not respond within 20 seconds.'), {name: 'CameraRequestTimeoutError'}));
+          }, 20000);
+        })]);
+      } catch (error) { checkCurrent(); throw error; }
+      finally { clearTimeout(requestTimer); }
       if (!isCurrent()) { for (const track of stream.getTracks()) track.stop(); checkCurrent(); }
       return stream;
     }
@@ -1799,7 +1817,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       const activeCount = next.filter(point => !point.held).length;
       lastPoints = next;
       notify(next.length ? 'tracking' : 'searching',
-        activeCount ? `손 ${activeCount}개가 보여요. 친구 주변을 천천히 비춰 주세요.` : HAND_SEARCH_MESSAGE, true);
+        activeCount ? `${['','한','두','세','네'][activeCount]} 손이 보여요. 친구 주변을 천천히 비춰 주세요.` : HAND_SEARCH_MESSAGE, true);
       onPoints(next);
     }
     const clearPoints = () => { tracker.reset(); lastPoints = []; onPoints([]); };
@@ -1827,11 +1845,13 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       notify('idle', '카메라를 껐어요. 마우스나 화면 터치로 빛을 움직여 보세요.', false);
     }
     function permissionMessage(error) {
-      if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') return '카메라 사용이 허용되지 않았어요. 주소창의 카메라 권한을 허용한 뒤 다시 켜 주세요. 마우스와 터치는 계속 사용할 수 있어요.';
+      if (error?.name === 'CameraRequestTimeoutError') return '카메라가 응답하지 않아요. 브라우저의 카메라 허용 창을 확인하고, 다른 전시 창이나 카메라 앱을 닫은 뒤 다시 켜 주세요.';
+      if (error?.name === 'CameraPlaybackTimeoutError') return '카메라는 연결됐지만 영상이 들어오지 않아요. 웹캠 연결과 다른 앱의 사용 여부를 확인한 뒤 다시 켜 주세요.';
+      if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') return '카메라 권한이 차단됐어요. Chrome의 사이트 설정과 Windows의 카메라 접근을 허용한 뒤 다시 켜 주세요. 전시 실행 창은 별도로 허용해야 해요.';
       if (error?.name === 'NotFoundError' || error?.name === 'DevicesNotFoundError') return '연결된 카메라가 없어요. 웹캠을 연결한 뒤 다시 켜 주세요.';
       if (error?.name === 'NotReadableError' || error?.name === 'TrackStartError') {
         if (error.cameraLabels?.length && error.cameraLabels.every(label => /OBS Virtual Camera/i.test(label))) return 'OBS 가상 카메라에서 영상이 오지 않아요. OBS에서 ‘가상 카메라 시작’을 누르거나 실제 웹캠을 연결한 뒤 다시 켜 주세요.';
-        return '카메라 영상을 시작하지 못했어요. 이 체험을 열어 둔 다른 탭이나 카메라 앱을 닫고 ‘카메라 켜기’를 눌러 주세요.';
+        return '카메라 영상을 시작하지 못했어요. 홈페이지와 전시 실행 창 중 하나만 남기고 다른 카메라 앱을 닫은 뒤 ‘카메라 켜기’를 눌러 주세요.';
       }
       return '카메라를 시작하지 못했어요. 카메라를 확인한 뒤 다시 켜 주세요. 마우스와 터치도 사용할 수 있어요.';
     }
@@ -1897,7 +1917,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     async function begin(session) {
       frames = 0; points = 0; lastPoints = [];
       if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
-        fail('이 화면에서는 카메라를 열 수 없어요. Chrome이나 Edge에서 로컬 실행 주소로 열어 주세요.', new Error('Camera requires a secure context.'));
+        fail('카메라는 보안 연결에서 열 수 있어요. https://www.pluspsychology.ai/experience/mind-forest 또는 이 PC의 localhost 주소로 열어 주세요.', new Error('Camera requires a secure context.'));
         return false;
       }
       if (!window.Worker || !window.OffscreenCanvas || !window.createImageBitmap) {
@@ -1916,17 +1936,21 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         track.enabled = !paused || previewOnly;
         track.onended = () => { if (session === epoch) fail('카메라 연결이 끊겼어요. 연결을 확인한 뒤 다시 켜 주세요.', new Error('Camera track ended.')); };
       }
-      notify('loading', '손끝을 알아보는 중이에요. 잠시만 기다려 주세요.', true);
+      let playbackReady = false;
       try {
         video.muted = true; video.autoplay = true; video.playsInline = true; video.srcObject = stream;
+        // Show the preview before waiting for playback or loading the model.
+        notify('connecting', '카메라 영상을 연결하고 있어요.', true);
         const play = video.play();
         await new Promise((resolve, reject) => {
           rejectInit = reject;
-          timeout = setTimeout(() => reject(new Error('Camera playback timed out.')), 15000);
+          timeout = setTimeout(() => reject(Object.assign(new Error('Camera playback timed out.'), {name: 'CameraPlaybackTimeoutError'})), 15000);
           play.then(resolve, reject);
         });
         if (session !== epoch) return false;
         clearTimeout(timeout); timeout = 0; rejectInit = null;
+        playbackReady = true;
+        notify('loading', '카메라가 연결됐어요. 손 인식을 준비하고 있어요.', true);
         const assets = Object.fromEntries(Object.entries(ASSETS).map(([key, path]) => [key, assetURL(path)]));
         const source = '(' + workerMain.toString() + ')(' + MAX_HANDS + ',' + calculatePinchRatio.toString() + ');';
         const workerURL = URL.createObjectURL(new Blob([source], {type: 'text/javascript'})); objectURLs.add(workerURL);
@@ -1968,7 +1992,9 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         notify(paused ? 'paused' : 'searching', paused ? '손 추적을 잠시 쉬고 있어요.' : HAND_SEARCH_MESSAGE, true);
         schedule(session); return true;
       } catch (error) {
-        if (session === epoch) fail('손 인식을 준비하지 못했어요. 카메라를 다시 켜 주세요. 마우스와 터치도 사용할 수 있어요.', error);
+        if (session === epoch) fail(playbackReady
+          ? '카메라 영상은 연결됐지만 손 인식을 준비하지 못했어요. 인터넷 연결을 확인한 뒤 카메라를 다시 켜 주세요.'
+          : permissionMessage(error), error);
         return false;
       }
     }
@@ -2013,6 +2039,27 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const asset = window.resolveForestAsset || (path => path);
   const startScreen = document.getElementById('start-screen');
   const startButton = document.getElementById('start-button');
+  function fitStartScreen() {
+    if (startScreen.hidden) return;
+    const content = startScreen.querySelector('.start-content');
+    const style = getComputedStyle(startScreen);
+    const spaceWidth = startScreen.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const spaceHeight = startScreen.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) - 16;
+    let scale = Math.min(2, Math.max(1.12, startScreen.clientWidth / 405));
+    content.style.zoom = scale;
+    // Fit the complete guide, including its button and input icons, to the
+    // actual viewport. Font loading and OS/browser scaling can change its size.
+    for (let pass = 0; pass < 2; pass++) {
+      const bounds = content.getBoundingClientRect();
+      if (!bounds.width || !bounds.height) return;
+      const ratio = Math.min(1, spaceWidth / bounds.width, spaceHeight / bounds.height);
+      if (ratio >= 1) break;
+      scale *= ratio;
+      content.style.zoom = scale;
+    }
+  }
+  new ResizeObserver(fitStartScreen).observe(startScreen);
+  document.fonts.ready.then(fitStartScreen);
   const openingScreen = document.getElementById('opening-screen');
   const openingNext = document.getElementById('opening-next');
   const openingFootprints = document.getElementById('opening-footprints');
@@ -2465,13 +2512,14 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       if (dt > 0 && f.phase === 'rest') {
         for (const light of lights) {
           const speed = light.movement / (dt / 1000);
-          if (!light.active || light.held || speed <= 10 || speed >= Math.max(width,height) * 4) continue;
+          if (!light.active || light.held || speed <= 4 || speed >= Math.max(width,height) * 4) continue;
           const distance = Math.hypot((light.x*width-r.x)/(r.w*.85+18),
             (light.y*height-(r.y-r.h*.51))/(r.h*.62+18));
           const nearby = clamp((1.45-distance)/.65,0,1);
           // Each friend responds to the strongest nearby light; overlapping
           // lights don't multiply the rate or stack the same wake sound.
-          gain = Math.max(gain, (.065+Math.min(speed/r.h,1.8)*.30)*nearby*dt/1000);
+          // A brief gentle rub should wake a friend without requiring fast swipes.
+          gain = Math.max(gain, (.8+Math.min(speed/r.h,1.8)*.6)*nearby*dt/1000);
           strength = Math.max(strength, nearby);
         }
       }
@@ -2807,8 +2855,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const fireCorners = [{label:'왼쪽 위',right:false,bottom:false},{label:'오른쪽 위',right:true,bottom:false},{label:'오른쪽 아래',right:true,bottom:true},{label:'왼쪽 아래',right:false,bottom:true}];
   const fireGrowth = [.38, .65, .88, 1.15, 1.5];
 
-  /* Shared camera orientation: original camera direction is the default. */
-  let cameraMirrored = false, cameraOrientationRevision = 0;
+  /* Shared camera orientation: a mirrored preview is the default. */
+  let cameraMirrored = true, cameraOrientationRevision = 0;
   let cameraOrientationStream = null, cameraOrientationDeviceId = '';
   const cameraMirrorPreferences = new Map();
   const cameraOrientationStatus = document.getElementById('camera-orientation-status');
@@ -2817,13 +2865,13 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function updateCameraOrientationButtons() {
     experience.dataset.cameraMirrored = String(cameraMirrored);
-    cameraOrientationStatus.textContent = `현재 웹캠 방향: ${cameraMirrored ? '좌우 반전' : '기본'}${cameraOrientationBlocked() ? ' · 촬영 중에는 방향을 유지해요.' : ''}`;
+    cameraOrientationStatus.textContent = `현재 웹캠 방향: ${cameraMirrored ? '좌우 반전' : '반전 없음'}${cameraOrientationBlocked() ? ' · 촬영 중에는 방향을 유지해요.' : ''}`;
   }
   function setCameraMirrored(value, remember = false) {
     const next = Boolean(value);
     if (remember && cameraOrientationDeviceId) {
       cameraMirrorPreferences.set(cameraOrientationDeviceId, next);
-      try { localStorage.setItem('mind-forest:camera-mirror:' + cameraOrientationDeviceId, String(next)); } catch {}
+      try { localStorage.setItem('mind-forest:camera-mirror:v2:' + cameraOrientationDeviceId, String(next)); } catch {}
     }
     if (cameraMirrored === next) { updateCameraOrientationButtons(); return; }
     cameraMirrored = next;
@@ -2857,10 +2905,13 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     try { deviceId = stream.getVideoTracks()[0]?.getSettings?.().deviceId || ''; } catch {}
     if (stream === cameraOrientationStream && deviceId === cameraOrientationDeviceId) return;
     cameraOrientationStream = stream; cameraOrientationDeviceId = deviceId;
-    let mirrored = false;
+    let mirrored = true;
     if (deviceId) {
       if (cameraMirrorPreferences.has(deviceId)) mirrored = cameraMirrorPreferences.get(deviceId);
-      else try { mirrored = localStorage.getItem('mind-forest:camera-mirror:' + deviceId) === 'true'; } catch {}
+      else try {
+        const stored = localStorage.getItem('mind-forest:camera-mirror:v2:' + deviceId);
+        if (stored === 'true' || stored === 'false') mirrored = stored === 'true';
+      } catch {}
     }
     setCameraMirrored(mirrored);
   }
@@ -2868,7 +2919,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     if (cameraOrientationBlocked()) return;
     applyCameraDeviceOrientation();
     setCameraMirrored(!cameraMirrored, true);
-    status.textContent = cameraMirrored ? '숲과 모닥불, 사진의 좌우 방향을 함께 반전했어요.' : '숲과 모닥불, 사진의 좌우 방향을 기본으로 되돌렸어요.';
+    status.textContent = cameraMirrored ? '숲과 모닥불, 사진의 좌우 방향을 함께 반전했어요.' : '숲과 모닥불, 사진의 좌우 반전을 껐어요.';
   }
   function setPhotoCameraTransform(context, width) {
     context.setTransform(cameraMirrored ? -1 : 1, 0, 0, 1, cameraMirrored ? width : 0, 0);
@@ -3038,9 +3089,10 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   function fireOrigin() {
     const field = emberPlayfield.getBoundingClientRect();
     const corner = fireCorners[Math.min(fireDelivered, fireCorners.length - 1)];
-    const insetX = clamp(field.width * .12, 48, 120);
-    const top = Math.max(138, field.height * .24);
-    const bottom = field.height - Math.max(124, field.height * .15);
+    const insetX = clamp(field.width * .12, 68, 136);
+    const headingBottom = (fireProgress.getBoundingClientRect().bottom || field.top) - field.top;
+    const top = Math.max(headingBottom + 72, field.height * .36);
+    const bottom = field.height - Math.max(184, field.height * .17);
     return {x: field.left + (corner.right ? field.width - insetX : insetX), y: field.top + (corner.bottom ? bottom : top)};
   }
   function releaseFirePointer() {
@@ -3051,11 +3103,11 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     releaseFirePointer();
     firePickup = null; fireTracksHand = false; lastFireMovement = null;
     if (fireTimer || fireStepTimer || fireDelivered >= fireCorners.length) return;
+    updateFireGuide();
     const origin = fireOrigin();
     emberLight.classList.add('is-waiting');
     emberLight.style.transform = 'translate(' + origin.x + 'px,' + origin.y + 'px)';
     emberLight.dataset.corner = String(fireDelivered + 1);
-    updateFireGuide();
   }
   function fireDistance(x, y, fire) {
     const dx = (x - fire.left - fire.width / 2) / (fire.width * .37);
@@ -3088,7 +3140,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       seen.add(point.id);
       const x = field.left + point.x * field.width, y = field.top + point.y * field.height;
       const cursor = fireHandCursors[point.id];
-      if (cursor && Number.isFinite(x) && Number.isFinite(y)) {
+      // Held points only preserve identity during a tracking gap, not another visible hand.
+      if (cursor && !point.held && Number.isFinite(x) && Number.isFinite(y)) {
         cursor.hidden = false; cursor.style.left = x + 'px'; cursor.style.top = y + 'px';
         cursor.classList.toggle('is-pinching', point.pinch === true);
         cursor.classList.toggle('is-held', Boolean(point.held));
@@ -3571,7 +3624,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     try {
       if (!await preparePhotoCamera(version) || photoTake.disabled) return;
       if (!await refreshPhotoForeground(version) || photoTake.disabled) return;
-      photoMessage.textContent = '미리보기를 보며 자리를 잡아 주세요. 촬영한 사진은 휴대폰 저장용 QR로 제공돼요.';
+      photoMessage.textContent = '미리보기를 보며 자리를 잡아 주세요.';
       drawGroupPhoto();
       scheduleAutoPhoto();
     } catch {
@@ -3658,7 +3711,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       photoResult.hidden = false;
       photoQr.hidden = !shared?.qr;
       if (shared?.qr) photoQr.src = shared.qr;
-      photoMessage.textContent = shared?.qr ? '휴대폰으로 QR을 찍어 사진을 저장하세요.'
+      photoMessage.textContent = shared?.qr ? '휴대폰으로 QR을 찍어\n사진을 저장하세요.'
         : '웹사이트에 사진을 저장하지 못했어요. 아래 버튼으로 이 기기에 저장할 수 있어요.';
       clearTimeout(idleTimer);
       photoReturn.textContent = photoResultSeconds + '초 후에 처음으로 돌아갑니다.';
@@ -3822,6 +3875,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     if(e.altKey||e.ctrlKey||e.metaKey||e.target.matches('input, textarea, select, [contenteditable="true"]'))return;
     // Physical keys also work when the keyboard is set to Korean (C produces ㅊ).
     const shortcut = /^Key[A-Z]$/.test(e.code) ? e.code.slice(3).toLowerCase() : e.key.toLowerCase();
+    if(!e.repeat&&shortcut==='r'){e.preventDefault();returnToOpening();return;}
     if(started&&!e.repeat&&['forest','fire'].includes(stage)&&shortcut==='c'){e.preventDefault();toggleCamera();return;}
     if(started&&!e.repeat&&shortcut==='m'){e.preventDefault();void toggleSound();return;}
     if(started&&!e.repeat&&['forest','fire','photo'].includes(stage)&&shortcut==='n'){e.preventDefault();toggleCameraMirror();return;}
@@ -3843,7 +3897,6 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     }
     if(e.repeat)return;
     if(shortcut==='f')toggleFullscreen();
-    if(shortcut==='r')reset();
   });
   document.addEventListener('keyup',e=>keys.delete(e.key));
   addEventListener('blur',()=>{windowBlurred=true;releaseLight();if(stage==='fire')parkEmber();syncCameraPause();});
@@ -3876,7 +3929,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   });
   addEventListener('pagehide',stopPhotoCamera);
   document.addEventListener('fullscreenchange',()=>{const full=Boolean(document.fullscreenElement);document.getElementById('fullscreen-label').textContent=full?'창으로':'전체화면';document.getElementById('fullscreen').setAttribute('aria-label',full?'전체화면 종료':'전체화면으로 보기');});
-  document.getElementById('reset').addEventListener('click',reset);
+  document.getElementById('reset').addEventListener('click',returnToOpening);
   helpToggle.addEventListener('click',()=>toggleHelp());document.getElementById('help-close').addEventListener('click',()=>toggleHelp(false));
   document.getElementById('fullscreen').addEventListener('click',toggleFullscreen);
   startButton.addEventListener('click',startExperience);
