@@ -15,6 +15,7 @@ function element(attributes = {}) {
   return {hidden: false, disabled: false, textContent: '', ...attributes,
     setAttribute(key, value) { this[key] = value; },
     removeAttribute(key) { delete this[key]; },
+    hasAttribute(key) { return Object.hasOwn(this,key); },
     focus() { this.focused = true; }};
 }
 function videoSetup(config = null) {
@@ -143,4 +144,22 @@ test('automatic capture waits for a valid person mask, and a failed manual attem
     assert.equal(qa.api.photoCaptured,false);assert.equal(qa.calls.draw,0);
     assert.equal(qa.api.photoBackdropLocked,false);
   }
+});
+
+test('mobile photo results offer direct download while desktop retains the QR and matching instructions',()=>{
+  const qa=photoSetup();qa.api.mobilePhotoLayout={matches:true};
+  qa.include('updatePhotoResultPresentation');qa.api.updatePhotoResultPresentation();
+  assert.equal(qa.api.photoQr.hidden,true);
+  assert.match(qa.api.photoMessage.textContent,/다운로드 버튼/);
+  assert.doesNotMatch(qa.api.photoMessage.textContent,/QR/);
+  assert.equal(qa.api.photoDownload.href,'blob:previous-photo');
+  qa.api.mobilePhotoLayout.matches=false;qa.api.updatePhotoResultPresentation();
+  assert.equal(qa.api.photoQr.hidden,false);assert.match(qa.api.photoMessage.textContent,/QR/);
+  qa.api.photoQr.removeAttribute('src');qa.api.mobilePhotoLayout.matches=true;
+  qa.api.updatePhotoResultPresentation();
+  assert.match(qa.api.photoMessage.textContent,/다운로드 버튼/,'mobile does not need a successful QR upload');
+  qa.api.mobilePhotoLayout.matches=false;qa.api.updatePhotoResultPresentation();
+  assert.equal(qa.api.photoQr.hidden,true);assert.match(qa.api.photoMessage.textContent,/아래 버튼/);
+  qa.api.photoResult.hidden=true;qa.api.photoMessage.textContent='촬영 준비';
+  qa.api.updatePhotoResultPresentation();assert.equal(qa.api.photoMessage.textContent,'촬영 준비');
 });

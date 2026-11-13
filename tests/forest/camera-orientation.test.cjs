@@ -44,8 +44,9 @@ function coloredFrame(left,right) {
 }
 function setup({stored=new Map(),storageBlocked=false}={}) {
   const elements=new Map(),writes=[],calls={release:0,reset:0,moves:[],fire:[]};
-  const element=()=>({disabled:false,hidden:false,style:{},attributes:{},classList:{remove(){},toggle(){}},setAttribute(key,value){this.attributes[key]=value;}});
+  const element=()=>{const classes=new Set();return {disabled:false,hidden:false,style:{},attributes:{},classList:{add:name=>classes.add(name),remove:name=>classes.delete(name),contains:name=>classes.has(name),toggle(name,on){on?classes.add(name):classes.delete(name);}},setAttribute(key,value){this.attributes[key]=value;}};};
   elements.set('camera-orientation-status',element());
+  elements.set('camera-panel',element());
   const layer=pixelCanvas(),mask=pixelCanvas();
   const context=vm.createContext({console,Map,Boolean,Math,Number,Promise,performance:{now:()=>1000},
     stage:'forest',started:true,windowBlurred:false,cameraActive:true,width:1000,height:800,help:{hidden:true},canvas:{dataset:{}},
@@ -59,6 +60,7 @@ function setup({stored=new Map(),storageBlocked=false}={}) {
     firePinches:new Map([[0,{sequence:3,armed:true}]]),fireHandCursors:[element(),element()],emberLight:element(),
     fireTimer:0,firePinchTimer:42,firePinchFlight:{cancel(){throw new Error('An earned flight must not be cancelled.');}},
     cameraLights:new Map(),cameraDots:[element(),element(),element(),element()],
+    cameraPreviewDismissed:false,cameraPreviewStartedAt:0,cameraPreviewOrigins:new Map(),
     releaseLight(){calls.release++;context.cameraLights.clear();},hand:{resetTracking(){calls.reset++;}},
     moveLight(x,y,now,light){calls.moves.push({x,y});Object.assign(light,{active:true,targetX:x/1000,targetY:y/800});},
     moveCameraEmber:points=>calls.fire.push(points),newLight:color=>({color,active:false}),lightColors:['white','green','blue','pink'],
@@ -66,7 +68,7 @@ function setup({stored=new Map(),storageBlocked=false}={}) {
       setItem(key,value){if(storageBlocked)throw new Error('Storage blocked');stored.set(key,value);writes.push([key,value]);}},
     clearTimeout(){},refreshPhotoForeground:async()=>true,drawGroupPhotoIfCurrent(){},scheduleAutoPhoto(){},
     clamp:(value,min,max)=>Math.max(min,Math.min(max,value))});
-  vm.runInContext(orientation+sourceFunction('cameraPoints')+`
+  vm.runInContext(orientation+['resetCameraPreview','updateCameraPreview','cameraPoints'].map(sourceFunction).join('\n')+`
     globalThis.orientationState=()=>({mirrored:cameraMirrored,deviceId:cameraOrientationDeviceId,revision:cameraOrientationRevision});
   `,context);
   context.updateCameraOrientationButtons();
@@ -92,6 +94,39 @@ test('mirroring is the default and one shared switch aligns forest, fire and pre
   assert.equal(qa.api.firePinchTimer,42,'a previously earned flight can finish');
   assert.ok(qa.api.fireHandCursors.every(cursor=>cursor.hidden));
   qa.api.toggleCameraMirror();qa.api.cameraPoints([raw]);assert.equal(qa.calls.fire.at(-1)[0].x,.8);
+});
+
+test('the initial preview ignores jitter then dismisses after real hand movement without stopping tracking',()=>{
+  const qa=setup(),panel=qa.elements.get('camera-panel'),point={id:0,x:.5,y:.5,rawX:.5,rawY:.5};
+  qa.api.resetCameraPreview();
+  qa.api.updateCameraPreview([point],1000);
+  qa.api.updateCameraPreview([{...point,x:.505}],1800);
+  assert.equal(panel.classList.contains('is-dismissed'),false);
+  qa.api.updateCameraPreview([{...point,x:.55,held:true}],1800);
+  assert.equal(panel.classList.contains('is-dismissed'),false);
+  qa.api.updateCameraPreview([{...point,x:.55}],1800);
+  assert.equal(panel.classList.contains('is-dismissed'),true);
+  assert.equal(panel.attributes['aria-hidden'],'true');
+  qa.api.cameraPoints([{...point,x:.6}]);
+  assert.equal(qa.calls.moves.at(-1).x,400,'lights keep responding after the preview disappears');
+  qa.api.updateCameraPreview([],1900);
+  assert.equal(panel.classList.contains('is-dismissed'),true,'losing a hand does not cover characters again');
+  qa.api.resetCameraPreview();
+  assert.equal(panel.classList.contains('is-dismissed'),false,'a new camera session shows its preview');
+  assert.equal(qa.api.cameraPreviewOrigins.size,0);
+});
+
+test('preview motion belongs to each hand and gives a short first look before dismissal',()=>{
+  const qa=setup(),panel=qa.elements.get('camera-panel');
+  qa.api.resetCameraPreview();
+  qa.api.updateCameraPreview([{id:0,x:.2,y:.4}],1000);
+  qa.api.updateCameraPreview([{id:0,x:.2,y:.4},{id:1,x:.8,y:.4}],1100);
+  assert.equal(panel.classList.contains('is-dismissed'),false,'another person appearing is not motion');
+  qa.api.updateCameraPreview([{id:1,x:.3,y:.4,reset:true}],1200);
+  qa.api.updateCameraPreview([{id:1,x:.35,y:.4}],1300);
+  assert.equal(panel.classList.contains('is-dismissed'),false,'the first 700ms remain visible');
+  qa.api.updateCameraPreview([{id:1,x:.35,y:.4}],1800);
+  assert.equal(panel.classList.contains('is-dismissed'),true);
 });
 
 test('the saved mirror choice belongs to the actual device and an unfamiliar webcam starts in the default direction',()=>{
