@@ -3105,10 +3105,11 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   function fireOrigin() {
     const field = emberPlayfield.getBoundingClientRect();
     const corner = fireCorners[Math.min(fireDelivered, fireCorners.length - 1)];
-    const insetX = clamp(field.width * .12, 68, 136);
+    // Keep pickup points inside the camera view, including on wide exhibition screens.
+    const insetX = field.width * .28;
     const headingBottom = (fireProgress.getBoundingClientRect().bottom || field.top) - field.top;
-    const top = Math.max(headingBottom + 72, field.height * .36);
-    const bottom = field.height - Math.max(184, field.height * .17);
+    const top = Math.max(headingBottom + 72, field.height * .42);
+    const bottom = field.height - Math.max(184, field.height * .28);
     return {x: field.left + (corner.right ? field.width - insetX : insetX), y: field.top + (corner.bottom ? bottom : top)};
   }
   function releaseFirePointer() {
