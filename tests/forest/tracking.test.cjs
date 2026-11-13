@@ -8,15 +8,15 @@ const html = fs.readFileSync(file, 'utf8');
 const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]);
 const source = scripts.find(s=>s.includes('/* Local webcam hand tracking.'));
 assert.ok(source);
-function setup({mediaDevices}={}) {
+function setup({mediaDevices, workerReady=true, play=async()=>{}}={}) {
   let now = 0, id = 0;
-  const animations = new Map(), workers = [], points = [], states = [], blobs = new Map();
+  const animations = new Map(), workers = [], points = [], states = [], blobs = new Map(), timers = new Map(), previews = [];
   const track = {enabled:true,stopped:false,stop(){this.stopped=true;}};
   const stream = {getTracks:()=>[track],getVideoTracks:()=>[track]};
-  const video = {readyState:4,currentTime:0,play:async()=>{},pause(){},srcObject:null};
+  const video = {readyState:4,currentTime:0,play,pause(){},srcObject:null};
   class Worker {
     constructor(url){workers.push(this);this.sent=[];this.script=blobs.get(url);}
-    postMessage(message){this.sent.push(message);if(message.type==='init')queueMicrotask(()=>this.onmessage({data:{type:'ready'}}));}
+    postMessage(message){this.sent.push(message);if(message.type==='init'&&workerReady)queueMicrotask(()=>this.onmessage({data:{type:'ready'}}));}
     result(points, timestamp=this.sent.at(-1).timestamp){this.onmessage({data:{type:'result',points,timestamp}});}
     terminate(){this.terminated=true;}
   }
@@ -25,15 +25,79 @@ function setup({mediaDevices}={}) {
     createImageBitmap:async()=>({close(){}}),performance:{now:()=>now},
     document:{hidden:false,baseURI:'http://localhost/'},navigator:{mediaDevices:mediaDevices??{getUserMedia:async()=>stream}},
     requestAnimationFrame:callback=>{animations.set(++id,callback);return id;},cancelAnimationFrame:id=>animations.delete(id),
-    setTimeout:()=>++id,clearTimeout(){},isSecureContext:true});
+    setTimeout:(callback,delay)=>{timers.set(++id,{callback,delay});return id;},clearTimeout:id=>timers.delete(id),isSecureContext:true});
   context.window=context;vm.runInContext(source,context);
   const api=context.ForestHandTracking;
-  const controller=api.create({video,onPoints:next=>points.push(next),onState:s=>states.push(s)});
-  return {api,controller,video,track,points,states,context,workers,
+  const controller=api.create({video,onPoints:next=>points.push(next),onState:s=>{states.push(s);previews.push({status:s.status,stream:video.srcObject});}});
+  return {api,controller,video,track,points,states,context,workers,timers,previews,
     async tick(time){now=time;video.currentTime=time/1000;const callbacks=[...animations.values()];animations.clear();for(const cb of callbacks)cb(time);await new Promise(setImmediate);},
     result(next){workers.at(-1).result(next);}};
 }
 test('all inline scripts parse',()=>{for(const s of scripts)if(!s.trim().startsWith('{'))new vm.Script(s);});
+
+test('hand counts use natural Korean for one through four visible hands',async()=>{
+  for(const [count,label] of [[1,'한'],[2,'두'],[3,'세'],[4,'네']]){
+    const qa=setup();await qa.controller.start();
+    const hands=Array.from({length:count},(_,i)=>({x:.2+i*.2,y:.5,wristX:.2+i*.2,wristY:.7}));
+    await qa.tick(100);qa.result(hands);await qa.tick(150);qa.result(hands);
+    assert.ok(qa.controller.getState().message.startsWith(label+' 손이 보여요.'));
+    qa.controller.stop();
+  }
+});
+
+test('the preview has its stream while playback and hand model initialization are still pending',async()=>{
+  let startPlayback;
+  const qa=setup({workerReady:false,play:()=>new Promise(resolve=>{startPlayback=resolve;})});
+  const started=qa.controller.start();
+  await new Promise(setImmediate);
+  assert.equal(qa.controller.getState().status,'connecting');
+  assert.ok(qa.previews.at(-1).stream,'the visible preview must receive the connected stream');
+  assert.equal(qa.workers.length,0);
+  startPlayback();await new Promise(setImmediate);
+  assert.equal(qa.controller.getState().status,'loading');
+  assert.ok(qa.previews.at(-1).stream,'slow model downloads must not hide a working webcam');
+  assert.equal(qa.track.stopped,false);
+  qa.workers[0].onmessage({data:{type:'ready'}});
+  assert.equal(await started,true);qa.controller.stop();
+});
+
+test('an unanswered permission request times out and releases a stream granted later',async()=>{
+  let resolveCamera,requests=0;
+  const qa=setup({mediaDevices:{getUserMedia(){requests++;return new Promise(resolve=>{resolveCamera=resolve;});}}});
+  const started=qa.controller.start();
+  const timer=[...qa.timers.values()].find(timer=>timer.delay===20000);
+  assert.ok(timer);timer.callback();
+  assert.equal(await started,false);
+  assert.equal(qa.controller.getState().status,'error');
+  assert.match(qa.controller.getState().message,/카메라가 응답하지/);
+  assert.equal(requests,1,'a pending permission prompt must not create competing capture requests');
+  const tracks=[0,0].map(()=>({stopped:false,stop(){this.stopped=true;}}));
+  resolveCamera({getTracks:()=>tracks});await new Promise(setImmediate);
+  assert.ok(tracks.every(track=>track.stopped));
+  assert.equal(qa.video.srcObject,null);
+});
+
+test('a stalled video reports missing camera frames and releases the device',async()=>{
+  const qa=setup({play:()=>new Promise(()=>{})});
+  const started=qa.controller.start();await new Promise(setImmediate);
+  [...qa.timers.values()].find(timer=>timer.delay===15000).callback();
+  assert.equal(await started,false);
+  assert.match(qa.controller.getState().message,/영상이 들어오지/);
+  assert.equal(qa.track.stopped,true);
+  assert.equal(qa.video.srcObject,null);
+});
+
+test('a model failure is distinguished from camera permission and a retry can start cleanly',async()=>{
+  const qa=setup({workerReady:false});
+  let started=qa.controller.start();await new Promise(setImmediate);
+  qa.workers[0].onmessage({data:{type:'error',message:'Model fetch failed.'}});
+  assert.equal(await started,false);
+  assert.match(qa.controller.getState().message,/카메라 영상은 연결됐지만 손 인식/);
+  assert.equal(qa.track.stopped,true);assert.equal(qa.video.srcObject,null);
+  started=qa.controller.start();await new Promise(setImmediate);
+  qa.workers[1].onmessage({data:{type:'ready'}});
+  assert.equal(await started,true);qa.controller.stop();
+});
 
 test('an unreadable default camera falls back sequentially to another video device',async()=>{
   const calls=[],events=[],stream={getTracks:()=>[]};

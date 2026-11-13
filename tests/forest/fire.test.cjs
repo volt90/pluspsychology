@@ -9,6 +9,12 @@ const stateSource = html.slice(html.indexOf('  let fireTracksHand ='), html.inde
 const stageSource = html.slice(html.indexOf('  function showFinale(name) {'), html.indexOf('  async function beginFinale() {'));
 assert.ok(fireSource.includes('function moveCameraEmber'));
 
+function handTracker() {
+  const source=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]).find(s=>s.includes('/* Local webcam hand tracking.'));
+  const context=vm.createContext({});context.window=context;vm.runInContext(source,context);
+  return context.ForestHandTracking.createHandTracker();
+}
+
 function setup(width = 1000, height = 800) {
   let now = 0, serial = 0;
   const timers = new Map(), captures = new Set(), videos = [];
@@ -250,4 +256,33 @@ test('corner pickup zones remain inside narrow portrait screens and above footer
       qa.api.liftEmbers(true); if (i < 3) qa.advance(700);
     }
   }
+});
+
+test('one hand jumping across the screen never shows a second cursor at its held old position',()=>{
+  const qa=setup(),tracker=handTracker();
+  const raw=x=>({x,y:.5,wristX:x,wristY:.7,pinchRatio:.6});
+  tracker.push([raw(.2)],0);
+  qa.api.moveCameraEmber(tracker.push([raw(.2)],50));
+  assert.equal(qa.api.fireHandCursors.filter(c=>!c.hidden).length,1);
+  tracker.push([raw(.8)],100);
+  const crossing=tracker.push([raw(.8)],150);
+  assert.equal(crossing.length,2,'reproduce the old held point alongside the newly observed hand');
+  assert.equal(crossing.filter(p=>p.held).length,1);
+  qa.api.moveCameraEmber(crossing);
+  assert.equal(qa.api.fireHandCursors.filter(c=>!c.hidden).length,1);
+  for(let time=200;time<=1200;time+=50){
+    qa.api.moveCameraEmber(tracker.push([raw(Math.floor(time/100)%2?.2:.8)],time));
+    assert.ok(qa.api.fireHandCursors.filter(c=>!c.hidden).length<=1);
+  }
+});
+
+test('four observed hands keep four cursors while a missing hand is hidden immediately',()=>{
+  const qa=setup(),tracker=handTracker();
+  const raw=[.12,.37,.63,.88].map(x=>({x,y:.5,wristX:x,wristY:.7,pinchRatio:.6}));
+  tracker.push(raw,0);qa.api.moveCameraEmber(tracker.push(raw,50));
+  assert.equal(qa.api.fireHandCursors.filter(c=>!c.hidden).length,4);
+  qa.api.moveCameraEmber(tracker.push(raw.slice(1),100));
+  assert.equal(qa.api.fireHandCursors.filter(c=>!c.hidden).length,3);
+  qa.api.moveCameraEmber(tracker.push([],150));
+  assert.equal(qa.api.fireHandCursors.filter(c=>!c.hidden).length,0);
 });

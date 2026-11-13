@@ -75,44 +75,44 @@ function setup({stored=new Map(),storageBlocked=false}={}) {
     include(...names){vm.runInContext(names.map(sourceFunction).join('\n'),context);}};
 }
 
-test('default direction stays unchanged and one shared switch aligns forest, fire and preview dots',()=>{
+test('mirroring is the default and one shared switch aligns forest, fire and preview dots',()=>{
   const qa=setup();
   const raw={id:0,x:.2,y:.3,rawX:.25,rawY:.35,held:false,reset:true};
   qa.api.cameraPoints([raw]);
-  assert.equal(qa.calls.moves.at(-1).x,200);assert.equal(qa.api.cameraDots[0].style.left,'25%');
-  assert.equal(qa.api.experience.dataset.cameraMirrored,'false');
+  assert.equal(qa.calls.moves.at(-1).x,800);assert.equal(qa.api.cameraDots[0].style.left,'75%');
+  assert.equal(qa.api.experience.dataset.cameraMirrored,'true');
   qa.api.toggleCameraMirror();
   qa.api.cameraPoints([raw]);
-  assert.equal(qa.calls.moves.at(-1).x,800);assert.equal(qa.calls.moves.at(-1).y,240);
-  assert.equal(qa.api.cameraDots[0].style.left,'75%');assert.equal(qa.api.experience.dataset.cameraMirrored,'true');
+  assert.equal(qa.calls.moves.at(-1).x,200);assert.equal(qa.calls.moves.at(-1).y,240);
+  assert.equal(qa.api.cameraDots[0].style.left,'25%');assert.equal(qa.api.experience.dataset.cameraMirrored,'false');
   qa.api.stage='fire';qa.api.cameraPoints([raw]);
-  assert.equal(qa.calls.fire.at(-1)[0].x,.8);assert.equal(qa.calls.fire.at(-1)[0].y,.3);
+  assert.equal(qa.calls.fire.at(-1)[0].x,.2);assert.equal(qa.calls.fire.at(-1)[0].y,.3);
   assert.equal(raw.x,.2,'the raw tracker result must remain unchanged');
   assert.equal(qa.calls.reset,1);assert.equal(qa.calls.release,1);assert.equal(qa.api.firePinches.size,0);
   assert.equal(qa.api.firePinchTimer,42,'a previously earned flight can finish');
   assert.ok(qa.api.fireHandCursors.every(cursor=>cursor.hidden));
-  qa.api.toggleCameraMirror();qa.api.cameraPoints([raw]);assert.equal(qa.calls.fire.at(-1)[0].x,.2);
+  qa.api.toggleCameraMirror();qa.api.cameraPoints([raw]);assert.equal(qa.calls.fire.at(-1)[0].x,.8);
 });
 
 test('the saved mirror choice belongs to the actual device and an unfamiliar webcam starts in the default direction',()=>{
-  const prefix='mind-forest:camera-mirror:',stored=new Map([[prefix+'camera-a','true']]);
-  const qa=setup({stored});qa.attach('camera-a');assert.equal(qa.api.orientationState().mirrored,true);
-  qa.api.toggleCameraMirror();assert.equal(stored.get(prefix+'camera-a'),'false');
+  const prefix='mind-forest:camera-mirror:v2:',stored=new Map([[prefix+'camera-a','false'],['mind-forest:camera-mirror:camera-b','false']]);
+  const qa=setup({stored});qa.attach('camera-a');assert.equal(qa.api.orientationState().mirrored,false);
+  qa.api.toggleCameraMirror();assert.equal(stored.get(prefix+'camera-a'),'true');
+  qa.attach('camera-b');assert.equal(qa.api.orientationState().mirrored,true,'the old default must not override the new mirrored default');
+  qa.api.toggleCameraMirror();assert.equal(stored.get(prefix+'camera-b'),'false');
+  qa.attach('camera-a');assert.equal(qa.api.orientationState().mirrored,true);
   qa.attach('camera-b');assert.equal(qa.api.orientationState().mirrored,false);
-  qa.api.toggleCameraMirror();assert.equal(stored.get(prefix+'camera-b'),'true');
-  qa.attach('camera-a');assert.equal(qa.api.orientationState().mirrored,false);
-  qa.attach('camera-b');assert.equal(qa.api.orientationState().mirrored,true);
   assert.deepEqual(qa.writes.map(([key])=>key),[prefix+'camera-a',prefix+'camera-b']);
 });
 
 test('an anonymous stream is not persisted, and blocked storage still permits per-device choices within this page',()=>{
   const anonymous=setup();anonymous.attach('');anonymous.api.toggleCameraMirror();
-  anonymous.api.applyCameraDeviceOrientation();assert.equal(anonymous.api.orientationState().mirrored,true);
+  anonymous.api.applyCameraDeviceOrientation();assert.equal(anonymous.api.orientationState().mirrored,false);
   assert.equal(anonymous.writes.length,0);
-  anonymous.attach('');assert.equal(anonymous.api.orientationState().mirrored,false,'a different anonymous stream must not inherit the last camera choice');
+  anonymous.attach('');assert.equal(anonymous.api.orientationState().mirrored,true,'a different anonymous stream must not inherit the last camera choice');
   const blocked=setup({storageBlocked:true});blocked.attach('camera-a');blocked.api.toggleCameraMirror();
-  blocked.attach('camera-b');assert.equal(blocked.api.orientationState().mirrored,false);
-  blocked.attach('camera-a');assert.equal(blocked.api.orientationState().mirrored,true);
+  blocked.attach('camera-b');assert.equal(blocked.api.orientationState().mirrored,true);
+  blocked.attach('camera-a');assert.equal(blocked.api.orientationState().mirrored,false);
 });
 
 test('help reports the direction while the shortcut cannot change a countdown or an already captured photo',()=>{
@@ -120,16 +120,17 @@ test('help reports the direction while the shortcut cannot change a countdown or
   for(const state of [{disabled:true,captured:false,resultHidden:true},{disabled:false,captured:true,resultHidden:false}]){
     qa.api.photoTake.disabled=state.disabled;qa.api.photoCaptured=state.captured;qa.api.photoResult.hidden=state.resultHidden;
     qa.api.updateCameraOrientationButtons();qa.api.toggleCameraMirror();
-    assert.equal(qa.api.orientationState().mirrored,false);
-    assert.match(qa.elements.get('camera-orientation-status').textContent,/기본 · 촬영 중에는 방향을 유지/);
+    assert.equal(qa.api.orientationState().mirrored,true);
+    assert.match(qa.elements.get('camera-orientation-status').textContent,/좌우 반전 · 촬영 중에는 방향을 유지/);
   }
   qa.api.photoTake.disabled=false;qa.api.photoCaptured=false;qa.api.photoResult.hidden=true;
   qa.api.updateCameraOrientationButtons();qa.api.toggleCameraMirror();
-  assert.equal(qa.elements.get('camera-orientation-status').textContent,'현재 웹캠 방향: 좌우 반전');
+  assert.equal(qa.elements.get('camera-orientation-status').textContent,'현재 웹캠 방향: 반전 없음');
 });
 
 test('chroma-key photos use the same direction as the forest without flipping the photo frame',()=>{
   const qa=setup();qa.include('updateKeyedPhoto');
+  qa.api.setCameraMirrored(false);
   const frame=coloredFrame([0,255,0,255],[220,20,40,255]);
   Object.assign(qa.api.cameraVideo,{...frame,srcObject:{}});
   qa.api.updateKeyedPhoto();
@@ -141,6 +142,7 @@ test('chroma-key photos use the same direction as the forest without flipping th
 
 test('the segmentation bitmap and alpha mask flip together rather than moving the cutout to the wrong side',()=>{
   const qa=setup();qa.include('applyPhotoMask');
+  qa.api.setCameraMirrored(false);
   const frame={bitmap:coloredFrame([220,20,40,255],[10,40,230,255]),alpha:new Uint8ClampedArray([255,255,0,0,255,255,0,0]),width:4,height:2};
   qa.api.applyPhotoMask(frame);
   assert.equal(qa.layer.pixels[3],255);assert.equal(qa.layer.pixels[0],220);assert.equal(qa.layer.pixels[15],0);
@@ -154,7 +156,7 @@ test('a direction change while segmentation is pending retries a fresh frame for
   Object.assign(qa.api,{stage:'photo',photoPreviewReady:true,photoPersonMode:'loading',photoTake:{disabled:true},
     photoSegmenter:{process:()=>new Promise(resolve=>pending.push(resolve))},applyPhotoMask:frame=>applied.push(frame.id)});
   const request=qa.api.refreshPhotoForeground(1);assert.equal(pending.length,1);
-  qa.api.setCameraMirrored(true);
+  qa.api.setCameraMirrored(false);
   pending[0]({id:'old-direction',bitmap:{close(){closed.push('old');}}});
   await new Promise(setImmediate);assert.equal(pending.length,2);
   pending[1]({id:'current-direction',bitmap:{close(){closed.push('current');}}});
@@ -163,12 +165,12 @@ test('a direction change while segmentation is pending retries a fresh frame for
 });
 
 test('photo-only camera acquisition loads the same device preference as a metadata event',async()=>{
-  const qa=setup({stored:new Map([['mind-forest:camera-mirror:photo-camera','true']])});qa.include('preparePhotoCamera');
+  const qa=setup({stored:new Map([['mind-forest:camera-mirror:v2:photo-camera','false']])});qa.include('preparePhotoCamera');
   const stream={getVideoTracks:()=>[{readyState:'live',getSettings:()=>({deviceId:'photo-camera'})}]};
   Object.assign(qa.api,{stage:'photo',photoCameraRequest:null,extraPhotoStream:null,waitForPhotoFrames:async()=>{},
     window:{ForestHandTracking:{requestCamera:async()=>stream}}});
   assert.equal(await qa.api.preparePhotoCamera(1),true);
-  assert.equal(qa.api.orientationState().mirrored,true);assert.equal(qa.api.cameraVideo.srcObject,stream);
+  assert.equal(qa.api.orientationState().mirrored,false);assert.equal(qa.api.cameraVideo.srcObject,stream);
   qa.api.applyCameraDeviceOrientation();assert.equal(qa.calls.reset,1,'repeated metadata for the same stream must not reset the preference');
 });
 
@@ -201,4 +203,20 @@ test('H opens help and Escape closes it in each camera scene, including Korean k
     keydown(event({repeat:true}));assert.equal(qa.api.help.hidden,false,'holding H does not flicker the help');
     keydown(event({code:'Escape',key:'Escape'}));assert.equal(qa.api.help.hidden,true);
   }
+});
+
+test('R returns to the opening from every stage and works with Korean keyboard input',()=>{
+  const qa=setup();let returns=0,keydown;
+  qa.api.returnToOpening=()=>{returns++;};
+  qa.api.reset=()=>{throw new Error('R must not only reset the forest.');};
+  qa.api.document.addEventListener=(type,callback)=>{if(type==='keydown')keydown=callback;};
+  const start=app.indexOf("  document.addEventListener('keydown',e=>{");
+  vm.runInContext(app.slice(start,app.indexOf("  document.addEventListener('keyup'",start)),qa.api);
+  const event=extra=>({code:'KeyR',key:'ㄱ',repeat:false,altKey:false,ctrlKey:false,metaKey:false,target:{matches:()=>false},preventDefault(){},...extra});
+  for(const stage of ['forest','video','fire','photo']){qa.api.stage=stage;keydown(event());}
+  assert.equal(returns,4);
+  qa.api.stage='forest';qa.api.started=false;keydown(event());assert.equal(returns,5);
+  for(const extra of [{repeat:true},{ctrlKey:true},{altKey:true},{metaKey:true},{target:{matches:()=>true}}])keydown(event(extra));
+  assert.equal(returns,5);
+  assert.ok(app.includes("document.getElementById('reset').addEventListener('click',returnToOpening)"));
 });
