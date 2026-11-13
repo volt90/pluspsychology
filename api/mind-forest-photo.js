@@ -156,7 +156,9 @@ module.exports = async function handler(req, res) {
       if (configured) { await ensureBucket(); await prunePhotos(Date.now()); }
       return json(res, 200, { cleaned: configured });
     }
-    if (!url.searchParams.has('photo')) return json(res, 200, { photoShare: configured });
+    if (!url.searchParams.has('photo')) return json(res, 200, {
+      photoShare: configured, photoShareScope: 'website', photoShareLifetimeSeconds: lifetime / 1000,
+    });
     if (!configured) return photoPage(req, res, null);
     return await downloadPhoto(req, res, url, url.searchParams.get('photo'));
   } catch {

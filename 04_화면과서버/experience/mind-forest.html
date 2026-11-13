@@ -110,19 +110,32 @@ button { -webkit-tap-highlight-color: transparent; }
 .finale .video-stage { position: absolute; inset: 0; display: grid; place-items: center; width: 100%; height: 100%; background: #020404; }
 .video-stage video { display: block; width: 100%; height: 100%; object-fit: contain; }
 .video-placeholder { padding: 18px; }
-#finale-fire-stage { --fire-scale: clamp(1.2,min(calc(100vw / 184px),calc(100svh / 270px)),3); position: absolute; inset: 0; width: 100%; display: grid; place-items: safe center center; padding: 14px 16px; touch-action: none; background: radial-gradient(ellipse at 50% 65%,#382b20 0%,#132125 46%,#0a1518 78%); }
-.fire-content { width: min(100%,1320px); }
-.fire-content h2 { margin-bottom: clamp(9px,1.7svh,18px); font-size: calc(clamp(22px,4vw,36px) * var(--fire-scale)); line-height: 1.05; }
-.fire-content p { font-size: calc(16px * var(--fire-scale)); line-height: 1.3; word-break: keep-all; text-wrap: balance; }
-.campfire-area { position: relative; height: calc(166px * var(--fire-scale)); margin-top: clamp(22px,4svh,44px); }
-.ember-light { --ember-size: calc(16px * var(--fire-scale)); position: fixed; z-index: 2; top: 0; left: 0; width: var(--ember-size); height: var(--ember-size); margin: calc(var(--ember-size) * -.5) 0 0 calc(var(--ember-size) * -.5); border-radius: 50%; background: radial-gradient(circle,#fffee3 22%,#ffeb8d 61%,#ffb942 100%); box-shadow: 0 0 var(--ember-size) calc(var(--ember-size) * .32) #ffdc715e,0 0 calc(var(--ember-size) * 2.2) calc(var(--ember-size) * .5) #ffc55335; pointer-events: none; }
-.ember-light.is-waiting { position: absolute; left: 50%; }
-#finale-fire-stage.is-kindled .ember-light { opacity: 0; transition: opacity .24s ease-out; }
-.finale .fire-pad { position: absolute; bottom: 4%; left: 50%; width: min(100%,calc(clamp(128px,24vw,220px) * var(--fire-scale))); height: calc(155px * var(--fire-scale)); margin: 0; padding: 0; border: 0; border-radius: 50%; transform: translateX(-50%); background: radial-gradient(ellipse 50% 23% at 50% 84%,#f9984933,transparent); }
+#finale-fire-stage { --fire-scale: clamp(.85,min(calc(100vw / 260px),calc((100svh - 180px) / 190px)),1.65); --fire-growth: .38; position: absolute; inset: 0; width: 100%; display: block; padding: 16px; touch-action: none; background: radial-gradient(ellipse at 50% 65%,#382b20 0%,#132125 46%,#0a1518 78%); }
+.fire-content { width: 100%; height: 100%; position: relative; }
+.fire-content h2 { margin: max(2px,env(safe-area-inset-top)) 0 8px; font-size: clamp(24px,3vw,38px); line-height: 1.15; }
+.fire-content p { font-size: clamp(14px,1.6vw,19px); line-height: 1.4; word-break: keep-all; text-wrap: balance; }
+.fire-content #finale-fire-progress { margin: 5px 0; color: #f5d99e; font-family: "Black Han Sans","Anemone Air"; font-size: clamp(13px,1.4vw,17px); }
+.fire-content .fire-keyboard { display: none; position: absolute; bottom: 52px; left: 0; right: 0; margin: 0; color: #aebdaf; font-size: 12px; }
+.fire-content:has(.fire-pad:focus-visible) .fire-keyboard { display: block; }
+.campfire-area { position: absolute; inset: 116px 0 88px; }
+.ember-light { --ember-size: clamp(24px,3vw,40px); position: fixed; z-index: 2; top: 0; left: 0; width: var(--ember-size); height: var(--ember-size); margin: calc(var(--ember-size) * -.5) 0 0 calc(var(--ember-size) * -.5); border-radius: 50%; background: radial-gradient(circle,#fffee3 22%,#ffeb8d 61%,#ffb942 100%); box-shadow: 0 0 var(--ember-size) calc(var(--ember-size) * .32) #ffdc715e,0 0 calc(var(--ember-size) * 2.2) calc(var(--ember-size) * .5) #ffc55335; pointer-events: none; }
+.ember-light.is-waiting::after { content: ''; position: absolute; inset: -13px; border: 1px dashed #f6dfa77a; border-radius: 50%; }
+.ember-light.is-reachable::after { border: 2px solid #fff5cb; box-shadow: 0 0 14px #fff4b855; }
+.fire-hand-cursor { position: fixed; z-index: 3; top: 0; left: 0; width: 42px; height: 42px; opacity: .96; pointer-events: none; transform: translate(-50%,-12.5%); filter: drop-shadow(0 2px 2px #071514cc) drop-shadow(0 0 3px var(--hand-color,#fff)); }
+.fire-hand-cursor svg { display: block; width: 100%; height: 100%; overflow: visible; fill: #fff7df; stroke: #233a32; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.fire-hand-cursor .hand-detail { fill: none; stroke-width: 1.7; }
+.fire-hand-cursor .hand-cuff { fill: var(--hand-color,#fff); }
+.fire-hand-cursor .hand-pinched, .fire-hand-cursor.is-pinching .hand-open { display: none; }
+.fire-hand-cursor.is-pinching .hand-pinched { display: inline; }
+.fire-hand-cursor.is-held { opacity: .3; }
+@media (max-width: 620px) { .fire-hand-cursor { width: 36px; height: 36px; } }
+#finale-fire-stage.is-kindled .ember-light { opacity: 0; }
+.finale .fire-pad { position: absolute; top: 50%; left: 50%; width: min(100%,calc(clamp(128px,24vw,220px) * var(--fire-scale))); height: calc(155px * var(--fire-scale)); margin: 0; padding: 0; border: 0; border-radius: 50%; transform: translate(-50%,-50%); background: radial-gradient(ellipse 50% 23% at 50% 84%,#f9984933,transparent); }
+.finale .fire-pad:disabled { opacity: 1; }
 .fire-pad:focus-visible { outline: 1px dashed #ffe6a5; outline-offset: 5px; }
 .fire-pad::before, .fire-pad::after { content: ''; position: absolute; bottom: 13%; left: 50%; translate: -50% 0; z-index: 1; width: calc(82px * var(--fire-scale)); height: calc(13px * var(--fire-scale)); border-radius: calc(8px * var(--fire-scale)); background: linear-gradient(#6b4230,#362522); transform: rotate(12deg); pointer-events: none; }
 .fire-pad::after { transform: rotate(-12deg); background: linear-gradient(#8d5033,#402a23); }
-.fire-flare { position: absolute; bottom: 18%; left: 50%; translate: -50% 0; width: calc(56px * var(--fire-scale)); height: calc(82px * var(--fire-scale)); transform-origin: 50% 100%; pointer-events: none; }
+.fire-flare { position: absolute; bottom: 18%; left: 50%; translate: -50% 0; width: calc(56px * var(--fire-scale)); height: calc(82px * var(--fire-scale)); transform-origin: 50% 100%; transform: scale(var(--fire-growth)); transition: transform .65s ease; pointer-events: none; }
 .flame { display: block; width: 100%; height: 100%; border-radius: 70% 28% 56% 44% / 78% 63% 38% 28%; transform-origin: 50% 94%; background: radial-gradient(ellipse at 49% 77%,#fff6b8 12%,#ffc263 45%,#e46d38 78%); box-shadow: 0 0 calc(36px * var(--fire-scale)) #e28a45; animation: fire-sway .8s ease-in-out infinite alternate; }
 @keyframes fire-sway { from { transform: rotate(-10deg) scale(.94,1.03); } to { transform: rotate(9deg) scale(1.03,.94); } }
 .fire-spark { position: absolute; top: 45%; left: 50%; width: calc(var(--size) * var(--fire-scale)); height: calc(var(--size) * var(--fire-scale)); border-radius: 50%; background: #ffe29a; box-shadow: 0 0 calc(9px * var(--fire-scale)) #ff994e; pointer-events: none; }
@@ -157,7 +170,7 @@ body.exploring .heading .intro { opacity: 0; }
 .camera-panel { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(1.5); width: clamp(126px, 22vw, 176px); pointer-events: none; border: 1px solid #3a5156; border-radius: 12px; background: rgba(9,25,31,.92); overflow: hidden; }
 #experience:has(.camera-panel:not([hidden])) .sleeping-notice { top: max(12px, 5svh); }
 .camera-preview { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #08151b; }
-#camera-video { width: 100%; height: 100%; object-fit: fill; opacity: .8; display: block; transform: scaleX(-1); }
+#camera-video { width: 100%; height: 100%; object-fit: fill; opacity: .8; display: block; transform: none; }
 .camera-dot { position: absolute; width: 9px; height: 9px; transform: translate(-50%,-50%); border-radius: 50%; background: #fffce5; box-shadow: 0 0 8px #f5f5cd; }
 #camera-status { font-size: 13px; line-height: 1.5; margin: 0; padding: 10px 12px; color: #d4ded4; overflow-wrap: anywhere; }
 #experience[data-camera-state="tracking"] .camera-panel { border-color: #99b298; }
@@ -168,7 +181,7 @@ nav { display: flex; align-items: center; gap: 7px; pointer-events: auto; }
 nav button { display: inline-flex; gap: 7px; align-items: center; justify-content: center; min-height: 42px; border: 1px solid transparent; border-radius: 24px; padding: 0 12px; background: rgba(7, 23, 29, .35); color: #cbd4ca; cursor: pointer; font-size: 14px; transition: background .2s, color .2s; }
 nav button:hover, nav button[aria-expanded="true"] { background: #233d40; color: #fffced; }
 nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-.help-panel { position: absolute; z-index: 3; right: clamp(22px, 4.3vw, 80px); bottom: 80px; width: 340px; max-width: calc(100vw - 40px); max-height: calc(100dvh - 120px); overflow-y: auto; background: #12262e; border: 1px solid #3a5156; border-radius: 6px; padding: 24px; color: #d4ded4; font-size: 16px; line-height: 1.65; }
+.help-panel { position: absolute; z-index: 20; right: clamp(22px, 4.3vw, 80px); bottom: 80px; width: 340px; max-width: calc(100vw - 40px); max-height: calc(100dvh - 120px); overflow-y: auto; background: #12262e; border: 1px solid #3a5156; border-radius: 6px; padding: 24px; color: #d4ded4; font-size: 16px; line-height: 1.65; }
 .help-title { display: flex; justify-content: space-between; align-items: center; }
 .help-title h2 { font-family: "Black Han Sans", "Anemone Air"; font-size: 18px; font-weight: 400; margin: 0; color: #f0eee1; }
 .help-title button { width: 32px; height: 32px; background: transparent; border: 0; font-size: 25px; cursor: pointer; }
@@ -177,6 +190,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
 .help-panel dl { display: grid; grid-template-columns: 70px 1fr; row-gap: 5px; margin: 22px 0; font-size: 15px; }
 .help-panel dt { color: #f2ecd7; }
 .help-panel dd { margin: 0; }
+#experience[data-camera-mirrored="true"] #camera-video { transform: scaleX(-1); }
 #encounters { position: absolute; inset: 0; pointer-events: none; }
 .encounter { position: absolute; pointer-events: none; text-align: center; display: flex; align-items: center; flex-direction: column; gap: 7px; opacity: 0; transform: translate(-50%, -100%); transition: opacity .45s ease; width: max-content; max-width: min(260px, calc(100vw - 32px)); }
 .encounter.visible { opacity: 1; }
@@ -187,11 +201,12 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
 @media (pointer: coarse) { #forest { cursor: auto; } }
 @media (max-width: 620px) {
   .camera-panel { top: 42%; }
-  .heading { top: 30px; left: 26px; }
-  .world-name { margin-bottom: 19px; font-size: 12px; }
-  .intro { font-size: 15px; }
+  .heading { top: max(16px, env(safe-area-inset-top)); left: 18px; }
+  .world-name { margin-bottom: 8px; font-size: 11px; }
+  .heading h1 { font-size: 26px; margin-bottom: 8px; }
+  .intro { font-size: 12px; line-height: 1.45; }
   .quiet-note { display: none; }
-  .controls { left: 18px; right: 18px; justify-content: center; }
+  .controls { left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); justify-content: center; }
   nav { gap: 3px; width: 100%; justify-content: center; }
   nav button { background: rgba(7,23,29,.7); padding: 5px 6px; min-height: 50px; min-width: 44px; font-size: 11px; flex-direction: column; gap: 4px; }
   #camera-status { font-size: 12px; padding: 8px; }
@@ -200,12 +215,36 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
   .direction-demo { width: 106px; height: 106px; }
   .direction-demo img { height: 76px; }
   .encounter { max-width: 200px; }
-  .friend-words { font-size: 16px; }
+  .friend-name { font-size: 16px; }
+  .friend-words { font-size: 14px; line-height: 1.4; padding: 8px 10px; }
 }
 @media (max-height: 460px) {
   .camera-panel { top: 50%; width: 116px; transform: translate(-50%, -50%) scale(clamp(1, calc((100svh - 144px) / 154px), 1.5)); }
   #camera-status { font-size: 12px; padding: 6px 8px; }
   #experience:has(.camera-panel:not([hidden])) .sleeping-notice { padding-block: 8px; font-size: 22px; }
+}
+@media (max-width: 620px) and (orientation: portrait) {
+  /* Keep the video running for inference without covering the forest. */
+  #experience[data-stage="forest"] .camera-preview { display: none; }
+  #experience[data-stage="forest"] .camera-panel {
+    top: auto; bottom: calc(76px + env(safe-area-inset-bottom)); left: 50%;
+    transform: translateX(-50%); width: max-content; max-width: calc(100% - 32px);
+  }
+  #experience[data-stage="forest"][data-camera-state="tracking"] .camera-panel { display: none; }
+  #experience[data-stage="forest"] #camera-status { font-size: 12px; line-height: 1.4; padding: 7px 10px; text-align: center; }
+  #experience[data-stage="forest"] .rub-guide {
+    top: auto !important; bottom: calc(76px + env(safe-area-inset-bottom)); left: 50% !important;
+    transform: translateX(-50%); display: flex; align-items: center; gap: 6px;
+    padding: 6px 10px; border-radius: 18px; background: #122527;
+  }
+  #experience[data-stage="forest"] .rub-hand { font-size: 22px; animation: none; }
+  #experience[data-stage="forest"] .rub-guide p { padding: 0; font-size: 13px; line-height: 1.4; }
+  #experience[data-stage="forest"]:not([data-camera-state="tracking"]):has(.camera-panel:not([hidden])) .rub-guide { visibility: hidden; }
+  #experience[data-stage="forest"] .sleeping-notice { display: none; }
+  #experience[data-stage="forest"] .encounter {
+    top: calc(128px + env(safe-area-inset-top)) !important; left: 50% !important;
+    transform: translateX(-50%); width: max-content; max-width: min(300px, calc(100% - 32px)); gap: 4px;
+  }
 }
 @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } .demo-orbit { animation: none; transform: rotate(40deg); } }
 
@@ -296,24 +335,29 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
       <p>카메라 앞에 최대 네 명이 함께할 수 있어요.<br>각자 검지를 화면쪽으로 가리키면<br>손끝마다 색이 다른 빛이 따라가요.</p>
       <p>‘카메라 끄기’를 누르고<br>마우스/화면 터치/방향키로<br>빛을 옮길 수 있어요.</p>
       <p>친구의 얼굴과 몸 주변을 빙글빙글 맴돌아 보세요. 잔잔한 소리와 함께 빛이 모여요.<br>충분한 빛이 모이면 친구가 깨어나 인사를 건네요.</p>
-      <dl><dt>방향키</dt><dd>카메라를 끄고 빛 옮기기</dd><dt>C</dt><dd>카메라 켜기·끄기</dd><dt>F</dt><dd>전체화면</dd><dt>R</dt><dd>처음으로</dd><dt>H</dt><dd>안내 열기·닫기</dd><dt>M</dt><dd>소리 켜기·끄기</dd></dl>
+      <p>오른쪽으로 움직였을 때 빛도 오른쪽으로 움직이는지 확인해 주세요. 반대로 움직인다면 <strong>N키</strong>를 눌러 웹캠의 좌우 방향을 바꿔 주세요. 숲과 모닥불, 사진에 함께 적용돼요.</p>
+      <p id="camera-orientation-status" role="status">현재 웹캠 방향: 기본</p>
+      <p>사진 촬영 카운트다운 중에는 좌우 방향이 고정돼요. 방향을 다시 맞추려면 촬영 후 ‘다시 찍기’를 눌러 주세요.</p>
+      <dl><dt>방향키</dt><dd>카메라를 끄고 빛 옮기기</dd><dt>C</dt><dd>카메라 켜기·끄기</dd><dt>N</dt><dd>웹캠 좌우 방향 바꾸기</dd><dt>F</dt><dd>전체화면</dd><dt>R</dt><dd>처음으로</dd><dt>H</dt><dd>안내 열기·닫기</dd><dt>M</dt><dd>소리 켜기·끄기</dd></dl>
     </aside>
     <div id="finale" class="finale" hidden>
       <section id="finale-video-stage" class="video-stage" aria-label="숲에서 만난 다음 이야기" hidden>
-        <div id="finale-video-placeholder" class="video-placeholder">
-          <h2 id="finale-video-title" tabindex="-1">숲에서 만난 다음 이야기</h2>
-          <p id="finale-video-message">영상을 불러오고 있어요.</p>
+        <h2 id="finale-video-title" class="sr-only" tabindex="-1">숲에서 만난 다음 이야기 영상</h2>
+        <div id="finale-video-placeholder" class="video-placeholder" hidden>
+          <p id="finale-video-message" role="status"></p>
         </div>
         <video id="finale-video" aria-label="숲에서 만난 다음 이야기 영상" playsinline preload="none" hidden></video>
       </section>
       <section id="finale-fire-stage" aria-labelledby="finale-fire-title" hidden>
         <div class="fire-content">
           <h2 id="finale-fire-title" tabindex="-1">모닥불 함께 쬐기</h2>
-          <p id="finale-fire-guide">노란빛을 모닥불로 가져가 보세요.</p>
+          <p id="finale-fire-guide" aria-live="polite">왼쪽 위의 빛을 잡아 모닥불로 옮겨 주세요.</p>
+          <p id="finale-fire-progress" role="status">함께 모은 빛 0 / 4</p>
           <div class="campfire-area">
             <span id="ember-light" class="ember-light is-waiting" aria-hidden="true"></span>
-            <button id="fire-pad" class="fire-pad" type="button" aria-label="모닥불에 불씨 넣기"><span class="fire-flare" aria-hidden="true"><span class="flame"></span></span></button>
+            <button id="fire-pad" class="fire-pad" type="button" aria-label="첫 번째 빛을 모닥불에 넣기" aria-describedby="fire-keyboard"><span class="fire-flare" aria-hidden="true"><span class="flame"></span></span></button>
           </div>
+          <p id="fire-keyboard" class="fire-keyboard">모닥불 버튼이 선택됐어요. Enter 또는 Space로 빛을 하나씩 모을 수 있어요.</p>
         </div>
         <button id="finale-fire-camera" type="button" hidden>카메라 켜기</button>
         <button id="finale-fire-home" type="button">처음으로</button>
@@ -336,6 +380,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
               <a id="photo-download" download="서로의-빛-단체사진.jpg">사진 다운로드</a>
             </div>
             <p class="photo-return-notice"><span class="warning-icon" aria-hidden="true">⚠︎</span><span id="photo-return">30초 후에 처음으로 돌아갑니다.</span></p>
+            <button id="photo-retake" type="button">다시 찍기</button>
             <button id="photo-result-home" type="button">처음으로 돌아가기</button>
           </div>
         </div>
@@ -1014,25 +1059,233 @@ window.FOREST_MEDIA = {
   },
   "voices": {
     "seru": {
-      "src": "/assets/mind-forest/audio/seru-greeting.wav",
+      "src": "/assets/mind-forest/audio/seru-greeting-v2.wav",
       "text": "따뜻해… 조금만 더 같이 있어 줄래?",
-      "volume": 0.78,
-      "duration": 5.187,
-      "provider": "Temporary Windows Korean speech"
+      "volume": 0.72,
+      "duration": 2.7,
+      "envelope": {
+        "stepSeconds": 0.04,
+        "values": [
+          0.00007,
+          0.00009,
+          0.00142,
+          0.69046,
+          0.70691,
+          0.24691,
+          0.04875,
+          0.66015,
+          0.37379,
+          0.04428,
+          0.06412,
+          0.06207,
+          0.37603,
+          0.36004,
+          0.27335,
+          0.08716,
+          0.00913,
+          0.00226,
+          0.00008,
+          0.00011,
+          0.00028,
+          0.00011,
+          0.00919,
+          0.00257,
+          0.00012,
+          0.00067,
+          0.00249,
+          0.0021,
+          0.00817,
+          0.06942,
+          0.15287,
+          1,
+          0.55762,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.47935,
+          0.59531,
+          0.66176,
+          0.12877,
+          0.63857,
+          0.55673,
+          0.12312,
+          0.1631,
+          0.37409,
+          0.72808,
+          1,
+          0.57623,
+          0.13834,
+          0.13844,
+          0.64555,
+          0.56115,
+          0.19008,
+          0.36717,
+          0.54026,
+          0.45977,
+          0.38467,
+          0.70949,
+          0.69553,
+          0.21758,
+          0.0166,
+          0.00618,
+          0.00056,
+          0.00008,
+          0
+        ]
+      },
+      "provider": "local Qwen3-TTS",
+      "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "voiceId": "Qwen/Qwen3-TTS-12Hz-1.7B-Base:eb74cd0d20f138996264",
+      "seed": 20261113
     },
     "rubi": {
-      "src": "/assets/mind-forest/audio/rubi-greeting.wav",
+      "src": "/assets/mind-forest/audio/rubi-greeting-v3.wav",
       "text": "이 빛, 네가 건넨 거구나.",
-      "volume": 0.78,
-      "duration": 2.801,
-      "provider": "Temporary Windows Korean speech"
+      "volume": 0.72,
+      "duration": 2.429375,
+      "envelope": {
+        "stepSeconds": 0.04,
+        "values": [
+          0.00031,
+          0.42925,
+          0.71136,
+          0.82184,
+          0.57151,
+          0.15221,
+          0.20892,
+          0.42925,
+          0.8941,
+          1,
+          1,
+          0.6936,
+          0.20989,
+          0.05216,
+          0.06535,
+          0.07659,
+          0.05713,
+          0.03639,
+          0.02414,
+          0.01482,
+          0.0095,
+          0.00595,
+          0.00466,
+          0.00282,
+          0.00232,
+          0.00376,
+          0.12572,
+          0.16645,
+          0.26792,
+          0.46833,
+          0.61321,
+          0.42622,
+          0.6615,
+          1,
+          1,
+          0.29999,
+          0.88234,
+          0.65342,
+          0.56821,
+          0.74439,
+          0.82895,
+          0.71809,
+          0.59306,
+          0.8046,
+          0.40975,
+          0.14154,
+          0.3554,
+          0.56478,
+          0.59592,
+          0.56532,
+          0.50997,
+          0.49352,
+          0.35198,
+          0.27855,
+          0.195,
+          0.15578,
+          0.0496,
+          0.01515,
+          0.00533,
+          0.00064,
+          0.00023
+        ]
+      },
+      "provider": "Higgsfield / ElevenLabs",
+      "model": "elevenlabs_v4",
+      "voiceId": "f1e8226e-2248-4d5f-b43c-0a79e9949dbf",
+      "voiceType": "preset",
+      "voiceName": "Andre",
+      "stability": 0.75,
+      "similarityBoost": 0.75
     },
     "simriPhoto": {
-      "src": "/assets/mind-forest/audio/simri-photo-invitation.wav",
+      "src": "/assets/mind-forest/audio/simri-photo-invitation-v2.wav",
       "text": "이제 우리 함께 사진 찍자!",
-      "volume": 0.78,
-      "duration": 2.844,
-      "provider": "Temporary Windows Korean speech"
+      "volume": 0.72,
+      "duration": 2.05,
+      "envelope": {
+        "stepSeconds": 0.04,
+        "values": [
+          0.00363,
+          0.00353,
+          0.00429,
+          0.49401,
+          0.64564,
+          0.10598,
+          0.49819,
+          1,
+          1,
+          1,
+          0.59099,
+          0.36845,
+          0.22074,
+          0.07913,
+          0.08036,
+          0.19694,
+          0.35263,
+          0.36537,
+          0.78957,
+          0.68416,
+          0.47397,
+          0.94245,
+          0.49127,
+          0.38855,
+          0.01842,
+          0.03166,
+          0.73543,
+          0.7629,
+          0.19178,
+          0.13279,
+          0.79925,
+          0.65927,
+          0.09576,
+          0.348,
+          0.29117,
+          0.2127,
+          0.05061,
+          0.2803,
+          0.10013,
+          0.00477,
+          0.00142,
+          0.00911,
+          0.31909,
+          0.85059,
+          0.72205,
+          0.25253,
+          0.06497,
+          0.00684,
+          0.0008,
+          0.00032,
+          0.00038,
+          0.00001
+        ]
+      },
+      "provider": "local Qwen3-TTS",
+      "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "voiceId": "Qwen/Qwen3-TTS-12Hz-1.7B-Base:0e53482d593e2321935a",
+      "seed": 20261111
     },
     "simri": {
       "src": "/assets/mind-forest/audio/simri-greeting.wav",
@@ -1202,9 +1455,42 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) return null;
     // Out-of-frame landmarks are a lost hand, not a light pinned to an edge.
     if (point.x < 0 || point.x > 1 || point.y < 0 || point.y > 1) return null;
-    // Mirror once, matching the selfie preview; vertical motion stays unchanged.
-    const rawX = 1 - point.x, rawY = point.y;
-    return {x: clamp((rawX - .1) / .8), y: clamp((rawY - .1) / .8), rawX, rawY};
+    // Use the same horizontal direction for the forest, fire and camera preview.
+    // Do not apply a second scene-specific flip to the detector coordinates.
+    const rawX = point.x, rawY = point.y;
+    // A wider working area and gentler filtering reduce motion amplification.
+    return {x: clamp((rawX - .02) / .96), y: clamp((rawY - .02) / .96), rawX, rawY};
+  }
+
+  function calculatePinchRatio(landmarks, aspectRatio) {
+    if (!Array.isArray(landmarks) || landmarks.length < 21 || !Number.isFinite(aspectRatio) || aspectRatio <= 0) return null;
+    const valid = point => point && Number.isFinite(point.x) && Number.isFinite(point.y)
+      && point.x >= 0 && point.x <= 1 && point.y >= 0 && point.y <= 1;
+    if (![0, 4, 5, 8, 9, 17].every(index => valid(landmarks[index]))) return null;
+    // Landmarks use separate normalized axes. Restore the image proportions
+    // before comparing the fingertip gap with the size of this person's palm.
+    const distance = (a, b) => Math.hypot((a.x - b.x) * aspectRatio, a.y - b.y);
+    const palmSize = Math.max(distance(landmarks[5], landmarks[17]), distance(landmarks[0], landmarks[9]));
+    if (palmSize <= 1e-6) return null;
+    return distance(landmarks[4], landmarks[8]) / palmSize;
+  }
+
+  function createPinchTracker(nextSequence) {
+    let armed = false, closed = false, closingSince = null, sequence = 0;
+    const reset = () => { armed = false; closed = false; closingSince = null; };
+    return {
+      reset,
+      push(ratio, now, reliable = true) {
+        const valid = reliable && Number.isFinite(ratio) && ratio >= 0;
+        if (!valid) reset();
+        else if (ratio >= .48) { armed = true; closed = false; closingSince = null; }
+        else if (!closed && armed && ratio <= .30) {
+          closingSince ??= now;
+          if (now - closingSince >= 90) { closed = true; sequence = nextSequence(); }
+        } else if (!closed) closingSince = null;
+        return {pinch: closed, pinchValid: valid, pinchSequence: sequence};
+      }
+    };
   }
 
   // A short median filter removes isolated landmark spikes. The dead zone keeps
@@ -1220,9 +1506,9 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         if (history.length < 2) return null;
         const current = {x: median(history.map(p => p.x)), y: median(history.map(p => p.y))};
         if (!smooth) smooth = current;
-        else smooth = {x: smooth.x + (current.x - smooth.x) * .65, y: smooth.y + (current.y - smooth.y) * .65};
+        else smooth = {x: smooth.x + (current.x - smooth.x) * .32, y: smooth.y + (current.y - smooth.y) * .32};
         const distance = emitted ? Math.hypot(smooth.x - emitted.x, smooth.y - emitted.y) : Infinity;
-        if (distance < .009) return null;
+        if (distance < .014) return null;
         const reset = !emitted || distance > .35;
         // Rebase a new hand or a large jump instead of drawing a sweep across the forest.
         if (reset) smooth = current;
@@ -1234,10 +1520,12 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
 
   // Brief detection gaps hold a real observed position; never extrapolate a
   // moving hand. A held point must not add character charge or orbit sounds.
-  function createPointTracker({graceMs=TRACKING_GRACE_MS}={}) {
+  function createPointTracker({graceMs=TRACKING_GRACE_MS, nextPinchSequence}={}) {
     const filter=createPointFilter();
+    let sequence=0;
+    const gesture=createPinchTracker(nextPinchSequence || (() => ++sequence));
     let last=null,missingSince=null,lastSeenAt=null;
-    function reset(){filter.reset();last=null;missingSince=null;lastSeenAt=null;}
+    function reset(){filter.reset();gesture.reset();last=null;missingSince=null;lastSeenAt=null;}
     function expire(now){
       // Expire from the last observation, even if inference stops answering.
       if(lastSeenAt!==null&&now-lastSeenAt>=graceMs){reset();return true;}
@@ -1247,17 +1535,28 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       reset,expire,
       push(raw,now){
         expire(now);
+        if(lastSeenAt!==null&&now<=lastSeenAt){
+          gesture.reset();
+          const point=last?{...last,pinch:false,pinchValid:false,held:true,reset:false}:null;
+          if(point)last=point;
+          return {status:last?'tracking':'searching',point};
+        }
         const mapped=mapPoint(raw);
         if(!mapped){
+          gesture.reset();
           if(!last)return {status:'searching',point:null};
-          if(missingSince===null){missingSince=now;return {status:'tracking',point:{...last,held:true,reset:false}};}
+          if(missingSince===null){missingSince=now;last={...last,pinch:false,pinchValid:false,held:true,reset:false};return {status:'tracking',point:{...last}};}
           return {status:'tracking',point:null};
         }
         const returning=missingSince!==null;missingSince=null;lastSeenAt=now;
         // A different position after a gap is a new anchor, not a sweep.
         if(returning&&last&&Math.hypot(mapped.x-last.x,mapped.y-last.y)>.25){filter.reset();filter.push(raw);}
         const filtered=filter.push(raw);
-        const point=filtered?{...filtered,held:false}:(returning&&last?{...last,held:false,reset:false}:null);
+        // Gesture observations must survive the position dead zone. Reusing
+        // the filtered position does not create movement or character charge.
+        const gestureState=gesture.push(raw.pinchRatio,now,!filtered?.reset);
+        const position=filtered||(last?{...last,reset:false}:null);
+        const point=position?{...position,...gestureState,held:false,observedAt:now}:null;
         if(point)last=point;
         return {status:'tracking',point};
       }
@@ -1266,6 +1565,9 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
 
   function createHandTracker() {
     const tracks = new Map();
+    // Keep event identities unique even when a hand ID is reused after an exit
+    // or a camera restart; consumers can safely discard already seen pinches.
+    let pinchSequence = 0;
     function expire(now) {
       let changed = false;
       for (const [id, track] of tracks) {
@@ -1273,7 +1575,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       }
       return changed;
     }
-    const snapshot = () => [...tracks.values()].flatMap(track => track.point ? [track.point] : []);
+    const snapshot = () => [...tracks.values()].flatMap(track => track.point ? [{...track.point}] : []);
     function push(rawPoints, now) {
       expire(now);
       const hands = rawPoints.filter(mapPoint).slice(0, MAX_HANDS);
@@ -1309,7 +1611,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         if (matched.has(index) || tracks.size >= MAX_HANDS) continue;
         let id = 0;
         while (tracks.has(id)) id++;
-        const filter = createPointTracker();
+        const filter = createPointTracker({nextPinchSequence: () => ++pinchSequence});
         filter.push(raw, now);
         tracks.set(id, {filter, anchor: anchors[index], point: null});
       }
@@ -1325,7 +1627,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   // A classic worker supports opaque file:// origins in the single-HTML build.
   // The official IIFE bundle and classic Wasm loader need no module imports.
   // MediaPipe's synchronous inference never runs on the UI thread.
-  function workerMain(maxHands) {
+  function workerMain(maxHands, calculatePinchRatio) {
     let detector = null;
     self.onmessage = async event => {
       const data = event.data;
@@ -1348,7 +1650,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
             const result = detector.detectForVideo(data.bitmap, data.timestamp);
             const points = (result.landmarks || []).flatMap(landmarks => {
               const tip = landmarks[8], wrist = landmarks[0];
-              return tip ? [{x: tip.x, y: tip.y, wristX: wrist?.x, wristY: wrist?.y}] : [];
+              return tip ? [{x: tip.x, y: tip.y, wristX: wrist?.x, wristY: wrist?.y,
+                pinchRatio: calculatePinchRatio(landmarks, data.bitmap.width / data.bitmap.height)}] : [];
             });
             self.postMessage({type: 'result', timestamp: data.timestamp, points});
           } finally { data.bitmap?.close(); }
@@ -1444,14 +1747,38 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
 
   async function requestCamera(isCurrent = () => true) {
     const devices = navigator.mediaDevices;
-    try {
-      return await devices.getUserMedia({audio: false,
-        video: {width: {ideal: 640}, height: {ideal: 480}, frameRate: {ideal: 24, max: 30}, facingMode: {ideal: 'user'}}});
-    } catch (error) {
-      // Some drivers reject the preferred video mode but can open the default mode.
-      if (!isCurrent() || !['NotReadableError','TrackStartError','OverconstrainedError'].includes(error?.name)) throw error;
-      return devices.getUserMedia({audio: false, video: true});
+    const retryable = error => ['NotReadableError','TrackStartError','OverconstrainedError','NotFoundError','DevicesNotFoundError'].includes(error?.name);
+    const checkCurrent = () => { if (!isCurrent()) throw Object.assign(new Error('Camera request cancelled.'), {name: 'AbortError'}); };
+    async function acquire(video) {
+      checkCurrent();
+      let stream;
+      try { stream = await devices.getUserMedia({audio: false, video}); }
+      catch (error) { checkCurrent(); throw error; }
+      if (!isCurrent()) { for (const track of stream.getTracks()) track.stop(); checkCurrent(); }
+      return stream;
     }
+    let lastError;
+    // Relax capture settings first. If the default is a busy/virtual camera,
+    // try other connected video inputs without retrying a permission denial.
+    for (const video of [{width: {ideal: 640}, height: {ideal: 480}, frameRate: {ideal: 24, max: 30}, facingMode: {ideal: 'user'}}, true]) {
+      try { return await acquire(video); }
+      catch (error) { if (!retryable(error)) throw error; lastError = error; }
+    }
+    checkCurrent();
+    if (!devices.enumerateDevices) throw lastError;
+    let available;
+    try { available = await devices.enumerateDevices(); }
+    catch { checkCurrent(); throw lastError; }
+    checkCurrent();
+    const ids = new Set(available.filter(device => device.kind === 'videoinput' && device.deviceId).map(device => device.deviceId));
+    for (const deviceId of ids) {
+      try { return await acquire({deviceId: {exact: deviceId}}); }
+      catch (error) { if (!retryable(error)) throw error; lastError = error; }
+    }
+    const cameraError = new Error(lastError.message, {cause: lastError});
+    cameraError.name = lastError.name;
+    cameraError.cameraLabels = available.filter(device => device.kind === 'videoinput').map(device => device.label);
+    throw cameraError;
   }
 
   function create({video, onPoints = () => {}, onState = () => {}}) {
@@ -1502,7 +1829,10 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     function permissionMessage(error) {
       if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') return '카메라 사용이 허용되지 않았어요. 주소창의 카메라 권한을 허용한 뒤 다시 켜 주세요. 마우스와 터치는 계속 사용할 수 있어요.';
       if (error?.name === 'NotFoundError' || error?.name === 'DevicesNotFoundError') return '연결된 카메라가 없어요. 웹캠을 연결한 뒤 다시 켜 주세요.';
-      if (error?.name === 'NotReadableError' || error?.name === 'TrackStartError') return '카메라 영상을 시작하지 못했어요. 이 체험을 열어 둔 다른 탭이나 카메라 앱을 닫고 ‘카메라 켜기’를 눌러 주세요.';
+      if (error?.name === 'NotReadableError' || error?.name === 'TrackStartError') {
+        if (error.cameraLabels?.length && error.cameraLabels.every(label => /OBS Virtual Camera/i.test(label))) return 'OBS 가상 카메라에서 영상이 오지 않아요. OBS에서 ‘가상 카메라 시작’을 누르거나 실제 웹캠을 연결한 뒤 다시 켜 주세요.';
+        return '카메라 영상을 시작하지 못했어요. 이 체험을 열어 둔 다른 탭이나 카메라 앱을 닫고 ‘카메라 켜기’를 눌러 주세요.';
+      }
       return '카메라를 시작하지 못했어요. 카메라를 확인한 뒤 다시 켜 주세요. 마우스와 터치도 사용할 수 있어요.';
     }
     function schedule(session) {
@@ -1557,6 +1887,13 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       lastVideoTime = -1;
       notify(paused ? 'paused' : 'searching', paused ? '손 추적을 잠시 쉬고 있어요.' : HAND_SEARCH_MESSAGE, true);
     }
+    function resetTracking() {
+      resumedAt = performance.now(); lastVideoProgress = resumedAt; staleVideo = false;
+      lastVideoTime = -1;
+      if (inFlight) frameStarted = resumedAt;
+      clearPoints();
+      if (ready) notify(paused ? 'paused' : 'searching', paused ? '손 추적을 잠시 쉬고 있어요.' : HAND_SEARCH_MESSAGE, true);
+    }
     async function begin(session) {
       frames = 0; points = 0; lastPoints = [];
       if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
@@ -1591,7 +1928,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         if (session !== epoch) return false;
         clearTimeout(timeout); timeout = 0; rejectInit = null;
         const assets = Object.fromEntries(Object.entries(ASSETS).map(([key, path]) => [key, assetURL(path)]));
-        const source = '(' + workerMain.toString() + ')(' + MAX_HANDS + ');';
+        const source = '(' + workerMain.toString() + ')(' + MAX_HANDS + ',' + calculatePinchRatio.toString() + ');';
         const workerURL = URL.createObjectURL(new Blob([source], {type: 'text/javascript'})); objectURLs.add(workerURL);
         worker = new Worker(workerURL, {name: 'forest-hand-tracking'});
         await new Promise((resolve, reject) => {
@@ -1614,7 +1951,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
             }
             if (data.type !== 'result') return;
             inFlight = false; frames++;
-            if (paused || document.hidden || !ready || data.timestamp < resumedAt) return;
+            if (paused || document.hidden || !ready || data.timestamp <= resumedAt) return;
             const receivedAt = performance.now();
             if (tracker.expire(receivedAt)) publish(tracker.snapshot());
             // A late result cannot bring back a light that has already expired.
@@ -1644,12 +1981,12 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       pending.finally(() => { if (startPromise === pending) startPromise = null; });
       return pending;
     }
-    return {start, stop, setPaused,
+    return {start, stop, setPaused, resetTracking,
       getState: () => ({...state, frames, points, lastPoint: lastPoints.length ? {...lastPoints[0]} : null,
         lastPoints: lastPoints.map(point => ({...point})), ready, paused, inFlight})};
   }
 
-  window.ForestHandTracking = Object.freeze({create, requestCamera, createPhotoSegmenter, mapPoint, createPointFilter, createPointTracker, createHandTracker, maxHands: MAX_HANDS, assets: ASSETS});
+  window.ForestHandTracking = Object.freeze({create, requestCamera, createPhotoSegmenter, mapPoint, calculatePinchRatio, createPointFilter, createPointTracker, createHandTracker, maxHands: MAX_HANDS, assets: ASSETS});
 })();
 
 </script>
@@ -1707,7 +2044,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   function updateOpeningMusicButton() {
     const playing = openingMusicEnabled && !openingMusic.paused;
     openingMusicButton.setAttribute('aria-pressed', String(playing));
-    openingMusicButton.title = playing ? '배경음 끄기' : '배경음 켜기';
+    openingMusicButton.title = playing ? '배경음 끄기' : openingMusicEnabled ? '화면을 누르면 배경음이 시작돼요' : '배경음 켜기';
+    openingMusicButton.setAttribute('aria-label', openingMusicButton.title);
   }
   function fadeBackground(track, level, rewind = false) {
     audio.fadeMedia(track, 0, () => {
@@ -1729,12 +2067,15 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     });
   }
   function syncGuideMusic() {
-    if (startScreen.hidden || document.hidden || audio.isMuted()) {
-      fadeBackground(guideMusic, .35, startScreen.hidden);
+    const inForest = started && stage === 'forest';
+    const audible = !startScreen.hidden || inForest;
+    const volume = inForest ? .22 : .35;
+    if (!audible || document.hidden || audio.isMuted()) {
+      fadeBackground(guideMusic, volume, !audible);
       return;
     }
     audio.cancelMediaFade(guideMusic);
-    guideMusic.volume = .35;
+    guideMusic.volume = volume;
     void guideMusic.play().catch(error => {
       if (error.name !== 'AbortError') console.warn('Forest guide music:', error);
     });
@@ -1809,6 +2150,11 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     fadeBackground(openingMusic, openingMusicVolume, true);
     const footsteps = audio.footsteps();
     void audio.unlock();
+    // Start this specific media element inside the click, before the walk's await.
+    // Safari may otherwise reject the guide music after the delayed transition.
+    audio.cancelMediaFade(guideMusic);
+    guideMusic.volume = 0;
+    void guideMusic.play().catch(() => {});
     await Promise.all([footsteps, new Promise(resolve => setTimeout(resolve, openingWalkMs))]);
     openingFootprints.hidden = true;
     openingScreen.hidden=true;startScreen.hidden=false;startScreen.classList.add('from-opening');
@@ -1845,6 +2191,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   let ready = false, lastFrame = 0, requestId = 0, explored = false;
   let sceneTime = 0, lastMovementAt = 0, lastRubAt = 0, allAwakeAt = null;
   let stage = 'forest';
+  const compactForest = matchMedia('(max-width: 620px) and (orientation: portrait)');
   let activePointerId = null;
   let hand = null, cameraActive = false, windowBlurred = false, resumeCamera = false;
   const keys = new Set();
@@ -2033,12 +2380,14 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function syncCameraPause(){
     const unavailable = document.hidden || windowBlurred;
-    const tracking = (stage === 'forest' && help.hidden) || (stage === 'fire' && !fireTimer);
+    const tracking = help.hidden && (stage === 'forest' || (stage === 'fire' && !fireTimer));
     hand?.setPaused(!tracking || unavailable, stage === 'photo' && !unavailable);
   }
   function cameraPoints(points) {
+    // Apply the display preference after filtering, once for every scene.
+    if (cameraMirrored) points = points.map(point => ({...point, x: 1 - point.x, rawX: 1 - point.rawX}));
     if (stage === 'fire') {
-      if (started && cameraActive && !document.hidden && !windowBlurred && !fireTimer) moveCameraEmber(points);
+      if (started && cameraActive && help.hidden && !document.hidden && !windowBlurred && !fireTimer) moveCameraEmber(points);
       return;
     }
     const visibleIds = new Set(points.map(point => point.id));
@@ -2135,7 +2484,14 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       if(f.phase==='waking'&&sceneTime-f.phaseStart>=f.wakeDuration)beginGreeting(f);
       if(f.phase==='talking'&&!f.voiceHandle&&sceneTime-f.phaseStart>5000){f.phase='awake';f.phaseStart=sceneTime;}
       if(gain>0&&f.phase==='rest'&&strength>strongest){sounding=f;strongest=strength;}
-      const visible=f.phase==='talking'&&help.hidden;
+    }
+    // Voices play in sequence. On a narrow screen, keep one readable dialogue
+    // in the reserved area, including when muted fallback greetings overlap.
+    const speakingId = compactForest.matches ? audio.getState().currentVoice?.id : null;
+    const talking = friends.filter(f => f.phase === 'talking');
+    const mobileSpeaker = talking.find(f => f.id === speakingId) || talking.reduce((latest, f) => !latest || f.phaseStart > latest.phaseStart ? f : latest, null);
+    for (const f of friends) {
+      const visible=f.phase==='talking'&&help.hidden&&(!compactForest.matches||f===mobileSpeaker);
       f.bubble.classList.toggle('visible',visible);f.bubble.setAttribute('aria-hidden',String(!visible));
       f.bubble.dataset.state=f.phase;f.bubble.dataset.charge=f.charge.toFixed(3);f.bubble.dataset.wakes=String(f.wakeCount);
     }
@@ -2395,6 +2751,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const localStoryVideos = ['/assets/mind-forest/video/Mind-Forest_part1.mp4', '/assets/mind-forest/video/Mind-Forest_part2.mp4'];
   const emberPlayfield = finaleSections.fire;
   const fireGuide = document.getElementById('finale-fire-guide');
+  const fireProgress = document.getElementById('finale-fire-progress');
   const emberLight = document.getElementById('ember-light');
   const firePad = document.getElementById('fire-pad');
   const fireFlare = firePad.querySelector('.fire-flare');
@@ -2440,10 +2797,83 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   let flowVersion = 0, videoTimer = 0, fireTimer = 0, idleTimer = 0, returnTimer = 0, photoCaptured = false;
   let activeVideoPart = 0;
   let photoAutoTimer = 0;
-  let extraPhotoStream = null, photoObjectURL = null, finaleConfig = null, photoCameraRequest = null;
+  let extraPhotoStream = null, photoObjectURL = null, finaleConfig = null, resolvedFinaleConfig = null, photoCameraRequest = null;
   let photoPreviewReady = false;
   let photoSegmenter = null, photoSegmentationRequest = null, photoPersonMode = 'loading';
   let fireTracksHand = false, fireBurst = null, lastFireMovement = null;
+  let fireDelivered = 0, firePickup = null, fireStepTimer = 0, fireSequence = 0, fireKeyHeld = false;
+  let firePinchTimer = 0, firePinchFlight = null;
+  const firePinches = new Map();
+  const fireCorners = [{label:'왼쪽 위',right:false,bottom:false},{label:'오른쪽 위',right:true,bottom:false},{label:'오른쪽 아래',right:true,bottom:true},{label:'왼쪽 아래',right:false,bottom:true}];
+  const fireGrowth = [.38, .65, .88, 1.15, 1.5];
+
+  /* Shared camera orientation: original camera direction is the default. */
+  let cameraMirrored = false, cameraOrientationRevision = 0;
+  let cameraOrientationStream = null, cameraOrientationDeviceId = '';
+  const cameraMirrorPreferences = new Map();
+  const cameraOrientationStatus = document.getElementById('camera-orientation-status');
+  function cameraOrientationBlocked() {
+    return stage === 'photo' && (photoTake.disabled || photoCaptured || !photoResult.hidden);
+  }
+  function updateCameraOrientationButtons() {
+    experience.dataset.cameraMirrored = String(cameraMirrored);
+    cameraOrientationStatus.textContent = `현재 웹캠 방향: ${cameraMirrored ? '좌우 반전' : '기본'}${cameraOrientationBlocked() ? ' · 촬영 중에는 방향을 유지해요.' : ''}`;
+  }
+  function setCameraMirrored(value, remember = false) {
+    const next = Boolean(value);
+    if (remember && cameraOrientationDeviceId) {
+      cameraMirrorPreferences.set(cameraOrientationDeviceId, next);
+      try { localStorage.setItem('mind-forest:camera-mirror:' + cameraOrientationDeviceId, String(next)); } catch {}
+    }
+    if (cameraMirrored === next) { updateCameraOrientationButtons(); return; }
+    cameraMirrored = next;
+    cameraOrientationRevision++;
+    releaseLight();
+    hand?.resetTracking();
+    firePinches.clear();
+    for (const cursor of fireHandCursors) cursor.hidden = true;
+    emberLight.classList.remove('is-reachable');
+    photoBackdropChosen = false; photoBackdropCandidate = -1;
+    photoCameraLayer.width = photoCameraLayer.height = 0;
+    updateCameraOrientationButtons();
+    if (stage === 'photo' && !cameraOrientationBlocked()) {
+      clearTimeout(photoAutoTimer);
+      const version = flowVersion;
+      const refresh = () => {
+        if (version !== flowVersion || stage !== 'photo' || !photoPreviewReady || cameraOrientationBlocked()) return;
+        void refreshPhotoForeground(version).then(current => {
+          drawGroupPhotoIfCurrent(current);
+          if (current && !cameraOrientationBlocked()) scheduleAutoPhoto();
+        });
+      };
+      if (photoSegmentationRequest) void photoSegmentationRequest.then(refresh);
+      else refresh();
+    }
+  }
+  function applyCameraDeviceOrientation() {
+    const stream = cameraVideo.srcObject;
+    if (!stream) return;
+    let deviceId = '';
+    try { deviceId = stream.getVideoTracks()[0]?.getSettings?.().deviceId || ''; } catch {}
+    if (stream === cameraOrientationStream && deviceId === cameraOrientationDeviceId) return;
+    cameraOrientationStream = stream; cameraOrientationDeviceId = deviceId;
+    let mirrored = false;
+    if (deviceId) {
+      if (cameraMirrorPreferences.has(deviceId)) mirrored = cameraMirrorPreferences.get(deviceId);
+      else try { mirrored = localStorage.getItem('mind-forest:camera-mirror:' + deviceId) === 'true'; } catch {}
+    }
+    setCameraMirrored(mirrored);
+  }
+  function toggleCameraMirror() {
+    if (cameraOrientationBlocked()) return;
+    applyCameraDeviceOrientation();
+    setCameraMirrored(!cameraMirrored, true);
+    status.textContent = cameraMirrored ? '숲과 모닥불, 사진의 좌우 방향을 함께 반전했어요.' : '숲과 모닥불, 사진의 좌우 방향을 기본으로 되돌렸어요.';
+  }
+  function setPhotoCameraTransform(context, width) {
+    context.setTransform(cameraMirrored ? -1 : 1, 0, 0, 1, cameraMirrored ? width : 0, 0);
+  }
+  /* End shared camera orientation. */
 
   function flashScreen() {
     if (reducedMotion.matches) return;
@@ -2451,22 +2881,32 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function getFinaleConfig() {
     if (location.protocol === 'file:') return Promise.resolve({});
-    finaleConfig ??= fetch('/api/mind-forest-photo', {signal: AbortSignal.timeout(1800)})
-      .then(response => response.ok ? response.json() : {}).catch(() => ({}));
+    finaleConfig ??= fetch('/api/mind-forest-photo', {signal: AbortSignal.timeout(5000)})
+      .then(response => {
+        if (!response.ok) throw new Error('Photo configuration unavailable.');
+        return response.json();
+      }).then(config => { resolvedFinaleConfig = config; return config; })
+      .catch(() => { finaleConfig = null; return {}; });
     return finaleConfig;
   }
   function showFinale(name) {
+    if (stage === 'fire' && name !== 'fire') cancelFireInteraction();
+    help.hidden = true;
+    helpToggle.setAttribute('aria-expanded', 'false');
+    audio.setPaused(false);
     stage = name;
     experience.dataset.stage = name;
+    updateCameraOrientationButtons();
     finale.hidden = false;
     for (const [id, section] of Object.entries(finaleSections)) section.hidden = id !== name;
-    syncCampfireAudio();
+    syncGuideMusic();syncCampfireAudio();
     syncCameraPause();
     document.getElementById('finale-' + name + '-title').focus({preventScroll: true});
   }
   async function beginFinale() {
     stage = 'transition';
     experience.dataset.stage = stage;
+    syncGuideMusic();
     const version = ++flowVersion;
     releaseLight();
     audio.stopAll();
@@ -2483,12 +2923,14 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     const version = flowVersion;
     const isCurrent = () => version === flowVersion && activeVideoPart === part && stage === 'video';
     activeVideoPart = part;
-    videoTitle.textContent = `숲에서 만난 이야기 ${part}부`;
-    finaleVideo.setAttribute('aria-label', videoTitle.textContent + ' 영상');
-    videoMessage.textContent = '영상을 불러오고 있어요.';
+    videoPlaceholder.hidden = true;
+    videoMessage.textContent = '';
+    finaleVideo.hidden = false;
+    finaleVideo.setAttribute('aria-label', part === 1 ? '친구들이 모닥불에 모이는 영상' : '모닥불의 온기를 나누는 영상');
     showFinale('video');
-    const config = await getFinaleConfig();
-    if (!isCurrent()) return;
+    // The photo service must not delay the story. Use prefetched overrides
+    // when available, otherwise start the bundled video immediately.
+    const config = resolvedFinaleConfig || {};
     const videos = config.storyVideos ?? localStoryVideos;
     const source = part === 1 ? finaleVideo.dataset.src || videos[0] || config.endingVideo : videos[1];
     if (!source) {
@@ -2530,7 +2972,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       finaleVideo.load();
     }
     finaleVideo.hidden = true;
-    videoPlaceholder.hidden = false;
+    videoPlaceholder.hidden = true;
+    videoMessage.textContent = '';
   }
   async function finishFinaleVideo() {
     if (stage !== 'video' || !activeVideoPart) return;
@@ -2549,17 +2992,41 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     else beginPhoto();
   }
   function beginFire() {
-    fireBurst?.cancel();
+    cancelFireInteraction();
+    fireDelivered = 0;
+    firePad.disabled = false;
+    emberPlayfield.dataset.delivered = '0';
+    emberPlayfield.style.setProperty('--fire-growth', fireGrowth[0]);
     firePad.querySelectorAll('.fire-spark').forEach(spark => spark.remove());
     emberPlayfield.classList.remove('is-kindled');
-    parkEmber();
     showFinale('fire');
+    parkEmber();
     updateFireGuide();
     scheduleFinaleIdleReturn();
   }
+  function cancelFireInteraction() {
+    fireSequence++;
+    clearTimeout(firePinchTimer); firePinchTimer = 0;
+    firePinchFlight?.cancel(); firePinchFlight = null;
+    firePinches.clear();
+    for (const cursor of fireHandCursors) cursor.hidden = true;
+    emberLight.classList.remove('is-reachable');
+    clearTimeout(fireStepTimer); fireStepTimer = 0;
+    clearTimeout(fireTimer); fireTimer = 0;
+    fireBurst?.cancel(); fireBurst = null;
+    releaseFirePointer();
+    firePickup = null; fireTracksHand = false; fireKeyHeld = false;
+    lastFireMovement = null;
+  }
   function updateFireGuide() {
-    fireGuide.textContent = cameraActive ? '검지 끝의 빛을 모닥불로 가져가 보세요.' : '노란빛을 모닥불로 가져가 보세요.';
+    fireProgress.textContent = '함께 모은 빛 ' + fireDelivered + ' / 4';
+    if (fireDelivered === fireCorners.length) fireGuide.textContent = '많은 빛이 모여, 더 따뜻해졌어요.';
+    else if (fireStepTimer) fireGuide.textContent = '온기가 조금 더 커졌어요. 다음 빛을 기다려 주세요.';
+    else if (firePinchTimer) fireGuide.textContent = '잡은 빛이 모닥불로 날아가고 있어요.';
+    else if (firePickup) fireGuide.textContent = '잡은 빛을 중앙 모닥불에 놓아 주세요.';
+    else fireGuide.textContent = (fireDelivered + 1) + '번째 · ' + fireCorners[fireDelivered].label + (cameraActive ? ' 빛에 손끝을 맞추고 엄지와 검지를 펴서 오므려 주세요.' : '의 빛을 끌어서 모닥불에 놓아 주세요.');
     fireCamera.hidden = !hand || cameraActive || Boolean(fireTimer);
+    firePad.setAttribute('aria-label', fireDelivered === 4 ? '네 개의 빛이 모인 모닥불' : (fireDelivered + 1) + '번째 빛을 모닥불에 넣기');
   }
   function scheduleFinaleIdleReturn() {
     clearTimeout(idleTimer);
@@ -2568,54 +3035,125 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       if (stage === waitingStage) returnToOpening();
     }, finaleIdleMs);
   }
+  function fireOrigin() {
+    const field = emberPlayfield.getBoundingClientRect();
+    const corner = fireCorners[Math.min(fireDelivered, fireCorners.length - 1)];
+    const insetX = clamp(field.width * .12, 48, 120);
+    const top = Math.max(138, field.height * .24);
+    const bottom = field.height - Math.max(124, field.height * .15);
+    return {x: field.left + (corner.right ? field.width - insetX : insetX), y: field.top + (corner.bottom ? bottom : top)};
+  }
+  function releaseFirePointer() {
+    if (firePickup?.kind === 'pointer' && emberPlayfield.hasPointerCapture?.(firePickup.id)) emberPlayfield.releasePointerCapture(firePickup.id);
+  }
   function parkEmber() {
-    fireTracksHand = false;
-    lastFireMovement = null;
-    if (fireTimer) return;
+    if (firePinchTimer) return;
+    releaseFirePointer();
+    firePickup = null; fireTracksHand = false; lastFireMovement = null;
+    if (fireTimer || fireStepTimer || fireDelivered >= fireCorners.length) return;
+    const origin = fireOrigin();
     emberLight.classList.add('is-waiting');
-    emberLight.style.transform = '';
+    emberLight.style.transform = 'translate(' + origin.x + 'px,' + origin.y + 'px)';
+    emberLight.dataset.corner = String(fireDelivered + 1);
+    updateFireGuide();
   }
   function fireDistance(x, y, fire) {
     const dx = (x - fire.left - fire.width / 2) / (fire.width * .37);
     const dy = (y - fire.top - fire.height / 2) / (fire.height * .44);
     return dx * dx + dy * dy;
   }
-  function placeFireLight(x, y, distance) {
+  function firePickupDistance(x, y) {
+    const origin = fireOrigin();
+    return Math.hypot(x - origin.x, y - origin.y);
+  }
+  function placeFireLight(x, y, deliver) {
+    if (!firePickup || fireTimer || fireStepTimer) return;
     emberLight.classList.remove('is-waiting');
-    emberLight.style.transform = `translate(${x}px,${y}px)`;
-    if (distance <= 1) liftEmbers();
+    emberLight.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+    if (deliver && fireDistance(x, y, firePad.getBoundingClientRect()) <= 1) liftEmbers();
     else if (!lastFireMovement || Math.hypot(x - lastFireMovement.x, y - lastFireMovement.y) >= 8) {
       lastFireMovement = {x, y};
       scheduleFinaleIdleReturn();
     }
   }
   function moveCameraEmber(points) {
+    if (stage !== 'fire') return;
     const field = emberPlayfield.getBoundingClientRect();
-    const fire = firePad.getBoundingClientRect();
-    let closest = null;
+    const seen = new Set(), candidates = [];
+    let reachable = false;
+    for (const cursor of fireHandCursors) cursor.hidden = true;
+    // Consume every gesture even during the flight/cooldown. A pinch made for
+    // the previous corner must never be replayed when the next corner appears.
     for (const point of points) {
-      if (point.held) continue;
+      seen.add(point.id);
       const x = field.left + point.x * field.width, y = field.top + point.y * field.height;
-      const distance = fireDistance(x, y, fire);
-      if (!closest || distance < closest.distance) closest = {x, y, distance};
+      const cursor = fireHandCursors[point.id];
+      if (cursor && Number.isFinite(x) && Number.isFinite(y)) {
+        cursor.hidden = false; cursor.style.left = x + 'px'; cursor.style.top = y + 'px';
+        cursor.classList.toggle('is-pinching', point.pinch === true);
+        cursor.classList.toggle('is-held', Boolean(point.held));
+      }
+      const previous = firePinches.get(point.id);
+      const sequence = Number.isSafeInteger(point.pinchSequence) ? point.pinchSequence : 0;
+      const valid = point.pinchValid === true && !point.held && !point.reset && Number.isFinite(x) && Number.isFinite(y);
+      if (!valid) { firePinches.set(point.id, {sequence, armed: false}); continue; }
+      const fresh = Boolean(previous && sequence > previous.sequence);
+      const open = point.pinch === false;
+      firePinches.set(point.id, {sequence, armed: open || Boolean(previous?.armed && !fresh)});
+      const distance = firePickupDistance(x, y);
+      if (distance <= 56) {
+        reachable = true;
+        if (fresh && point.pinch === true && previous.armed) candidates.push({id: point.id, distance});
+      }
     }
-    if (!closest) { if (fireTracksHand) parkEmber(); return; }
-    fireTracksHand = true;
-    placeFireLight(closest.x, closest.y, closest.distance);
+    for (const id of firePinches.keys()) if (!seen.has(id)) firePinches.delete(id);
+    const busy = Boolean(fireTimer || fireStepTimer || firePinchTimer || fireDelivered >= 4 || firePickup);
+    emberLight.classList.toggle('is-reachable', reachable && !busy);
+    if (!busy && candidates.length) flyPinchedEmber(candidates.sort((a,b) => a.distance - b.distance)[0].id);
+  }
+  function flyPinchedEmber(id) {
+    const origin = fireOrigin(), fire = firePad.getBoundingClientRect();
+    const x = fire.left + fire.width / 2, y = fire.top + fire.height / 2;
+    const sequence = fireSequence, duration = reducedMotion.matches ? 120 : 420;
+    firePickup = {kind: 'pinch', id}; fireTracksHand = true;
+    clearTimeout(idleTimer);
+    emberLight.classList.remove('is-waiting'); emberLight.classList.remove('is-reachable');
+    const start = 'translate(' + origin.x + 'px,' + origin.y + 'px)';
+    const end = 'translate(' + x + 'px,' + y + 'px)';
+    emberLight.style.transform = start;
+    if (!reducedMotion.matches) firePinchFlight = emberLight.animate([
+      {transform: start}, {transform: end}
+    ], {duration, easing: 'cubic-bezier(.35,0,.3,1)', fill: 'forwards'});
+    firePinchTimer = setTimeout(() => {
+      if (stage !== 'fire' || sequence !== fireSequence) return;
+      firePinchTimer = 0;
+      firePinchFlight?.cancel(); firePinchFlight = null;
+      emberLight.style.transform = end;
+      liftEmbers();
+    }, duration);
+    updateFireGuide();
   }
   function moveEmber(event) {
-    if (stage !== 'fire' || fireTimer || fireTracksHand || !event.isPrimary) return;
-    if (fireHome.contains(event.target) || fireCamera.contains(event.target)) { parkEmber(); return; }
-    const field = emberPlayfield.getBoundingClientRect();
+    if (stage !== 'fire' || !help.hidden || fireTimer || fireStepTimer || firePinchTimer || fireTracksHand || fireDelivered >= 4 || !event.isPrimary) return;
+    if (fireHome.contains(event.target) || fireCamera.contains(event.target)) return;
     const {clientX: x, clientY: y} = event;
-    if (x < field.left || x > field.right || y < field.top || y > field.bottom) {
-      parkEmber();
-      return;
+    if (!firePickup) {
+      if (event.type !== 'pointerdown' || event.button !== 0 || firePickupDistance(x,y) > 44) return;
+      event.preventDefault();
+      firePickup = {kind: 'pointer', id: event.pointerId};
+      emberPlayfield.setPointerCapture(event.pointerId);
+      updateFireGuide();
     }
-    placeFireLight(x, y, fireDistance(x, y, firePad.getBoundingClientRect()));
+    if (firePickup.kind !== 'pointer' || firePickup.id !== event.pointerId) return;
+    if (event.type === 'pointermove' && event.pointerType === 'mouse' && event.buttons === 0) { parkEmber(); return; }
+    const field = emberPlayfield.getBoundingClientRect();
+    if (x < field.left || x > field.right || y < field.top || y > field.bottom) { parkEmber(); return; }
+    placeFireLight(x, y, event.type === 'pointerup');
+    if (event.type === 'pointerup') parkEmber();
   }
   function transitionFromFire() {
-    if (stage !== 'fire') return;
+    if (stage !== 'fire' || fireDelivered !== 4) return;
+    const sequence = fireSequence;
     if (!reducedMotion.matches) {
       flash.animate([
         {opacity: 0, backgroundColor: '#ffab64'},
@@ -2624,41 +3162,67 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       ], {duration: 720, easing: 'ease-in-out'});
     }
     fireTimer = setTimeout(() => {
-      if (stage !== 'fire') return;
+      if (stage !== 'fire' || sequence !== fireSequence) return;
       fireTimer = 0;
       void playFinaleVideo(2);
     }, reducedMotion.matches ? 0 : 310);
   }
-  function liftEmbers() {
-    if (stage !== 'fire' || fireTimer) return;
+  function liftEmbers(keyboard = false) {
+    if (stage !== 'fire' || fireTimer || fireStepTimer || firePinchTimer || fireDelivered >= 4 || (!keyboard && !firePickup)) return;
     clearTimeout(idleTimer);
+    releaseFirePointer();
+    firePickup = null; fireTracksHand = false;
+    fireDelivered++;
+    emberPlayfield.dataset.delivered = String(fireDelivered);
+    emberPlayfield.style.setProperty('--fire-growth', fireGrowth[fireDelivered]);
     emberPlayfield.classList.add('is-kindled');
-    fireTimer = setTimeout(transitionFromFire, 1450);
-    updateFireGuide();
-    syncCameraPause();
-    if (!audio.isMuted() && !document.hidden && (fireSound.paused || fireSound.ended)) {
-      fireSound.currentTime = 0;
-      void fireSound.play().catch(error => {
-        if (error.name !== 'AbortError') console.warn('Campfire flare:', error);
-      });
+    const sequence = fireSequence;
+    if (fireDelivered === 4) {
+      for (const cursor of fireHandCursors) cursor.hidden = true;
+      firePad.disabled = true;
+      fireTimer = setTimeout(() => { if (sequence === fireSequence) transitionFromFire(); }, reducedMotion.matches ? 900 : 1450);
+      syncCameraPause();
+    } else {
+      fireStepTimer = setTimeout(() => {
+        if (stage !== 'fire' || sequence !== fireSequence) return;
+        fireStepTimer = 0;
+        emberPlayfield.classList.remove('is-kindled');
+        parkEmber();
+        scheduleFinaleIdleReturn();
+      }, reducedMotion.matches ? 350 : 650);
     }
-    fireBurst = fireFlare.animate(reducedMotion.matches
-      ? [{filter: 'brightness(1)'}, {filter: 'brightness(1.45)', offset: .25}, {filter: 'brightness(1)'}]
-      : [{transform: 'scale(1)'}, {transform: 'scale(1.92)', offset: .38}, {transform: 'scale(1.7)'}],
-    {duration: 1850, easing: 'ease-out', fill: 'forwards'});
+    updateFireGuide();
+    if (!audio.isMuted() && !document.hidden) {
+      fireSound.currentTime = 0;
+      void fireSound.play().catch(error => { if (error.name !== 'AbortError') console.warn('Campfire flare:', error); });
+    }
+    fireBurst?.cancel();
+    fireBurst = fireFlare.animate([{filter: 'brightness(1)'}, {filter: 'brightness(1.45)', offset: .25}, {filter: 'brightness(1)'}],
+      {duration: reducedMotion.matches ? 180 : 650, easing: 'ease-out'});
     if (reducedMotion.matches || firePad.childElementCount > 28) return;
     for (let i = 0; i < 9; i++) {
       const spark = document.createElement('span');
       spark.className = 'fire-spark';
       spark.setAttribute('aria-hidden', 'true');
-      spark.style.setProperty('--size', `${3 + Math.random() * 3}px`);
+      spark.style.setProperty('--size', (3 + Math.random() * 3) + 'px');
       firePad.append(spark);
       const dx = (Math.random() - .5) * 145, dy = 65 + Math.random() * 95;
-      const flight = `translate(calc(${dx}px * var(--fire-scale)),max(-42svh,calc(${-dy}px * var(--fire-scale))))`;
-      spark.animate([{transform: 'translate(0,0)', opacity: 1},
-        {transform: flight, opacity: 0}],
-      {duration: 650 + Math.random() * 450, easing: 'ease-out'}).finished.then(() => spark.remove(), () => spark.remove());
+      const flight = 'translate(calc(' + dx + 'px * var(--fire-scale)),max(-42svh,calc(' + -dy + 'px * var(--fire-scale))))';
+      spark.animate([{transform: 'translate(0,0)', opacity: 1}, {transform: flight, opacity: 0}],
+        {duration: 650 + Math.random() * 450, easing: 'ease-out'}).finished.then(() => spark.remove(), () => spark.remove());
     }
+  }
+  function fireKeyDown(event) {
+    if (!['Enter',' '].includes(event.key)) return;
+    event.preventDefault();
+    if (event.repeat || fireKeyHeld) return;
+    fireKeyHeld = true;
+    liftEmbers(true);
+  }
+  function fireKeyUp(event) {
+    if (!['Enter',' '].includes(event.key)) return;
+    event.preventDefault();
+    fireKeyHeld = false;
   }
   function makePhotoDecoration() {
     const decoration = document.createElement('canvas');
@@ -2781,14 +3345,14 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function updateKeyedPhoto() {
     if (!cameraVideo.videoWidth || !cameraVideo.srcObject || cameraVideo.readyState < 2) return;
-    // Fit the whole group and keep the preview mirrored.
+    // Fit the whole group using the same direction as the forest and fire.
     const scale = Math.min(photoWindow.width / cameraVideo.videoWidth, photoWindow.height / cameraVideo.videoHeight);
     const w = Math.max(1, Math.round(cameraVideo.videoWidth * scale));
     const h = Math.max(1, Math.round(cameraVideo.videoHeight * scale));
     if (photoCameraLayer.width !== w) photoCameraLayer.width = w;
     if (photoCameraLayer.height !== h) photoCameraLayer.height = h;
     const key = photoCameraContext;
-    key.setTransform(-1, 0, 0, 1, w, 0);
+    setPhotoCameraTransform(key, w);
     key.drawImage(cameraVideo, 0, 0, w, h);
     const image = key.getImageData(0, 0, w, h);
     const pixels = image.data;
@@ -2866,7 +3430,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     if (photoCameraLayer.height !== h) photoCameraLayer.height = h;
     const camera = photoCameraContext;
     camera.save();
-    camera.setTransform(-1, 0, 0, 1, w, 0);
+    setPhotoCameraTransform(camera, w);
     camera.clearRect(0, 0, w, h);
     camera.drawImage(bitmap, 0, 0, w, h);
     camera.globalCompositeOperation = 'destination-in';
@@ -2875,7 +3439,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function refreshPhotoForeground(version) {
     if (photoSegmentationRequest) return photoSegmentationRequest;
-    const isCurrent = () => flowVersion === version && stage === 'photo' && !document.hidden && photoPreviewReady;
+    const orientation = cameraOrientationRevision;
+    const isCurrent = () => flowVersion === version && orientation === cameraOrientationRevision && stage === 'photo' && !document.hidden && photoPreviewReady;
     if (!isCurrent() || photoPersonMode === 'chroma') return Promise.resolve(isCurrent());
     const request = (async () => {
       try {
@@ -2894,7 +3459,15 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         console.warn('MediaPipe person segmentation is unavailable. Using the green-screen key.', error);
       }
       return true;
-    })().finally(() => { if (photoSegmentationRequest === request) photoSegmentationRequest = null; });
+    })().then(current => {
+      // A flip can happen while segmentation is running. Wait for a fresh
+      // frame instead of letting a simultaneous photo request keep a stale pose.
+      if (orientation !== cameraOrientationRevision && flowVersion === version && stage === 'photo' && !document.hidden && photoPreviewReady) {
+        if (photoSegmentationRequest === request) photoSegmentationRequest = null;
+        return refreshPhotoForeground(version);
+      }
+      return current;
+    }).finally(() => { if (photoSegmentationRequest === request) photoSegmentationRequest = null; });
     photoSegmentationRequest = request;
     return request;
   }
@@ -2935,6 +3508,25 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     drawGroupPhoto();
     void preparePhotoPreview();
   }
+  function retakePhoto() {
+    if (stage !== 'photo' || !photoCaptured || photoResult.hidden) return;
+    // Invalidate any old capture/share work before opening a new preview.
+    flowVersion++;
+    clearInterval(returnTimer);
+    clearTimeout(photoAutoTimer);
+    clearTimeout(idleTimer);
+    audio.stopAll();
+    stopPhotoCamera();
+    if (photoObjectURL) URL.revokeObjectURL(photoObjectURL);
+    photoObjectURL = null;
+    photoDownload.removeAttribute('href');
+    photoQr.removeAttribute('src');
+    photoQr.hidden = true;
+    photoReturn.textContent = '';
+    photoCountdown.textContent = '';
+    beginPhoto();
+    photoTake.focus({preventScroll: true});
+  }
   function waitForPhotoFrames() {
     if (!cameraVideo.requestVideoFrameCallback) return Promise.resolve();
     return new Promise((resolve, reject) => {
@@ -2965,6 +3557,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         cameraVideo.srcObject = stream;
       }
       await cameraVideo.play();
+      if (isCurrent()) applyCameraDeviceOrientation();
       if (isCurrent() && !photoPreviewReady) await waitForPhotoFrames();
       if (!isCurrent()) return false;
       photoPreviewReady = true;
@@ -2987,7 +3580,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function scheduleAutoPhoto() {
     clearTimeout(photoAutoTimer);
-    if (!document.hidden) photoAutoTimer = setTimeout(() => void takePhoto(true), photoAutoDelay);
+    if (stage === 'photo' && !document.hidden && help.hidden && !photoCaptured && !photoTake.disabled && photoPreviewReady)
+      photoAutoTimer = setTimeout(() => void takePhoto(true), photoAutoDelay);
   }
   function stopPhotoCamera() {
     photoCameraRequest = null;
@@ -3008,28 +3602,33 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     photoCameraLayer.width = photoCameraLayer.height = 0;
   }
   async function sharePhoto(blob) {
-    const config = await getFinaleConfig();
-    if (!config.photoShare) return null;
+    if (location.protocol === 'file:') return null;
     try {
       const response = await fetch('/api/mind-forest-photo', {method: 'POST', headers: {'Content-Type': 'application/octet-stream'},
-        body: blob, signal: AbortSignal.timeout(10000)});
-      return response.ok ? await response.json() : null;
+        body: blob, signal: AbortSignal.timeout(15000)});
+      if (!response.ok) return null;
+      const shared = await response.json();
+      const url = new URL(shared.url);
+      if (url.origin !== 'https://www.pluspsychology.ai' || url.pathname !== '/api/mind-forest-photo'
+        || !url.searchParams.has('photo') || typeof shared.qr !== 'string' || !shared.qr.startsWith('data:image/')) return null;
+      return shared;
     } catch { return null; }
   }
   async function takePhoto(automatic = false) {
-    if (stage !== 'photo' || photoTake.disabled || document.hidden) return;
+    if (stage !== 'photo' || photoTake.disabled || photoCaptured || !photoResult.hidden || document.hidden || !help.hidden) return;
     clearTimeout(photoAutoTimer);
     scheduleFinaleIdleReturn();
     const version = flowVersion;
     photoTake.disabled = true;
+    updateCameraOrientationButtons();
     photoMessage.textContent = '카메라를 준비하고 있어요.';
     try {
       if (!await preparePhotoCamera(version) || !await refreshPhotoForeground(version)) return;
       photoBackdropChosen = false;
       drawGroupPhoto();
       photoBackdropLocked = true;
-      photoMessage.textContent = automatic ? '이제 우리 함께 사진 찍자!' : '카메라를 바라봐 주세요.';
-      if (automatic) audio.speak('simri-photo');
+      photoMessage.textContent = photoInvitation?.text || '이제 우리 함께 사진 찍자!';
+      audio.speak('simri-photo');
       photoCountdown.hidden = false;
       for (let count = 5; count > 0; count--) {
         photoCountdown.textContent = String(count);
@@ -3059,8 +3658,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       photoResult.hidden = false;
       photoQr.hidden = !shared?.qr;
       if (shared?.qr) photoQr.src = shared.qr;
-      photoMessage.textContent = shared?.qr ? 'QR로 사진을 저장하세요.'
-        : '아래 버튼으로 이 컴퓨터에 사진을 저장할 수 있어요.';
+      photoMessage.textContent = shared?.qr ? '휴대폰으로 QR을 찍어 사진을 저장하세요.'
+        : '웹사이트에 사진을 저장하지 못했어요. 아래 버튼으로 이 기기에 저장할 수 있어요.';
       clearTimeout(idleTimer);
       photoReturn.textContent = photoResultSeconds + '초 후에 처음으로 돌아갑니다.';
       const deadline = performance.now() + photoResultSeconds * 1000;
@@ -3069,18 +3668,22 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         if (remaining <= 0) returnToOpening();
         else photoReturn.textContent = remaining + '초 후에 처음으로 돌아갑니다.';
       }, 125);
-      photoDownload.focus({preventScroll: true});
+      if (help.hidden) photoDownload.focus({preventScroll: true});
     } catch {
       if (flowVersion !== version) return;
       photoCaptured = false;
       photoBackdropLocked = false;
       photoCountdown.hidden = true;
       photoTake.disabled = false;
+      updateCameraOrientationButtons();
       photoMessage.textContent = '사진을 찍지 못했어요. 카메라가 켜져 있는지 확인한 뒤 다시 눌러 주세요.';
     }
   }
   function returnToOpening() {
     flowVersion++;
+    help.hidden = true;
+    helpToggle.setAttribute('aria-expanded', 'false');
+    cancelFireInteraction();
     clearGuideIdle();
     flash.getAnimations().forEach(animation => animation.cancel());
     clearFinaleVideo();
@@ -3100,6 +3703,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     controls.inert = false;
     stage = 'forest';
     started = false;
+    updateCameraOrientationButtons();
     syncCampfireAudio();
     sceneTime = 0;
     experience.dataset.stage = stage;
@@ -3135,19 +3739,50 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   });
   emberPlayfield.addEventListener('pointerdown', moveEmber);
   emberPlayfield.addEventListener('pointermove', moveEmber);
-  emberPlayfield.addEventListener('pointerleave', () => { if (!fireTracksHand) parkEmber(); });
+  emberPlayfield.addEventListener('pointerup', moveEmber);
   emberPlayfield.addEventListener('pointercancel', () => { if (!fireTracksHand) parkEmber(); });
-  emberPlayfield.addEventListener('pointerup', event => { if (event.pointerType !== 'mouse' && !fireTracksHand) parkEmber(); });
-  firePad.addEventListener('click', event => { if (event.detail === 0) liftEmbers(); });
+  emberPlayfield.addEventListener('lostpointercapture', () => { if (firePickup?.kind === 'pointer') parkEmber(); });
+  firePad.addEventListener('keydown', fireKeyDown);
+  firePad.addEventListener('keyup', fireKeyUp);
+  firePad.addEventListener('blur', () => { fireKeyHeld = false; });
+  firePad.addEventListener('click', event => { if (event.detail === 0 && !fireKeyHeld) liftEmbers(true); });
+  const fireHandCursors = lightColors.map(color => {
+    const cursor = document.createElement('span');
+    cursor.className = 'fire-hand-cursor'; cursor.hidden = true;
+    cursor.setAttribute('aria-hidden', 'true'); cursor.style.setProperty('--hand-color', color);
+    // Both poses meet the tracked fingertip at (32, 8); the palm hangs below it.
+    cursor.innerHTML = `<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <g class="hand-open">
+        <path d="M27 58 25 49C22 44 15 39 11 33 9 30 10 27 13 27 16 27 20 32 25 35L28 35V12C28 6.7 36 6.7 36 12V29L37 18C37 12.7 45 12.7 45 18V31L46 25C46 19.7 54 19.7 54 25V35C55 30 58 30 60 33 62 36 58 43 57 46 55 51 52 54 50 58Z"/>
+        <path class="hand-detail" d="M36 32V40M45 33 44 40M53 36 51 42M27 43Q36 39 43 44"/>
+      </g>
+      <g class="hand-pinched">
+        <path d="M26 58 21 44Q19 37 21 32L29 31 34 29 35 26Q38 22 41 26L44 33 45 31Q48 26 51 31L54 36Q58 33 60 38L59 44Q58 51 51 58Z"/>
+        <path fill-rule="evenodd" d="M32 8C18 8 11 16 12 27 13 38 28 42 38 32 45 25 41 15 34 10L32 8ZM31 16C36 18 37 23 33 27 27 32 20 29 20 24 20 19 24 16 31 16Z"/>
+        <path class="hand-detail" d="M31 9 34 14M37 32 41 39M46 35 49 41M29 45Q37 42 44 46"/>
+      </g>
+      <path class="hand-cuff" d="M26 54H52L50 61H28Z"/>
+    </svg>`;
+    emberPlayfield.append(cursor); return cursor;
+  });
   photoTake.addEventListener('click', () => void takePhoto());
+  document.getElementById('photo-retake').addEventListener('click', retakePhoto);
   document.getElementById('photo-home').addEventListener('click', returnToOpening);
   document.getElementById('photo-result-home').addEventListener('click', returnToOpening);
   function toggleHelp(open=help.hidden) {
     help.hidden=!open;helpToggle.setAttribute('aria-expanded',String(open));keys.clear();
+    if (open) {
+      releaseLight();
+      if (stage === 'fire' && !firePinchTimer) parkEmber();
+      if (stage === 'photo') clearTimeout(photoAutoTimer);
+    } else if (stage === 'photo') scheduleAutoPhoto();
     updatePrompts();
     audio.setPaused(open||!started);
     syncCameraPause();
-    if(open)document.getElementById('help-close').focus();else helpToggle.focus();
+    if(open)document.getElementById('help-close').focus();
+    else if(stage==='photo') (photoResult.hidden ? photoTake : document.getElementById('photo-retake')).focus({preventScroll:true});
+    else if(stage==='fire') firePad.focus({preventScroll:true});
+    else helpToggle.focus();
   }
   function updateSoundButton(){
     const muted=audio.isMuted(),button=document.getElementById('sound-toggle');
@@ -3156,16 +3791,23 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function startExperience(event){
     if(started||!openingScreen.hidden)return;
+    void getFinaleConfig();
     clearGuideIdle();
-    audio.setMuted(false);audio.setPaused(false);audio.unlock().then(ok=>{if(!ok){audio.setMuted(true);updateSoundButton();status.textContent='소리를 켜지 못했어요. 소리 버튼으로 다시 켤 수 있어요.';}});
+    audio.setMuted(false);audio.setPaused(false);audio.unlock().then(ok=>{if(!ok){audio.setMuted(true);updateSoundButton();syncSoundMedia();status.textContent='소리를 켜지 못했어요. 소리 버튼으로 다시 켤 수 있어요.';}});
     started=true;document.getElementById('experience').dataset.started='true';startScreen.hidden=true;canvas.tabIndex=0;if(event?.detail===0)canvas.focus();updateSoundButton();
-    syncGuideMusic();
+    syncSoundMedia();
     if(hand){syncCameraPause();void hand.start();}
   }
   async function toggleSound(){
     if(audio.isMuted()){const ok=await audio.unlock();if(!ok){status.textContent='소리를 켜지 못했어요. 다시 시도해 주세요.';return;}audio.setMuted(false);}
     else audio.setMuted(true);
     updateSoundButton();
+    syncSoundMedia();
+  }
+  function syncSoundMedia() {
+    const muted = audio.isMuted();
+    for (const track of [guideMusic, fireAmbience, fireSound, finaleVideo]) track.muted = muted;
+    syncGuideMusic();syncCampfireAudio();
   }
   async function toggleFullscreen() {
     try { if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else status.textContent='이 브라우저에서는 전체화면 기능을 지원하지 않아요. 화면은 창 크기에 맞춰 표시됩니다.'; }
@@ -3177,6 +3819,14 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   canvas.addEventListener('pointercancel',e=>{if(activePointerId!==e.pointerId)return;activePointerId=null;pointer.active=false;});
   canvas.addEventListener('pointerleave',e=>{if(!cameraActive&&e.isPrimary&&!canvas.hasPointerCapture(e.pointerId)){pointer.active=false;}});
   document.addEventListener('keydown',e=>{
+    if(e.altKey||e.ctrlKey||e.metaKey||e.target.matches('input, textarea, select, [contenteditable="true"]'))return;
+    // Physical keys also work when the keyboard is set to Korean (C produces ㅊ).
+    const shortcut = /^Key[A-Z]$/.test(e.code) ? e.code.slice(3).toLowerCase() : e.key.toLowerCase();
+    if(started&&!e.repeat&&['forest','fire'].includes(stage)&&shortcut==='c'){e.preventDefault();toggleCamera();return;}
+    if(started&&!e.repeat&&shortcut==='m'){e.preventDefault();void toggleSound();return;}
+    if(started&&!e.repeat&&['forest','fire','photo'].includes(stage)&&shortcut==='n'){e.preventDefault();toggleCameraMirror();return;}
+    if(started&&!e.repeat&&['forest','fire','photo'].includes(stage)&&shortcut==='h'){e.preventDefault();toggleHelp();return;}
+    if(started&&e.key==='Escape'&&!help.hidden){e.preventDefault();toggleHelp(false);return;}
     if (stage !== 'forest') return;
     if(!started){
       if(e.key==='Tab'){
@@ -3186,19 +3836,14 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       }
       return;
     }
-    if(e.altKey||e.ctrlKey||e.metaKey||e.target.matches('input, textarea, select, [contenteditable="true"]'))return;
-    if(e.key==='Escape'&&!help.hidden){toggleHelp(false);return;}
     if(!cameraActive&&e.key.startsWith('Arrow')&&help.hidden&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
       e.preventDefault();keys.add(e.key);
       // A short tap must move the light even if keyup arrives before the next frame.
       if(!e.repeat){const step={ArrowLeft:[-12,0],ArrowRight:[12,0],ArrowUp:[0,-12],ArrowDown:[0,12]}[e.key];moveLight(clamp(pointer.targetX*width+step[0],8,width-8),clamp(pointer.targetY*height+step[1],8,height-8),performance.now());}
     }
     if(e.repeat)return;
-    if(e.key.toLowerCase()==='f')toggleFullscreen();
-    if(e.key.toLowerCase()==='r')reset();
-    if(e.key.toLowerCase()==='h')toggleHelp();
-    if(e.key.toLowerCase()==='m')toggleSound();
-    if(e.key.toLowerCase()==='c')toggleCamera();
+    if(shortcut==='f')toggleFullscreen();
+    if(shortcut==='r')reset();
   });
   document.addEventListener('keyup',e=>keys.delete(e.key));
   addEventListener('blur',()=>{windowBlurred=true;releaseLight();if(stage==='fire')parkEmber();syncCameraPause();});
@@ -3213,6 +3858,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         audio.stopAll();
         photoCountdown.hidden = true;
         photoTake.disabled = false;
+        updateCameraOrientationButtons();
         photoMessage.textContent = '카메라를 준비하고 있어요.';
       }
       if (cameraActive || extraPhotoStream) stopPhotoCamera();
@@ -3242,13 +3888,21 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   });
   openingMusic.addEventListener('playing',updateOpeningMusicButton);
   openingMusic.addEventListener('pause',updateOpeningMusicButton);
+  function retryOpeningMusic(event) {
+    if (event.target.closest?.('#opening-music') || openingScreen.hidden || openingDone || !openingMusicEnabled || !openingMusic.paused) return;
+    syncOpeningMusic();
+  }
+  document.addEventListener('pointerdown',retryOpeningMusic);
+  document.addEventListener('keydown',retryOpeningMusic);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseOpening();else resumeOpening();if(!startScreen.hidden)scheduleGuideIdle();syncOpeningMusic();syncGuideMusic();syncCampfireAudio();});
   document.getElementById('sound-toggle').addEventListener('click',toggleSound);
   document.getElementById('camera-toggle').addEventListener('click',toggleCamera);
+  cameraVideo.addEventListener('loadedmetadata', applyCameraDeviceOrientation);
+  updateCameraOrientationButtons();
   hand=window.ForestHandTracking?.create({video:document.getElementById('camera-video'),onPoints:cameraPoints,onState:cameraState})||null;
   window.ForestCamera=hand;
   experience.dataset.stage='forest';experience.dataset.cameraState='idle';experience.dataset.inputSource='pointer';
-  addEventListener('resize',()=>{resize();if(!openingFootprints.hidden)placeOpeningFootprints();});
+  addEventListener('resize',()=>{resize();if(!openingFootprints.hidden)placeOpeningFootprints();if(stage==='fire')parkEmber();});
   resize();ctx.drawImage(background,0,0);ctx.drawImage(foreground,0,0);drawLight(performance.now(),16);
   const loads=friends.map(f=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{f.image=image;buildRig(f);resolve();};image.onerror=()=>reject(new Error(f.file));image.src=asset('/assets/mind-forest/'+f.file);}));
   if(media.ahreuAnimation)loads.push(new Promise(resolve=>{const image=new Image();image.onload=()=>{ahreuSprite=image;resolve();};image.onerror=()=>{console.warn('아르 애니메이션을 불러오지 못해 원본 그림을 표시합니다.');resolve();};image.src=asset(media.ahreuAnimation.src);}));

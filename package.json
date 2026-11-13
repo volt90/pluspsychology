@@ -1,6 +1,9 @@
 {
   "name": "pluspsychology-site",
   "private": true,
+  "scripts": {
+    "dev:mind-forest": "node scripts/mind-forest-dev-server.cjs"
+  },
   "dependencies": {
     "qrcode-generator": "2.0.4"
   }

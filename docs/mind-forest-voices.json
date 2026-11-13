@@ -1,0 +1,195 @@
+{
+  "voices": {
+    "seru": {
+      "text": "따뜻해… 조금만 더 같이 있어 줄래?",
+      "output": "D:\\pluspsychology-qa\\voice-update-20261113\\seru-greeting-v2.wav",
+      "generation": {
+        "status": "generated_audition_not_yet_reviewed",
+        "provider": "local Qwen3-TTS",
+        "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+        "modelPath": "D:\\kimsimri-quiet-forest\\production\\qwen-korean-review\\models\\Qwen3-TTS-12Hz-1.7B-Base",
+        "license": "Apache-2.0",
+        "text": "따뜻해… 조금만 더 같이 있어 줄래?",
+        "language": "Korean",
+        "seed": 20261113,
+        "reference": "D:\\pluspsychology-qa\\voice-update-20261113\\seru-reference-22.96-28.78.wav",
+        "referenceSha256": "eb74cd0d20f1389962645bee08283dbed440f5a74de2fd69c37ccc8549828e29",
+        "voiceProfile": "Qwen/Qwen3-TTS-12Hz-1.7B-Base:eb74cd0d20f138996264",
+        "refText": "지금 말하기 어려우면 우리 그냥 같이 걸을까? 나도 오늘은 혼자 걷기 싫었거든.",
+        "xVectorOnly": false,
+        "output": "D:\\pluspsychology-qa\\voice-update-20261113\\seru-greeting-qwen17b-icl.wav",
+        "sampleRate": 24000,
+        "duration": 3.04,
+        "peak": 0.6734057068824768,
+        "rms": 0.08778977394104004,
+        "generationSeconds": 28.14100000000326,
+        "totalSeconds": 32.84399999999732,
+        "maxNewTokens": 160,
+        "device": "cpu",
+        "dtype": "float32",
+        "versions": {
+          "qwen-tts": "0.1.1",
+          "torch": "2.15.0+cpu",
+          "torchaudio": "2.11.1+cpu",
+          "transformers": "4.57.3",
+          "soundfile": "0.14.0"
+        },
+        "review": "Direct listening and character timbre review are still required. A generated file alone does not prove likeness or accurate pronunciation."
+      },
+      "processing": {
+        "trim": {
+          "originalDuration": 3.04,
+          "startSeconds": 0.29,
+          "endSeconds": 2.99,
+          "thresholdDbfs": -45,
+          "headRoomSeconds": 0.12,
+          "tailRoomSeconds": 0.18
+        },
+        "sampleRate": 24000,
+        "channels": 1,
+        "bitDepth": 16,
+        "targetLufs": -19,
+        "truePeakCeilingDb": -2,
+        "measuredLufs": -19.0,
+        "measuredTruePeakDb": -2.13,
+        "samplePeak": 0.7823486328125,
+        "sha256": "6e70870ce4ffd76c0a9d59624741e1aa3cdd1d60f8d505d20d129003cde21a4d"
+      },
+      "sourceMP3": "C:\\Users\\chaer\\Downloads\\ElevenLabs_2026-11-12T17_37_36_Seru_gen_s50_sim75_v4.mp3",
+      "sourceMP3Sha256": "425b4a449f9c385f2a1022b0fe4f038feeb61c2a9f2575751dc1e17e47b8b0f7",
+      "referenceRangeSeconds": [
+        22.96,
+        28.78
+      ],
+      "suppliedSourceContainsTargetDialogue": false
+    },
+    "simriPhoto": {
+      "text": "이제 우리 함께 사진 찍자!",
+      "output": "D:\\pluspsychology-qa\\voice-update-20261113\\simri-photo-invitation-v2.wav",
+      "generation": {
+        "status": "generated_audition_not_yet_reviewed",
+        "provider": "local Qwen3-TTS",
+        "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+        "modelPath": "D:\\kimsimri-quiet-forest\\production\\qwen-korean-review\\models\\Qwen3-TTS-12Hz-1.7B-Base",
+        "license": "Apache-2.0",
+        "text": "이제 우리 함께 사진 찍자!",
+        "language": "Korean",
+        "seed": 20261111,
+        "reference": "D:\\kimsimri-quiet-forest\\production\\voice-reference\\simri-reference-9.98-14.40.wav",
+        "referenceSha256": "0e53482d593e2321935a91b99658b8dd3d970ac173601bca943b5879549b4913",
+        "voiceProfile": "Qwen/Qwen3-TTS-12Hz-1.7B-Base:0e53482d593e2321935a",
+        "refText": "찾을게요! 연습도 늦지 않게 하고요!",
+        "xVectorOnly": false,
+        "output": "D:\\pluspsychology-qa\\voice-update-20261113\\simri-photo-qwen17b-icl.wav",
+        "sampleRate": 24000,
+        "duration": 2.64,
+        "peak": 0.6710973978042603,
+        "rms": 0.0848051980137825,
+        "generationSeconds": 16.360000000000582,
+        "totalSeconds": 21.047000000005937,
+        "maxNewTokens": 128,
+        "device": "cpu",
+        "dtype": "float32",
+        "versions": {
+          "qwen-tts": "0.1.1",
+          "torch": "2.15.0+cpu",
+          "torchaudio": "2.11.1+cpu",
+          "transformers": "4.57.3",
+          "soundfile": "0.14.0"
+        },
+        "review": "Direct listening and character timbre review are still required. A generated file alone does not prove likeness or accurate pronunciation."
+      },
+      "processing": {
+        "trim": {
+          "originalDuration": 2.64,
+          "startSeconds": 0.16,
+          "endSeconds": 2.21,
+          "thresholdDbfs": -45,
+          "headRoomSeconds": 0.12,
+          "tailRoomSeconds": 0.18
+        },
+        "sampleRate": 24000,
+        "channels": 1,
+        "bitDepth": 16,
+        "targetLufs": -19,
+        "truePeakCeilingDb": -2,
+        "measuredLufs": -19.01,
+        "measuredTruePeakDb": -2.9,
+        "samplePeak": 0.707977294921875,
+        "sha256": "2d0021b140a97b8cd0761197a3ca2321c2eb1f1a63f6e0bca0cc10827aadf9c8"
+      },
+      "sourceMP3": null,
+      "sourceMP3Sha256": null,
+      "referenceRangeSeconds": null,
+      "suppliedSourceContainsTargetDialogue": null
+    },
+    "rubi": {
+      "text": "이 빛, 네가 건넨 거구나.",
+      "asset": "/03_체험자료/assets/mind-forest/audio/rubi-greeting-v3.wav",
+      "generation": {
+        "status": "user_selected_B_applied",
+        "provider": "Higgsfield / ElevenLabs",
+        "model": "elevenlabs_v4",
+        "voiceId": "f1e8226e-2248-4d5f-b43c-0a79e9949dbf",
+        "voiceType": "preset",
+        "voiceName": "Andre",
+        "text": "이 빛, 네가 건넨 거구나.",
+        "stability": 0.75,
+        "similarityBoost": 0.75,
+        "jobId": "a215a817-99e2-49c3-9d86-a45b9af6a21c"
+      },
+      "approval": {
+        "selection": "B",
+        "userMessage": "B가 더 나은 것 같아. 이걸 루비가 깨어날 때 나오는 목소리로 적용해줘."
+      },
+      "sourceAudition": {
+        "file": "D:\\pluspsychology-qa\\voice-update-20261113\\higgsfield-review\\rubi-eleven-v4-B.wav",
+        "sha256": "4f09368b48f4c3417d5fb28360649a92b6e213b403bcb8f61a582218e40ace71",
+        "mp3Sha256": "89f960bc3fab97dc379479a8cc8d5655e43b16c5b0f998c1bab4c7e076d73862"
+      },
+      "processing": {
+        "sampleRate": 24000,
+        "channels": 1,
+        "bitDepth": 16,
+        "duration": 2.429375,
+        "targetLufs": -19,
+        "measuredLufs": -18.99,
+        "measuredTruePeakDb": -2.61,
+        "sha256": "f607ca7d8e5b637800991b876c39af7812022703c177cc4c7ac049f36d1f679a",
+        "sampleCorrelationWithApprovedB": 0.9999681874230829,
+        "timingPitchAndScriptChanged": false,
+        "envelopeStepSeconds": 0.04
+      },
+      "voiceSelection": "Andre was selected from 114 public presets by acoustic comparison with the supplied synthetic reference; not an exact Rhuby voice clone.",
+      "suppliedReferenceUploaded": false,
+      "replaces": {
+        "asset": "rubi-greeting-v2.wav",
+        "reason": "User rejected the earlier local Qwen pronunciation."
+      }
+    }
+  },
+  "network": "Rubi B was generated through Higgsfield using the Andre preset. Seru and Simri photo invitation were generated locally. User-supplied reference MP3s were not uploaded.",
+  "originals": "Supplied MP3s and existing exhibition WAVs remain unchanged.",
+  "review": "Rubi B was explicitly selected by the user for the awakening interaction. Automatic ASR is a supplementary word check, not proof of natural pronunciation.",
+  "validation": {
+    "seru": {
+      "asrMatchesTarget": true,
+      "transcript": "따뜻해. 조금만 더 같이 있어줄래?"
+    },
+    "simriPhoto": {
+      "asrMatchesTarget": true,
+      "transcript": "이제 우리 함께 사진 찍자"
+    },
+    "rubi": {
+      "status": "user_selected_B_applied",
+      "expected": "이 빛, 네가 건넨 거구나.",
+      "generationInput": "이 빛, 네가 건넨 거구나.",
+      "transcript": "이 빚, 니가 건넨거구나?",
+      "model": "Systran/faster-whisper-medium",
+      "listeningFile": "D:\\pluspsychology-qa\\voice-update-20261113\\higgsfield-review\\rubi-eleven-v4-B.mp3",
+      "finalAsset": "rubi-greeting-v3.wav",
+      "approval": "User preferred B and explicitly requested using it when Rubi wakes up.",
+      "limitations": "Automatic transcription alone does not establish natural pronunciation or voice likeness."
+    }
+  }
+}
