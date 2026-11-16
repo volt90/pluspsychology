@@ -46,6 +46,7 @@
 
   // Answers stay in this tab's memory. Only navigation positions enter history.
   const visitId = Math.random().toString(36).slice(2);
+  let demoResultAvailable = false;
   function render(focusHeading = false) {
     const views = {home, check, result, postcard: postcardView, quiz: quizView, complete};
     content.innerHTML = views[state.screen]();
@@ -84,8 +85,8 @@
     navigate(screen);
   }
 
-  function advance() {
-    if (state.current === null) return;
+  function advance(skip = false) {
+    if (state.current === null && !skip) return;
     state.answers[state.index] = state.current;
     if (state.index < 7) {
       state.index++;
@@ -93,16 +94,43 @@
       navigate('check');
     } else {
       const missing = state.answers.indexOf(null);
-      if (missing !== -1) {
+      if (missing !== -1 && !skip) {
         state.index = missing;
         state.current = null;
         navigate('check');
         return;
       }
-      state.selected = state.answers.indexOf(Math.min(...state.answers));
+      const answered = state.answers.filter(value => value !== null);
+      state.selected = answered.length ? state.answers.indexOf(Math.min(...answered)) : 0;
+      if (skip) demoResultAvailable = true;
       navigate('result');
     }
   }
+
+  function advanceQuiz() {
+    if (state.quizIndex < 7) {
+      state.quizIndex++;
+      state.quizAnswer = state.quizAnswers[state.quizIndex];
+      navigate('quiz');
+    } else {
+      navigate('complete');
+    }
+  }
+
+  // Hidden presenter shortcut: leave unanswered questions unanswered.
+  window.addEventListener('keydown', event => {
+    if (event.defaultPrevented || event.repeat || event.ctrlKey || event.altKey || event.metaKey || event.isComposing) return;
+    if (event.code !== 'KeyG' && !['g', 'G'].includes(event.key)) return;
+    const target = event.target;
+    if (target && (target.isContentEditable || target.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])'))) return;
+    if (state.screen === 'complete') return;
+    event.preventDefault();
+    if (state.screen === 'home') begin('check');
+    else if (state.screen === 'check') advance(true);
+    else if (state.screen === 'result') navigate('postcard');
+    else if (state.screen === 'postcard') begin('quiz');
+    else if (state.screen === 'quiz') advanceQuiz();
+  });
 
   root.addEventListener('click', event => {
     const button = event.target.closest('button');
@@ -144,13 +172,7 @@
     } else if (action === 'back-result') {
       history.back();
     } else if (action === 'quiz-next') {
-      if (state.quizIndex < 7) {
-        state.quizIndex++;
-        state.quizAnswer = state.quizAnswers[state.quizIndex];
-        navigate('quiz');
-      } else {
-        navigate('complete');
-      }
+      advanceQuiz();
     }
   });
 
@@ -175,7 +197,7 @@
     state.quizIndex = Number.isInteger(position.quizIndex) ? Math.max(0, Math.min(7, position.quizIndex)) : 0;
     state.current = state.answers[state.index];
     state.quizAnswer = state.quizAnswers[state.quizIndex];
-    if (['result', 'postcard'].includes(state.screen) && state.answers.some(value => value === null)) {
+    if (['result', 'postcard'].includes(state.screen) && !demoResultAvailable && state.answers.some(value => value === null)) {
       state.screen = 'home';
     }
     render(true);

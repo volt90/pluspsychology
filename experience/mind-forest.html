@@ -3915,6 +3915,23 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     syncSoundMedia();
     if(hand){syncCameraPause();void hand.start();}
   }
+  function advanceDemoScene() {
+    if (!openingScreen.hidden) { void finishOpening(); return; }
+    if (!started) { startExperience({detail: 0}); return; }
+    if (stage === 'transition' || (stage === 'video' && !activeVideoPart)) return;
+    if (!help.hidden) toggleHelp(false);
+    if (stage === 'forest') {
+      encounterVersion++;
+      void beginFinale();
+    } else if (stage === 'video') {
+      void finishFinaleVideo();
+    } else if (stage === 'fire') {
+      clearTimeout(idleTimer);
+      void playFinaleVideo(2);
+    } else if (stage === 'photo') {
+      returnToOpening();
+    }
+  }
   async function toggleSound(){
     if(audio.isMuted()){const ok=await audio.unlock();if(!ok){status.textContent='소리를 켜지 못했어요. 다시 시도해 주세요.';return;}audio.setMuted(false);}
     else audio.setMuted(true);
@@ -3939,6 +3956,10 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     if(e.altKey||e.ctrlKey||e.metaKey||e.target.matches('input, textarea, select, [contenteditable="true"]'))return;
     // Physical keys also work when the keyboard is set to Korean (C produces ㅊ).
     const shortcut = /^Key[A-Z]$/.test(e.code) ? e.code.slice(3).toLowerCase() : e.key.toLowerCase();
+    if(shortcut==='g'){
+      if(e.repeat||e.isComposing||e.target.isContentEditable||e.target.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])'))return;
+      e.preventDefault();advanceDemoScene();return;
+    }
     if(!e.repeat&&shortcut==='r'){e.preventDefault();returnToOpening();return;}
     if(started&&!e.repeat&&['forest','fire'].includes(stage)&&shortcut==='c'){e.preventDefault();toggleCamera();return;}
     if(started&&!e.repeat&&shortcut==='m'){e.preventDefault();void toggleSound();return;}
