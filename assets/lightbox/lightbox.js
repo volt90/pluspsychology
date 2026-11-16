@@ -297,7 +297,8 @@
       }
       img.addEventListener('load', settle);
       img.addEventListener('error', function () { setTimeout(settle, 0); });
-      if (img.complete) settle();
+      // Include lazy images before scrolling; load/error still updates failed images.
+      settle();
 
       img.addEventListener('click', function () { if (enrolled) openBoxAt(it); });
       img.addEventListener('keydown', function (e) {
