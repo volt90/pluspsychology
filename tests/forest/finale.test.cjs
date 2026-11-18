@@ -19,20 +19,20 @@ function element(attributes = {}) {
     focus() { this.focused = true; }};
 }
 function videoSetup(config = null) {
-  const calls = {play: 0, config: 0, unavailable: 0};
+  const calls = {play: 0, config: 0, unavailable: 0}, timers = new Map();
   const context = vm.createContext({
     flowVersion: 1, activeVideoPart: 0, stage: 'forest', videoTimer: 0,
     resolvedFinaleConfig: config, localStoryVideos: ['/local-first.mp4', '/local-second.mp4'],
-    videoPlaceholder: element(), videoMessage: element({textContent: 'previous error'}),
+    videoPlaceholder: element(), videoMessage: element({textContent: 'previous error'}), videoRetry: element(),
     finaleVideo: element({hidden: true, dataset: {}, play: async () => { calls.play++; }}),
     audio: {isMuted: () => false},
     getFinaleConfig() { calls.config++; return new Promise(() => {}); },
     showFinale(name) { context.stage = name; },
-    setTimeout: () => 1,
+    setTimeout(callback, ms) { timers.set(ms, callback); return ms; }, clearTimeout(id) { timers.delete(id); },
     videoUnavailable() { calls.unavailable++; },
   });
-  vm.runInContext(sourceFunction('playFinaleVideo'), context);
-  return {api: context, calls};
+  vm.runInContext(['offerRetryForSlowVideo','playFinaleVideo'].map(sourceFunction).join('\n'), context);
+  return {api: context, calls, timers};
 }
 
 test('story playback starts the bundled video immediately even when the photo service cannot resolve', async () => {
@@ -47,6 +47,27 @@ test('story playback starts the bundled video immediately even when the photo se
     assert.equal(qa.api.finaleVideo.hidden, false);
     await playback;
   }
+});
+
+test('slow loading or blocked autoplay offers a retry without advancing the story', async () => {
+  const slow = videoSetup();
+  slow.api.finaleVideo.play = () => new Promise(() => {});
+  void slow.api.playFinaleVideo(1);
+  assert.equal(slow.api.videoRetry.hidden, true);
+  slow.timers.get(10000)();
+  assert.equal(slow.api.videoRetry.hidden, false);
+  assert.equal(slow.api.stage, 'video');
+  assert.equal(slow.api.finaleVideo.hidden, false);
+  assert.equal(slow.calls.unavailable, 0);
+
+  const blocked = videoSetup();
+  blocked.api.finaleVideo.play = () => Promise.reject(new DOMException('Play requires a gesture', 'NotAllowedError'));
+  await blocked.api.playFinaleVideo(2);
+  assert.equal(blocked.api.videoRetry.hidden, false);
+  assert.equal(blocked.calls.unavailable, 0);
+  blocked.api.finaleVideo.play = async () => {};
+  await blocked.api.playFinaleVideo(2);
+  assert.equal(blocked.api.videoRetry.hidden, true);
 });
 
 test('prefetched story overrides and an explicit first video are used without waiting for another lookup', async () => {

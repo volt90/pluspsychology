@@ -49,14 +49,21 @@ function setup() {
     }};
 }
 
-test('G walks through every demonstration scene without completing either quest or taking a photo', () => {
+test('G skips the interactive quests but each story video waits for its own ending', () => {
   const qa = setup();
   qa.api.started = false; qa.api.openingScreen.hidden = false;
   qa.press(); qa.press(); qa.press();
   assert.deepEqual(qa.calls, ['guide', 'forest', 'video1']);
   assert.equal(qa.api.encounterVersion, 5, 'old character greetings are invalidated before leaving the forest');
   qa.api.stage = 'video'; qa.api.activeVideoPart = 1;
-  qa.press(); qa.press(); qa.press(); qa.press();
+  qa.press(); qa.press({repeat: true});
+  assert.deepEqual(qa.calls, ['guide', 'forest', 'video1']);
+  qa.api.finishFinaleVideo();
+  qa.press();
+  qa.press();
+  assert.deepEqual(qa.calls, ['guide', 'forest', 'video1', 'fire', 'video2']);
+  qa.api.finishFinaleVideo();
+  qa.press();
   assert.deepEqual(qa.calls, ['guide', 'forest', 'video1', 'fire', 'video2', 'photo', 'opening']);
 });
 
@@ -132,12 +139,12 @@ test('skipping fire cancels its queued completion, idle return, gestures and poi
     updateCameraOrientationButtons() {}, syncGuideMusic() {}, syncCampfireAudio() {}, syncCameraPause() {},
     audio: {setPaused() {}, isMuted: () => true},
     resolvedFinaleConfig: null, localStoryVideos: ['/first.mp4', '/second.mp4'],
-    videoPlaceholder: element(), videoMessage: element(), videoTimer: 0,
+    videoPlaceholder: element(), videoMessage: element(), videoRetry: element(), videoTimer: 0,
     finaleVideo: element({play: async () => {}, dataset: {}}), videoUnavailable() {},
   });
   qa.api.document.getElementById = () => element();
   for (const id of [10, 11, 12]) qa.timers.set(id, {callback() { throw new Error('Old fire timer survived.'); }});
-  qa.include('transitionFromFire', 'cancelFireInteraction', 'showFinale', 'playFinaleVideo');
+  qa.include('transitionFromFire', 'cancelFireInteraction', 'showFinale', 'offerRetryForSlowVideo', 'playFinaleVideo');
   qa.api.transitionFromFire();
   const oldCompletionId = qa.api.fireTimer, oldCompletion = qa.timers.get(oldCompletionId).callback;
   qa.press();

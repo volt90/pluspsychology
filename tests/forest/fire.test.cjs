@@ -98,17 +98,63 @@ test('four corners appear in order and each completed drag grows the fire once',
 
 test('campfire drag cues use the primary pointing device until actual pointer input takes over', () => {
   const desktop = setup(), tablet = setup(820, 1180, true);
-  assert.equal(desktop.field.dataset.dragPointer, 'mouse');
-  assert.equal(tablet.field.dataset.dragPointer, 'touch');
+  assert.equal(desktop.field.dataset.fireInput, 'mouse');
+  assert.equal(tablet.field.dataset.fireInput, 'touch');
   tablet.pointer('pointermove', 50, 50, 1, 'mouse');
-  assert.equal(tablet.field.dataset.dragPointer, 'mouse', 'a mouse hover switches before pressing');
+  assert.equal(tablet.field.dataset.fireInput, 'mouse', 'a mouse hover switches before pressing');
   tablet.pointer('pointerdown', 50, 50, 2, 'pen');
-  assert.equal(tablet.field.dataset.dragPointer, 'touch');
+  assert.equal(tablet.field.dataset.fireInput, 'touch');
   tablet.api.rememberFirePointer({isPrimary: false, pointerType: 'mouse'});
-  assert.equal(tablet.field.dataset.dragPointer, 'touch', 'a secondary contact leaves the guide alone');
+  assert.equal(tablet.field.dataset.fireInput, 'touch', 'a secondary contact leaves the guide alone');
   desktop.api.rememberFirePointer({isPrimary: true, pointerType: 'touch'});
   desktop.api.beginFire();
-  assert.equal(desktop.field.dataset.dragPointer, 'touch', 'the touch that navigated into the stage is remembered');
+  assert.equal(desktop.field.dataset.fireInput, 'touch', 'the touch that navigated into the stage is remembered');
+});
+
+test('direction keys reveal keyboard guidance immediately and pointer movement restores the appropriate cue', () => {
+  const qa = setup();
+  let prevented = false, focused = false;
+  qa.light.focus = () => { focused = true; };
+  const press = (key, control = null) => qa.api.fireKeyDown({
+    key, target: {closest: () => control}, preventDefault() { prevented = true; }
+  });
+  qa.pointer('pointermove', 5, 8);
+  press('g');
+  assert.equal(qa.field.dataset.fireInput, 'mouse');
+  press('ArrowDown');
+  assert.equal(qa.field.dataset.fireInput, 'keyboard');
+  assert.ok(focused && prevented);
+  assert.equal(qa.state.delivered, 0);
+  qa.api.rememberFirePointer({type: 'pointermove', isPrimary: true, pointerType: 'mouse', clientX: 5, clientY: 8});
+  assert.equal(qa.field.dataset.fireInput, 'keyboard', 'a stationary cursor does not dismiss keyboard help');
+  qa.pointer('pointermove', 40, 45);
+  assert.equal(qa.field.dataset.fireInput, 'mouse');
+  prevented = false;
+  press('Tab');
+  assert.equal(qa.field.dataset.fireInput, 'keyboard');
+  assert.equal(prevented, false, 'Tab retains native focus navigation');
+  press('Enter', qa.api.fireHome);
+  assert.equal(qa.state.delivered, 0, 'home and camera retain their native keyboard actions');
+  assert.equal(prevented, false);
+  press(' ', qa.light);
+  assert.equal(qa.state.delivered, 1);
+  qa.pointer('pointerdown', 50, 50, 1, 'touch');
+  assert.equal(qa.field.dataset.fireInput, 'touch', 'input may change between lights');
+});
+
+test('camera cues return when a tracked hand newly aims at the light, without overriding the next key press each frame', () => {
+  const qa = setup();
+  qa.api.cameraActive = true;
+  qa.api.beginFire();
+  assert.equal(qa.field.dataset.fireInput, 'camera');
+  const aim = {id: 0, ...qa.api.fireOrigin(), pinchValid: true, pinch: false, pinchSequence: 0};
+  qa.api.fireKeyDown({key: 'ArrowLeft', preventDefault() {}});
+  assert.equal(qa.field.dataset.fireInput, 'keyboard');
+  qa.feed([aim]);
+  assert.equal(qa.field.dataset.fireInput, 'camera');
+  qa.api.fireKeyDown({key: 'ArrowRight', preventDefault() {}});
+  qa.feed([aim]);
+  assert.equal(qa.field.dataset.fireInput, 'keyboard');
 });
 
 test('each glass button announces its corner and only shows copy during a drag or on completion', () => {

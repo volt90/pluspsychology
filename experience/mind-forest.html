@@ -109,13 +109,16 @@ button { -webkit-tap-highlight-color: transparent; }
 .demo-orbit span { position: absolute; left: 50%; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: #fffce5; box-shadow: 0 0 12px 4px rgba(225,244,204,.5); }
 @keyframes show-orbit { to { transform: rotate(360deg); } }
 .rub-guide { position: absolute; z-index: 5; pointer-events: none; display: grid; justify-items: center; gap: 8px; width: max-content; max-width: calc(100vw - 24px); transform: translate(-50%,-100%); }
-.rub-hand { display: block; font-size: clamp(29px,5vw,49px); line-height: 1; filter: drop-shadow(0 0 9px #fff3aa); animation: show-rub 1.2s ease-in-out infinite; }
+.gesture-hand { fill: #fff8dc; stroke: #253e36; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.rub-hand { display: block; flex: none; width: clamp(38px,5vw,58px); height: auto; filter: drop-shadow(0 0 9px #fff3aa); animation: show-rub 1.2s ease-in-out infinite; }
 .rub-guide p { margin: 0; padding: 6px 12px; border-radius: 18px; color: #fff7d6; background: #122527; font-size: 28px; line-height: 1.25; word-break: keep-all; text-align: center; }
 @keyframes show-rub {
   0%,100% { transform: translate(-18px,4px) rotate(-18deg); }
   50% { transform: translate(18px,-4px) rotate(18deg); }
 }
-.sleeping-notice { position: absolute; z-index: 6; top: 20%; left: 50%; transform: translateX(-50%); width: max-content; max-width: min(90%,660px); margin: 0; padding: 12px 21px; border: 1px solid #63796c; border-radius: 22px; background: #112524; color: #fff4ce; font: 400 clamp(22px,3.6vw,40px)/1.3 "Black Han Sans","Anemone Air"; word-break: keep-all; text-align: center; pointer-events: none; }
+.forest-prompts { position: absolute; z-index: 6; top: max(20%,calc(96px + env(safe-area-inset-top))); left: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: clamp(6px,1vh,12px); width: min(660px,calc(100% - 32px)); text-align: center; pointer-events: none; }
+#experience:not([data-stage="forest"][data-started="true"]) .forest-prompts, #experience:has(.help-panel:not([hidden])) .forest-prompts { display: none; }
+.sleeping-notice { max-width: 100%; margin: 0; padding: .3em .65em; border: 1px solid #63796c; border-radius: 22px; background: #112524; color: #fff4ce; font: 400 clamp(20px,3.6vw,40px)/1.3 "Black Han Sans","Anemone Air"; word-break: keep-all; text-wrap: balance; }
 .finale { position: absolute; inset: 0; z-index: 16; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: safe center; padding: clamp(12px,3vh,32px); background: #0a1518; text-align: center; }
 .finale section { width: min(100%,680px); }
 .finale h2 { margin: 0 0 10px; color: #fff4da; font: 400 clamp(22px,4vw,36px) "Black Han Sans","Anemone Air"; word-break: keep-all; }
@@ -125,17 +128,17 @@ button { -webkit-tap-highlight-color: transparent; }
 .finale .video-stage { position: absolute; inset: 0; display: grid; place-items: center; width: 100%; height: 100%; background: #020404; }
 .video-stage video { display: block; width: 100%; height: 100%; object-fit: contain; }
 .video-placeholder { padding: 18px; }
+.video-stage .video-retry { position: absolute; bottom: max(24px,env(safe-area-inset-bottom)); justify-self: center; }
 #finale-fire-stage { --fire-scale: clamp(.85,min(calc(100vw / 260px),calc((100svh - 180px) / 190px)),1.65); --fire-growth: .38; position: absolute; inset: 0; width: 100%; display: block; padding: 16px; touch-action: none; background: radial-gradient(ellipse at 50% 65%,#382b20 0%,#132125 46%,#0a1518 78%); }
 .fire-content { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; align-items: center; padding-top: clamp(12px,5svh,56px); padding-bottom: clamp(96px,16svh,148px); }
 .fire-content h2 { margin: max(2px,env(safe-area-inset-top)) 0 8px; font-size: clamp(30px,5.5vw,66px); line-height: 1.15; }
 .fire-content p { font-size: clamp(28px,3.2vw,38px); line-height: 1.4; word-break: keep-all; text-wrap: balance; }
-.fire-content .fire-keyboard { position: absolute; bottom: max(69px,10svh); width: 100%; margin: 0; font-size: clamp(16px,2vw,28px); }
 .fire-content #finale-fire-progress { margin: 5px 0; color: #f5d99e; font-family: "Black Han Sans","Anemone Air"; font-size: clamp(26px,2.8vw,34px); }
-.fire-content .fire-keyboard { display: none; color: #cbd6cc; }
-.fire-content:has(:is(.fire-pad,.ember-light):focus-visible):has(#finale-fire-guide:empty) .fire-keyboard { display: block; }
+.fire-keyboard { display: none; }
+[data-fire-input="keyboard"] .campfire-area:has(#finale-fire-guide:empty) .fire-keyboard { display: block; }
 .campfire-area { --flare-base: 18%; --flare-height: calc(82px * var(--fire-scale)); position: relative; flex: 1; width: 100%; min-height: 0; display: grid; grid-template: minmax(2em,1fr) auto minmax(0,1fr) / 100%; justify-items: center; row-gap: clamp(8px,1.5svh,16px); }
-.fire-content #finale-fire-guide { grid-area: 2 / 1; align-self: end; position: relative; z-index: 4; bottom: max(65%,calc(var(--flare-base) + var(--flare-height) * var(--fire-growth))); max-width: 100%; margin: 0 0 clamp(8px,1.5svh,16px); color: #fff3d5; font-size: clamp(16px,2vw,28px); line-height: 1.35; text-shadow: 0 2px 5px #0a1518; pointer-events: none; }
-.fire-content #finale-fire-guide:not(:empty) { padding: .15em .6em; border-radius: .6em; background: #102022d9; }
+.fire-content :is(#finale-fire-guide, .fire-keyboard) { grid-area: 2 / 1; align-self: end; position: relative; z-index: 4; bottom: max(65%,calc(var(--flare-base) + var(--flare-height) * var(--fire-growth))); max-width: 100%; margin: 0 0 clamp(8px,1.5svh,16px); color: #fff3d5; font-size: clamp(16px,2vw,28px); line-height: 1.35; text-shadow: 0 2px 5px #0a1518; pointer-events: none; }
+.fire-content :is(#finale-fire-guide:not(:empty), .fire-keyboard) { padding: .15em .6em; border-radius: .6em; background: #102022d9; }
 .finale .ember-light { --ember-size: clamp(60px,7vw,84px); padding: 0; border: 0; min-height: 0; position: fixed; z-index: 2; top: 0; left: 0; width: var(--ember-size); height: var(--ember-size); margin: calc(var(--ember-size) * -.5) 0 0 calc(var(--ember-size) * -.5); border-radius: 50%; background: radial-gradient(circle,#fffee3 22%,#ffeb8d 61%,#ffb942 100%); box-shadow: 0 0 var(--ember-size) calc(var(--ember-size) * .32) #ffdc715e,0 0 calc(var(--ember-size) * 2.2) calc(var(--ember-size) * .5) #ffc55335; pointer-events: none; }
 .finale .ember-light.is-waiting {
   pointer-events: auto; cursor: grab; color: #fff9df;
@@ -147,29 +150,30 @@ button { -webkit-tap-highlight-color: transparent; }
 .ember-light.is-waiting::after { content: ''; position: absolute; inset: -5px; pointer-events: none; border: 1px solid #ffe4a64a; border-radius: 50%; }
 .ember-light.is-reachable::after { border-color: #fff2be; box-shadow: 0 0 14px #ffdf8a88; }
 .ember-light svg { display: none; pointer-events: none; }
-.ember-light.is-waiting .gesture-hand { display: block; width: 72%; height: 72%; margin: auto; fill: #fff8dc; stroke: #253e36; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.gesture-hand .hand-detail { fill: none; stroke-width: 1.7; }
+.ember-light.is-waiting .gesture-hand { display: block; width: 72%; height: 72%; margin: auto; }
 .ember-light .hand-open { animation: cue-open 2.4s ease-in-out infinite; }
 .ember-light .hand-pinched { animation: cue-pinch 2.4s ease-in-out infinite; }
 @keyframes cue-open { 0%,38%,100% { opacity: 1; } 52%,84% { opacity: 0; } }
 @keyframes cue-pinch { 0%,38%,100% { opacity: 0; } 52%,84% { opacity: 1; } }
-[data-input-source="pointer"] .ember-light.is-waiting .gesture-arrow { display: block; position: absolute; right: 8%; bottom: 9%; width: 24%; height: 24%; fill: none; stroke: #ffedac; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(var(--drag-angle,45deg)); }
-[data-input-source="pointer"] [data-drag-pointer="mouse"] .ember-light.is-waiting .gesture-hand { display: none; }
-[data-input-source="pointer"] [data-drag-pointer="mouse"] .ember-light.is-waiting .gesture-mouse { display: block; width: 66%; height: 66%; margin: auto; fill: #29433d; stroke: #fff5d9; stroke-width: 2.2; stroke-linejoin: round; }
+:is([data-fire-input="mouse"], [data-fire-input="touch"]) .ember-light.is-waiting .gesture-arrow { display: block; position: absolute; right: 8%; bottom: 9%; width: 24%; height: 24%; fill: none; stroke: #ffedac; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(var(--drag-angle,45deg)); }
+:is([data-fire-input="mouse"], [data-fire-input="keyboard"]) .ember-light.is-waiting .gesture-hand { display: none; }
+[data-fire-input="mouse"] .ember-light.is-waiting .gesture-mouse,
+[data-fire-input="keyboard"] .ember-light.is-waiting .gesture-keyboard { display: block; width: 66%; height: 66%; margin: auto; fill: #29433d; stroke: #fff5d9; stroke-width: 2.2; stroke-linejoin: round; }
+.gesture-keyboard .key-rows { fill: none; stroke-linecap: round; }
+.gesture-keyboard .space-key { fill: #ffdb83; stroke: none; }
 .gesture-mouse .mouse-left { fill: #ffdb83; stroke: none; }
-[data-input-source="pointer"] .ember-light .hand-open { animation: none; }
-[data-input-source="pointer"] .ember-light .hand-pinched { display: none; }
+[data-fire-input="touch"] .ember-light .hand-open { animation: none; }
+[data-fire-input="touch"] .ember-light .hand-pinched { display: none; }
 .ember-light[data-corner="2"] { --drag-angle: 135deg; }
 .ember-light[data-corner="3"] { --drag-angle: 225deg; }
 .ember-light[data-corner="4"] { --drag-angle: -45deg; }
 @media (prefers-reduced-motion: reduce) {
   .ember-light .hand-open, .ember-light .hand-pinched { animation: none; }
-  [data-input-source="camera"] .ember-light:not(.is-reachable) .hand-pinched,
-  [data-input-source="camera"] .ember-light.is-reachable .hand-open { display: none; }
+  [data-fire-input="camera"] .ember-light:not(.is-reachable) .hand-pinched,
+  [data-fire-input="camera"] .ember-light.is-reachable .hand-open { display: none; }
 }
 .fire-hand-cursor { position: fixed; z-index: 3; top: 0; left: 0; width: 84px; height: 84px; opacity: .96; pointer-events: none; transform: translate(-50%,-12.5%); filter: drop-shadow(0 2px 2px #071514cc) drop-shadow(0 0 3px var(--hand-color,#fff)); }
-.fire-hand-cursor svg { display: block; width: 100%; height: 100%; overflow: visible; fill: #fff7df; stroke: #233a32; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.fire-hand-cursor .hand-detail { fill: none; stroke-width: 1.7; }
+.fire-hand-cursor .gesture-hand { display: block; width: 100%; height: 100%; overflow: visible; }
 .fire-hand-cursor .hand-cuff { fill: var(--hand-color,#fff); }
 .fire-hand-cursor .hand-pinched, .fire-hand-cursor.is-pinching .hand-open { display: none; }
 .fire-hand-cursor.is-pinching .hand-pinched { display: inline; }
@@ -179,7 +183,6 @@ button { -webkit-tap-highlight-color: transparent; }
   #finale-fire-stage { --fire-scale: .85; padding: 4px; }
   .fire-content { padding-top: 20px; padding-bottom: 96px; }
   .fire-content p { line-height: 1.25; }
-  #finale-fire-home, #finale-fire-camera { padding-inline: 10px; }
 }
 #finale-fire-stage.is-kindled .ember-light { opacity: 0; }
 .finale .fire-pad { position: relative; grid-area: 2 / 1; width: min(100%,calc(clamp(128px,24vw,220px) * var(--fire-scale))); height: calc(155px * var(--fire-scale)); margin: 0; padding: 0; border: 0; border-radius: 50%; background: radial-gradient(ellipse 50% 23% at 50% 84%,#f9984933,transparent); }
@@ -191,16 +194,17 @@ button { -webkit-tap-highlight-color: transparent; }
 .flame { display: block; width: 100%; height: 100%; border-radius: 70% 28% 56% 44% / 78% 63% 38% 28%; transform-origin: 50% 94%; background: radial-gradient(ellipse at 49% 77%,#fff6b8 12%,#ffc263 45%,#e46d38 78%); box-shadow: 0 0 calc(36px * var(--fire-scale)) #e28a45; animation: fire-sway .8s ease-in-out infinite alternate; }
 @keyframes fire-sway { from { transform: rotate(-10deg) scale(.94,1.03); } to { transform: rotate(9deg) scale(1.03,.94); } }
 .fire-spark { position: absolute; top: 45%; left: 50%; width: calc(var(--size) * var(--fire-scale)); height: calc(var(--size) * var(--fire-scale)); border-radius: 50%; background: #ffe29a; box-shadow: 0 0 calc(9px * var(--fire-scale)) #ff994e; pointer-events: none; }
-#finale-fire-home { position: absolute; right: max(14px,env(safe-area-inset-right)); bottom: max(16px,env(safe-area-inset-bottom)); max-width: calc(50% - 20px); font-size: clamp(32px,4vw,52px); line-height: 1.2; }
-#finale-fire-camera { position: absolute; left: max(14px,env(safe-area-inset-left)); bottom: max(16px,env(safe-area-inset-bottom)); max-width: calc(50% - 20px); font-size: clamp(32px,4vw,52px); line-height: 1.2; }
+#finale-fire-home, #finale-fire-camera { position: absolute; bottom: max(16px,env(safe-area-inset-bottom)); max-width: calc(50% - 20px); min-height: 44px; margin: 0; padding: 8px 16px; font-size: 17px; line-height: 1.25; white-space: nowrap; }
+#finale-fire-home { right: max(14px,env(safe-area-inset-right)); }
+#finale-fire-camera { left: max(14px,env(safe-area-inset-left)); }
 #finale-photo-stage { width: min(100%,1240px); display: grid; grid-template-columns: minmax(0,1fr) minmax(190px,270px); gap: clamp(12px,3vw,40px); align-items: center; }
 .photo-frame { position: relative; width: min(100%,calc(100svh - 64px)); margin: 0 auto; aspect-ratio: 1; }
 .photo-frame canvas, .photo-frame img { display: block; width: 100%; height: 100%; border-radius: 14px; box-shadow: 0 14px 45px #020907aa; }
 .photo-frame img { -webkit-touch-callout: default; }
 .photo-info { min-width: 0; }
 .photo-info h2 { text-wrap: balance; }
-.opening-next, #start-button, .photo-info :is(button, a) { display: inline-flex; align-items: center; justify-content: center; gap: .45em; vertical-align: middle; }
-.opening-next svg, #start-button svg, .photo-info :is(button, a) svg { flex: none; width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.opening-next, #start-button, #finale-fire-home, #finale-fire-camera, .photo-info :is(button, a) { display: inline-flex; align-items: center; justify-content: center; gap: .45em; vertical-align: middle; }
+.opening-next svg, #start-button svg, #finale-fire-home svg, #finale-fire-camera svg, .photo-info :is(button, a) svg { flex: none; width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 #photo-message { white-space: pre-line; word-break: keep-all; text-wrap: balance; }
 .photo-countdown { position: fixed; inset: 0; z-index: 2; display: grid; place-items: center; pointer-events: none; font: 400 clamp(70px,16vw,160px) "Black Han Sans","Anemone Air"; color: #fff8d8; text-shadow: 0 3px 18px #121513; }
 .finale .photo-return-notice { display: flex; align-items: center; justify-content: center; gap: .45em; width: fit-content; max-width: 90%; margin: 14px auto 0; color: #ff8a80; font: 400 clamp(17px,2.15vw,27px)/1.25 "Black Han Sans","Anemone Air"; word-break: keep-all; animation: photo-return-pulse 1.35s ease-in-out infinite; }
@@ -213,17 +217,14 @@ button { -webkit-tap-highlight-color: transparent; }
 .photo-qr { display: block; width: 120px; height: 120px; margin-inline: auto; background: white; border-radius: 4px; image-rendering: pixelated; }
 @media (max-width: 620px) {
   .finale button, .finale a { font-size: clamp(15px,4.2vw,18px); line-height: 1.25; white-space: nowrap; }
-  #finale-fire-home, #finale-fire-camera { width: calc(50% - 28px); max-width: none; min-height: 48px; padding: 10px 8px; font-size: clamp(18px,4.8vw,24px); }
+  #finale-fire-home, #finale-fire-camera { padding-inline: 12px; font-size: 16px; }
 }
 @media (orientation: landscape) and (max-height: 460px) {
   #finale-fire-stage { padding: 8px; }
   .fire-content { padding: 2px 0 56px; }
   .fire-content h2 { margin: 0 0 3px; font-size: 27px; }
   .fire-content #finale-fire-progress { margin: 0; font-size: 18px; }
-  .fire-content .fire-keyboard {
-    bottom: 2px; width: calc(100% - 208px); font-size: 15px; line-height: 1.3;
-  }
-  #finale-fire-home, #finale-fire-camera { bottom: 8px; width: auto; min-height: 44px; padding: 6px 12px; font-size: 17px; }
+  #finale-fire-home, #finale-fire-camera { bottom: max(8px,env(safe-area-inset-bottom)); }
 }
 @media (max-width: 760px) and (orientation: portrait) {
   #experience[data-stage="photo"] .finale { padding-inline: 12px; }
@@ -237,11 +238,11 @@ button { -webkit-tap-highlight-color: transparent; }
 .world-name { display: flex; align-items: center; gap: 8px; margin: 0 0 24px; font-family: "Black Han Sans", "Anemone Air"; font-size: 13px; color: #c2cdc2; letter-spacing: .015em; }
 .world-mark { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.2; }
 h1 { font-family: "Black Han Sans", "Anemone Air"; font-weight: 400; font-size: clamp(44px,4.4vw,68px); letter-spacing: -.035em; margin: 0 0 12px; line-height: 1.14; }
-.intro { margin: 0; color: #bbc9c1; font-size: 18px; line-height: 1.55; word-break: keep-all; }
+.intro { margin: 0; color: #e1e9dd; font-size: clamp(17px,1.65vw,24px); line-height: 1.45; word-break: keep-all; text-wrap: balance; text-shadow: 0 1px 4px #071519; }
 .intro .hand-instruction, [data-input-source="camera"] .intro .pointer-instruction { display: none; }
 [data-input-source="camera"] .intro .hand-instruction { display: inline; }
 body.exploring .heading { opacity: .38; }
-body.exploring .heading .intro { opacity: 0; }
+body.exploring .sleeping-notice[hidden] + .intro { visibility: hidden; }
 .camera-panel { position: absolute; bottom: calc(76px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: min(360px, calc(100% - 32px)); pointer-events: none; border: 1px solid #3a5156; border-radius: 12px; background: rgba(9,25,31,.92); text-align: center; }
 /* Keep the inline video available to the tracker and photo canvas without displaying it. */
 #camera-video { position: absolute; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -284,6 +285,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
   .controls { left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); justify-content: center; }
   nav { gap: 3px; width: 100%; justify-content: center; }
   nav button { background: rgba(7,23,29,.7); padding: 5px 6px; min-height: 50px; min-width: 44px; font-size: clamp(10px,2.9vw,11px); flex-direction: column; gap: 4px; white-space: nowrap; }
+  nav #reset { flex-direction: row; }
   #camera-status { font-size: 12px; padding: 8px; }
   .start-content h2 { font-size: clamp(23px,6.3vw,31px); }
   #start-description { font-size: 15px; margin-bottom: 16px; }
@@ -295,6 +297,9 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
   .friend-words { font-size: 14px; line-height: 1.4; padding: 8px 10px; }
 }
 @media (max-height: 460px) {
+  .heading { top: max(12px,env(safe-area-inset-top)); }
+  .heading .world-name { margin-bottom: 4px; }
+  .heading h1 { font-size: 30px; margin-bottom: 0; }
   .opening-light { margin-bottom: 12px; }
   .opening-world { margin-bottom: 12px; }
   #opening-title { font-size: clamp(23px,6.3svh,36px); }
@@ -304,17 +309,19 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
   .start-content h2 { font-size: clamp(23px,6.5svh,32px); }
   #start-description { margin-bottom: 10px; }
 }
-@media (max-width: 620px) and (orientation: portrait) {
-  #experience[data-stage="forest"] #camera-status { font-size: 12px; line-height: 1.4; padding: 7px 10px; text-align: center; }
+@media (max-width: 620px) and (orientation: portrait), (max-height: 460px) and (orientation: landscape) {
   #experience[data-stage="forest"] .rub-guide {
     top: auto !important; bottom: calc(76px + env(safe-area-inset-bottom)); left: 50% !important;
     transform: translateX(-50%); display: flex; align-items: center; gap: 6px;
     padding: 6px 10px; border-radius: 18px; background: #122527;
   }
-  #experience[data-stage="forest"] .rub-hand { font-size: 22px; animation: none; }
+  #experience[data-stage="forest"] .rub-hand { width: 32px; animation: none; }
   #experience[data-stage="forest"] .rub-guide p { padding: 0; font-size: 13px; line-height: 1.4; }
   #experience[data-stage="forest"]:has(.camera-panel:not([hidden])) .rub-guide { visibility: hidden; }
-  #experience[data-stage="forest"] .sleeping-notice { display: none; }
+}
+@media (max-width: 620px) and (orientation: portrait) {
+  #experience[data-stage="forest"] #camera-status { font-size: 12px; line-height: 1.4; padding: 7px 10px; text-align: center; }
+  #experience:has(.encounter.visible) .forest-prompts { visibility: hidden; }
   #experience[data-stage="forest"] .encounter {
     top: calc(128px + env(safe-area-inset-top)) !important; left: 50% !important;
     transform: translateX(-50%); width: max-content; max-width: min(300px, calc(100% - 32px)); gap: 4px;
@@ -325,6 +332,23 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
 </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <g id="forest-hand-open">
+        <path d="M27 58 25 49C22 44 15 39 11 33 9 30 10 27 13 27 16 27 20 32 25 35L28 35V12C28 6.7 36 6.7 36 12V29L37 18C37 12.7 45 12.7 45 18V31L46 25C46 19.7 54 19.7 54 25V35C55 30 58 30 60 33 62 36 58 43 57 46 55 51 52 54 50 58Z"/>
+        <path fill="none" stroke-width="1.7" d="M36 32V40M45 33 44 40M53 36 51 42M27 43Q36 39 43 44"/>
+      </g>
+      <g id="forest-hand-pinched">
+        <path d="M28 56C27 52 24 49 20 46C16 42 14 37 15 32C16 27 20 23 24 19L28 11C29 8 30 7 32 8C35 5 38 6 41 9C46 13 49 19 49 24C53 23 56 26 56 31L56 33C59 33 61 36 60 40C59 46 54 51 51 56Z"/>
+        <path fill="none" stroke-width="1.7" d="M32 8C35 10 34 14 32 17L29 22C28 25 28 27 28 30M32 17Q35 14 37 16L40 20M49 24L45 21Q41 18 39 22Q38 24 40 27L42 30M56 32L52 28Q48 24 45 28Q44 30 46 33L48 36M59 37L56 34Q52 30 50 34Q49 36 51 39L52 40M25 41Q28 35 34 34"/>
+        <path d="M19 37Q18 33 21 29" fill="none" stroke-width="1.7" opacity=".34"/>
+      </g>
+      <path id="forest-hand-cuff" d="M26 54H52L50 61H28Z"/>
+    </defs>
+    <symbol id="forest-icon-home" viewBox="0 0 24 24" stroke-width="1.7"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"/></symbol>
+    <symbol id="forest-icon-webcam" viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="m15 10 6-4v12l-6-4Z"/></symbol>
+    <symbol id="forest-icon-camera" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  </svg>
   <main id="experience" data-started="false" aria-label="김심리월드, 고요한 숲">
     <canvas id="forest" tabindex="-1" aria-label="고요한 숲. 검지나 손바닥을 움직이면 빛이 따라와요. 마우스, 화면 터치, 방향키로도 조작할 수 있어요.">손끝의 빛으로 친구들을 깨우고, 함께 온기를 나누는 김심리월드 체험전시.</canvas>
 
@@ -367,12 +391,14 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
     <header class="heading" aria-label="고요한 숲">
       <p class="world-name"><svg class="world-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5"/></svg> 김심리월드</p>
       <h1>고요한 숲</h1>
-      <p class="intro"><span class="hand-instruction">검지 끝이나 손바닥을 카메라 쪽으로 향해 주세요.</span><span class="pointer-instruction">마우스, 터치, 방향키로 빛을 움직여 보세요.</span></p>
     </header>
 
     <div id="encounters" aria-label="친구들의 이야기"></div>
-    <div id="rub-guide" class="rub-guide" hidden aria-hidden="true"><span class="rub-hand">🖐️</span><p>친구 위를 가볍게 문질러 주세요.</p></div>
-    <p id="sleeping-notice" class="sleeping-notice" role="status" hidden>아직 깨어나지 않은 친구가 있어요!</p>
+    <div id="rub-guide" class="rub-guide" hidden aria-hidden="true"><svg class="rub-hand gesture-hand" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use class="hand-open" href="#forest-hand-open"/><use class="hand-cuff" href="#forest-hand-cuff"/></svg><p>친구 위를 가볍게 문질러 주세요.</p></div>
+    <div class="forest-prompts">
+      <p id="sleeping-notice" class="sleeping-notice" role="status" hidden>아직 깨어나지 않은 친구가 있어요!</p>
+      <p class="intro"><span class="hand-instruction">검지 끝이나 손바닥을 카메라 쪽으로 향해 주세요.</span><span class="pointer-instruction">마우스, 터치, 방향키로 빛을 움직여 보세요.</span></p>
+    </div>
 
     <video id="camera-video" muted playsinline aria-hidden="true"></video>
     <aside id="camera-panel" class="camera-panel" hidden aria-label="손 인식 상태">
@@ -383,13 +409,13 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
       <span class="quiet-note">잠시, 여기 머물러도 괜찮아요.</span>
       <nav aria-label="숲 조작">
         <button id="camera-toggle" type="button" title="카메라 켜기·끄기 (C)" aria-pressed="false" aria-label="카메라 켜기">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="m15 10 6-4v12l-6-4Z"/></svg><span id="camera-label">카메라 켜기</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#forest-icon-webcam"/></svg><span id="camera-label">카메라 켜기</span>
         </button>
         <button id="sound-toggle" type="button" title="소리 켜기·끄기 (M)" aria-pressed="false" aria-label="소리 끄기">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4ZM16 8c3 2 3 6 0 8M19 5c5 4 5 10 0 14"/></svg><span id="sound-label">소리 끄기</span>
         </button>
-        <button id="reset" type="button" title="처음으로 (R)" aria-label="첫 인사 화면으로 돌아가기">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9a8 8 0 1 1-1 6M5 4v5h5"/></svg><span>처음으로</span>
+        <button id="reset" type="button" title="홈으로 가기 (R)">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#forest-icon-home"/></svg><span>홈으로 가기</span>
         </button>
         <button id="help-toggle" type="button" title="조작 안내 (H)" aria-expanded="false" aria-controls="help-panel">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M10 9a2.2 2.2 0 1 1 3.2 2c-1 .6-1.2 1-1.2 2M12 16v.1"/></svg><span>안내</span>
@@ -409,7 +435,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
       <button id="camera-direction" type="button">좌우 방향 바꾸기</button>
       <p id="camera-orientation-status" role="status">현재 웹캠 방향: 좌우 반전</p>
       <p>사진 촬영 카운트다운 중에는 좌우 방향이 고정돼요. 방향을 다시 맞추려면 촬영 후 ‘다시 찍기’를 눌러 주세요.</p>
-      <dl><dt>방향키</dt><dd>카메라를 끄고 빛 옮기기</dd><dt>C</dt><dd>카메라 켜기·끄기</dd><dt>N</dt><dd>웹캠 좌우 방향 바꾸기</dd><dt>F</dt><dd>전체화면</dd><dt>R</dt><dd>처음으로</dd><dt>H</dt><dd>안내 열기·닫기</dd><dt>M</dt><dd>소리 켜기·끄기</dd></dl>
+      <dl><dt>방향키</dt><dd>숲에서 빛 옮기기 · 모닥불에서 빛 선택</dd><dt>Enter / Space</dt><dd>모닥불에 빛 하나 모으기</dd><dt>C</dt><dd>카메라 켜기·끄기</dd><dt>N</dt><dd>웹캠 좌우 방향 바꾸기</dd><dt>F</dt><dd>전체화면</dd><dt>R</dt><dd>홈으로 가기</dd><dt>H</dt><dd>안내 열기·닫기</dd><dt>M</dt><dd>소리 켜기·끄기</dd></dl>
     </aside>
     <div id="finale" class="finale" hidden>
       <section id="finale-video-stage" class="video-stage" aria-label="숲에서 만난 다음 이야기" hidden>
@@ -418,6 +444,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
           <p id="finale-video-message" role="status"></p>
         </div>
         <video id="finale-video" aria-label="숲에서 만난 다음 이야기 영상" playsinline preload="none" hidden></video>
+        <button id="finale-video-retry" class="video-retry" type="button" hidden>영상 다시 재생</button>
       </section>
       <section id="finale-fire-stage" aria-labelledby="finale-fire-title" hidden>
         <div class="fire-content">
@@ -425,32 +452,30 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
           <p id="finale-fire-progress" role="status">함께 모은 빛 0 / 4</p>
           <div class="campfire-area">
             <p id="finale-fire-guide" aria-live="polite"></p>
+            <p id="fire-keyboard" class="fire-keyboard">Enter 또는 Space로 빛을 하나씩 모아 주세요.</p>
             <button id="ember-light" class="ember-light is-waiting" type="button" aria-label="왼쪽 위 빛 모으기" aria-describedby="fire-keyboard">
               <svg class="gesture-hand" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-                <g class="hand-open">
-                  <path d="M27 58 25 49C22 44 15 39 11 33 9 30 10 27 13 27 16 27 20 32 25 35L28 35V12C28 6.7 36 6.7 36 12V29L37 18C37 12.7 45 12.7 45 18V31L46 25C46 19.7 54 19.7 54 25V35C55 30 58 30 60 33 62 36 58 43 57 46 55 51 52 54 50 58Z"/>
-                  <path class="hand-detail" d="M36 32V40M45 33 44 40M53 36 51 42M27 43Q36 39 43 44"/>
-                </g>
-                <g class="hand-pinched">
-                  <path d="M28 56C27 52 24 49 20 46C16 42 14 37 15 32C16 27 20 23 24 19L28 11C29 8 30 7 32 8C35 5 38 6 41 9C46 13 49 19 49 24C53 23 56 26 56 31L56 33C59 33 61 36 60 40C59 46 54 51 51 56Z"/>
-                  <path class="hand-detail" d="M32 8C35 10 34 14 32 17L29 22C28 25 28 27 28 30M32 17Q35 14 37 16L40 20M49 24L45 21Q41 18 39 22Q38 24 40 27L42 30M56 32L52 28Q48 24 45 28Q44 30 46 33L48 36M59 37L56 34Q52 30 50 34Q49 36 51 39L52 40M25 41Q28 35 34 34"/>
-                  <path d="M19 37Q18 33 21 29" class="hand-detail" opacity=".34"/>
-                </g>
-                <path class="hand-cuff" d="M26 54H52L50 61H28Z"/>
+                <use class="hand-open" href="#forest-hand-open"/>
+                <use class="hand-pinched" href="#forest-hand-pinched"/>
+                <use class="hand-cuff" href="#forest-hand-cuff"/>
               </svg>
               <svg class="gesture-mouse" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
                 <rect x="11" y="4" width="26" height="40" rx="13"/>
                 <path class="mouse-left" d="M23 5.3a12 12 0 0 0-11 12v3.5h11Z"/>
                 <path d="M24 4v17M11 21h26" fill="none"/>
               </svg>
+              <svg class="gesture-keyboard" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="3" y="10" width="42" height="28" rx="5"/>
+                <path class="key-rows" d="M9 17h2m5 0h2m5 0h2m5 0h2m5 0h2M9 23h2m5 0h2m5 0h2m5 0h2m5 0h2"/>
+                <rect class="space-key" x="13" y="28" width="22" height="5" rx="1.5"/>
+              </svg>
               <svg class="gesture-arrow" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h12m-5-5 5 5-5 5"/></svg>
             </button>
             <button id="fire-pad" class="fire-pad" type="button" aria-label="첫 번째 빛을 모닥불에 넣기" aria-describedby="fire-keyboard"><span class="fire-flare" aria-hidden="true"><span class="flame"></span></span></button>
           </div>
-          <p id="fire-keyboard" class="fire-keyboard">Enter 또는 Space로 빛을 하나씩 모을 수 있어요.</p>
         </div>
-        <button id="finale-fire-camera" type="button" hidden>카메라 켜기</button>
-        <button id="finale-fire-home" type="button">처음으로</button>
+        <button id="finale-fire-camera" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#forest-icon-webcam"/></svg>카메라 켜기</button>
+        <button id="finale-fire-home" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#forest-icon-home"/></svg>홈으로 가기</button>
       </section>
       <section id="finale-photo-stage" aria-labelledby="finale-photo-title" hidden>
         <div class="photo-frame">
@@ -462,18 +487,18 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
           <h2 id="finale-photo-title" tabindex="-1">사진으로 기억을 남겨보세요</h2>
           <p id="photo-message" role="status"></p>
           <div id="photo-prepare">
-            <button id="photo-take" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="3.5"/></svg>단체 사진 찍기</button>
-            <button id="photo-home" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"/></svg>홈으로 가기</button>
+            <button id="photo-take" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#forest-icon-camera"/></svg>단체 사진 찍기</button>
+            <button id="photo-home" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#forest-icon-home"/></svg>홈으로 가기</button>
           </div>
           <div id="photo-result" hidden>
             <img id="photo-qr" class="photo-qr" alt="단체 사진 다운로드 QR 코드" width="120" height="120" hidden>
             <button id="photo-save" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15V3m-4 4 4-4 4 4M6 11H4v10h16V11h-2"/></svg>사진 저장</button>
             <div class="photo-actions">
-              <button id="photo-retake" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10a8.5 8.5 0 1 1 .8 7M3 4v6h6"/><circle cx="12" cy="12" r="2.75"/></svg>다시 찍기</button>
+              <button id="photo-retake" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#forest-icon-camera"/></svg>다시 찍기</button>
               <a id="photo-download" download="서로의-빛-단체사진.jpg"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg><span id="photo-download-label">사진 다운로드</span></a>
             </div>
             <p id="photo-return-notice" class="photo-return-notice" hidden><span class="warning-icon" aria-hidden="true">⚠︎</span><span id="photo-return"></span></p>
-            <button id="photo-result-home" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"/></svg>홈으로 가기</button>
+            <button id="photo-result-home" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#forest-icon-home"/></svg>홈으로 가기</button>
           </div>
         </div>
       </section>
@@ -1473,7 +1498,7 @@ window.FOREST_MEDIA = {
     },
     "ahreu": {
       "src": "/03_체험자료/assets/mind-forest/audio/ahreu-greeting.wav",
-      "text": "냐옹.",
+      "text": "야옹.",
       "volume": 0.72,
       "duration": 0.88,
       "envelope": {
@@ -2353,7 +2378,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     { id: 'simri', name: '김심리', file: 'simri.png', crop: [0, 0, 142, 261], x: .31, y: .73, h: 194, wakeDuration: 1450, words: '아, 네가 왔구나! 같이 걸을까?' },
     { id: 'seru', name: '세루', file: 'seru.png', crop: [16, 43, 244, 337], x: .18, y: .65, h: 198, wakeDuration: 1950, words: '따뜻해… 조금만 더 같이 있어 줄래?' },
     { id: 'rubi', name: '루비', file: 'rubi.png', crop: [8, 19, 276, 330], x: .77, y: .66, h: 188, wakeDuration: 1250, words: '이 빛, 네가 건넨 거구나.' },
-    { id: 'ahreu', name: '아르', file: 'ahreu.png', crop: [43, 29, 155, 168], x: .61, y: .82, h: 108, wakeDuration: 1200, words: '냐옹.' }
+    { id: 'ahreu', name: '아르', file: 'ahreu.png', crop: [43, 29, 155, 168], x: .61, y: .82, h: 108, wakeDuration: 1200, words: '야옹.' }
   ];
   for(const f of friends){
     Object.assign(f,{charge:0,phase:'rest',phaseStart:0,lastMotion:-10000,wakeCount:0});
@@ -2557,7 +2582,10 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     const changed=cameraActive!==Boolean(info.active);cameraActive=Boolean(info.active);
     if (info.status === 'connecting' || info.status === 'loading') applyCameraDeviceOrientation();
     if(changed||info.status!=='tracking')releaseLight();
-    if (stage === 'fire') updateFireGuide();
+    if (stage === 'fire') {
+      if (changed) emberPlayfield.dataset.fireInput = cameraActive ? 'camera' : lastFirePointer;
+      updateFireGuide();
+    }
     const experience=document.getElementById('experience');experience.dataset.cameraState=info.status;experience.dataset.inputSource=cameraActive?'camera':'pointer';
     const button=document.getElementById('camera-toggle');
     const label=cameraActive?'카메라 끄기':'카메라 켜기';button.setAttribute('aria-pressed',String(cameraActive));button.setAttribute('aria-label',label);document.getElementById('camera-label').textContent=label;
@@ -2884,6 +2912,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const videoPlaceholder = document.getElementById('finale-video-placeholder');
   const videoTitle = document.getElementById('finale-video-title');
   const videoMessage = document.getElementById('finale-video-message');
+  const videoRetry = document.getElementById('finale-video-retry');
   const localStoryVideos = ['/03_체험자료/assets/mind-forest/video/Mind-Forest_part1.mp4', '/03_체험자료/assets/mind-forest/video/Mind-Forest_part2.mp4'];
   const emberPlayfield = finaleSections.fire;
   const fireGuide = document.getElementById('finale-fire-guide');
@@ -2943,6 +2972,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   let photoPreviewReady = false;
   let photoSegmenter = null, photoSegmentationRequest = null, photoPersonMode = 'loading';
   let fireTracksHand = false, fireBurst = null, lastFireMovement = null;
+  let lastFirePointer, lastFireMouseX, lastFireMouseY;
   const fireHandPickupRadius = 70, firePointerPickupRadius = 56;
   const firePinchDriftPx = 26, fireAimGraceMs = 220;
   let fireDelivered = 0, firePickup = null, fireStepTimer = 0, fireSequence = 0, fireKeyHeld = false;
@@ -3114,7 +3144,9 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     await playFinaleVideo(1);
   }
   async function playFinaleVideo(part) {
-    const version = flowVersion;
+    const version = ++flowVersion;
+    clearTimeout(videoTimer);
+    videoRetry.hidden = true;
     const isCurrent = () => version === flowVersion && activeVideoPart === part && stage === 'video';
     activeVideoPart = part;
     videoPlaceholder.hidden = true;
@@ -3135,20 +3167,31 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     finaleVideo.hidden = false;
     finaleVideo.muted = audio.isMuted();
     finaleVideo.src = source;
-    videoTimer = setTimeout(videoUnavailable, 10000);
+    offerRetryForSlowVideo();
     try {
       await finaleVideo.play();
     } catch (error) {
       if (!isCurrent() || finaleVideo.hidden) return;
-      if (error.name !== 'NotAllowedError' || finaleVideo.muted) { videoUnavailable(); return; }
-      // Chrome may allow autoplay after muting even when it blocks playback with sound.
-      finaleVideo.muted = true;
-      try { await finaleVideo.play(); } catch { if (isCurrent() && !finaleVideo.hidden) videoUnavailable(); }
+      if (error.name !== 'NotAllowedError') { videoUnavailable(); return; }
+      if (!finaleVideo.muted) {
+        finaleVideo.muted = true;
+        try { await finaleVideo.play(); return; } catch (retryError) {
+          if (!isCurrent() || finaleVideo.hidden) return;
+          if (retryError.name !== 'NotAllowedError') { videoUnavailable(); return; }
+        }
+      }
+      videoRetry.hidden = false;
     }
+  }
+  function offerRetryForSlowVideo() {
+    if (stage !== 'video' || !activeVideoPart || finaleVideo.hidden) return;
+    clearTimeout(videoTimer);
+    videoTimer = setTimeout(() => { videoRetry.hidden = false; }, 10000);
   }
   function videoUnavailable() {
     if (stage !== 'video' || !activeVideoPart) return;
     clearTimeout(videoTimer);
+    videoRetry.hidden = true;
     finaleVideo.pause();
     finaleVideo.hidden = true;
     videoPlaceholder.hidden = false;
@@ -3159,6 +3202,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function clearFinaleVideo() {
     activeVideoPart = 0;
+    videoRetry.hidden = true;
     clearTimeout(videoTimer);
     finaleVideo.pause();
     if (finaleVideo.hasAttribute('src')) {
@@ -3189,7 +3233,8 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     cancelFireInteraction();
     fireDelivered = 0;
     firePad.disabled = false;
-    emberPlayfield.dataset.dragPointer ??= matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse';
+    lastFirePointer ??= matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse';
+    emberPlayfield.dataset.fireInput = cameraActive ? 'camera' : lastFirePointer;
     emberPlayfield.dataset.delivered = '0';
     emberPlayfield.style.setProperty('--fire-growth', fireGrowth[0]);
     firePad.querySelectorAll('.fire-spark').forEach(spark => spark.remove());
@@ -3316,6 +3361,9 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       if (fresh && point.pinch === true && previous.armed) candidates.push({id: point.id, distance});
     }
     for (const id of firePinches.keys()) if (!seen.has(id)) firePinches.delete(id);
+    if (cameraActive && reachable && (!emberLight.classList.contains('is-reachable') || candidates.length)) {
+      emberPlayfield.dataset.fireInput = 'camera';
+    }
     emberLight.classList.toggle('is-reachable', reachable);
     if (candidates.length) flyPinchedEmber(candidates.sort((a,b) => a.distance - b.distance)[0].id);
   }
@@ -3343,12 +3391,21 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   function rememberFirePointer(event) {
     if (!event.isPrimary || !['mouse', 'touch', 'pen'].includes(event.pointerType)) return;
-    const pointer = event.pointerType === 'mouse' ? 'mouse' : 'touch';
-    if (emberPlayfield.dataset.dragPointer !== pointer) emberPlayfield.dataset.dragPointer = pointer;
+    if (event.pointerType === 'mouse') {
+      // Some browsers report zero movementX/Y even while the pointer crosses the screen.
+      if (event.type === 'pointermove' && event.clientX === lastFireMouseX && event.clientY === lastFireMouseY) return;
+      lastFireMouseX = event.clientX;
+      lastFireMouseY = event.clientY;
+    }
+    lastFirePointer = event.pointerType === 'mouse' ? 'mouse' : 'touch';
+    if (stage === 'fire' && help.hidden && !firePickup && emberPlayfield.dataset.fireInput !== lastFirePointer) {
+      emberPlayfield.dataset.fireInput = lastFirePointer;
+    }
   }
   function moveEmber(event) {
-    if (stage !== 'fire' || !help.hidden || fireTimer || fireStepTimer || firePinchTimer || fireTracksHand || fireDelivered >= 4 || !event.isPrimary) return;
-    if (!firePickup) rememberFirePointer(event);
+    if (stage !== 'fire' || !help.hidden || !event.isPrimary) return;
+    if (event.type === 'pointermove' || event.type === 'pointerdown') rememberFirePointer(event);
+    if (fireTimer || fireStepTimer || firePinchTimer || fireTracksHand || fireDelivered >= 4) return;
     if (fireHome.contains(event.target) || fireCamera.contains(event.target)) return;
     const {clientX: x, clientY: y} = event;
     if (!firePickup) {
@@ -3428,14 +3485,27 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     }
   }
   function fireKeyDown(event) {
-    if (!['Enter',' '].includes(event.key)) return;
+    if (stage !== 'fire' || !help.hidden || fireDelivered >= 4 || firePickup) return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.isComposing || event.target?.isContentEditable || event.target?.matches?.('input, textarea, select')) return;
+    const direct = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key);
+    const activate = event.key === 'Enter' || event.key === ' ';
+    if (!direct && !activate && event.key !== 'Tab') return;
+    const control = event.target?.closest?.('button, a');
+    if (activate && control && control !== emberLight && control !== firePad) return;
+    emberPlayfield.dataset.fireInput = 'keyboard';
+    if (event.key === 'Tab') return;
     event.preventDefault();
+    if (direct || !control) emberLight.focus({preventScroll: true});
+    if (direct) {
+      if (!event.repeat) scheduleFinaleIdleReturn();
+      return;
+    }
     if (event.repeat || fireKeyHeld) return;
     fireKeyHeld = true;
     liftEmbers(true);
   }
   function fireKeyUp(event) {
-    if (!['Enter',' '].includes(event.key)) return;
+    if (!fireKeyHeld || !['Enter',' '].includes(event.key)) return;
     event.preventDefault();
     fireKeyHeld = false;
   }
@@ -4056,8 +4126,16 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     resumeOpening();
     syncOpeningMusic();
   }
-  finaleVideo.addEventListener('ended', finishFinaleVideo);
-  finaleVideo.addEventListener('playing', () => { if (!finaleVideo.hidden) clearTimeout(videoTimer); });
+  finaleVideo.addEventListener('ended', () => { if (finaleVideo.ended) void finishFinaleVideo(); });
+  finaleVideo.addEventListener('waiting', offerRetryForSlowVideo);
+  finaleVideo.addEventListener('playing', () => {
+    if (finaleVideo.hidden) return;
+    clearTimeout(videoTimer);
+    videoRetry.hidden = true;
+  });
+  videoRetry.addEventListener('click', () => {
+    if (stage === 'video' && activeVideoPart && !videoRetry.hidden) void playFinaleVideo(activeVideoPart);
+  });
   finaleVideo.addEventListener('error', () => { if (!finaleVideo.hidden) videoUnavailable(); });
   fireHome.addEventListener('click', returnToOpening);
   fireCamera.addEventListener('click', () => {
@@ -4069,9 +4147,9 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   emberPlayfield.addEventListener('pointerup', moveEmber);
   emberPlayfield.addEventListener('pointercancel', () => { if (!fireTracksHand) parkEmber(); });
   emberPlayfield.addEventListener('lostpointercapture', () => { if (firePickup?.kind === 'pointer') parkEmber(); });
+  document.addEventListener('keydown', fireKeyDown);
+  document.addEventListener('keyup', fireKeyUp);
   for (const button of [emberLight, firePad]) {
-    button.addEventListener('keydown', fireKeyDown);
-    button.addEventListener('keyup', fireKeyUp);
     button.addEventListener('blur', () => { fireKeyHeld = false; });
     button.addEventListener('click', event => { if (event.detail === 0 && !fireKeyHeld) liftEmbers(true); });
   }
@@ -4124,13 +4202,11 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   function advanceDemoScene() {
     if (!openingScreen.hidden) { void finishOpening(); return; }
     if (!started) { startExperience({detail: 0}); return; }
-    if (stage === 'transition' || (stage === 'video' && !activeVideoPart)) return;
+    if (stage === 'transition' || stage === 'video') return;
     if (!help.hidden) toggleHelp(false);
     if (stage === 'forest') {
       encounterVersion++;
       void beginFinale();
-    } else if (stage === 'video') {
-      void finishFinaleVideo();
     } else if (stage === 'fire') {
       clearTimeout(idleTimer);
       void playFinaleVideo(2);
