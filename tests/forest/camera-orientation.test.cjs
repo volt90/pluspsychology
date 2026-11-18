@@ -42,16 +42,18 @@ function coloredFrame(left,right) {
   for(let row=0;row<2;row++)for(let column=0;column<4;column++)image.pixels.set(column<2?left:right,(row*4+column)*4);
   return image;
 }
-function setup({stored=new Map(),storageBlocked=false}={}) {
+function setup({stored=new Map(),storageBlocked=false,cameraLabels=[]}={}) {
   const elements=new Map(),writes=[],calls={release:0,reset:0,moves:[],fire:[]};
   const element=()=>{const classes=new Set();return {disabled:false,hidden:false,style:{},attributes:{},classList:{add:name=>classes.add(name),remove:name=>classes.delete(name),contains:name=>classes.has(name),toggle(name,on){on?classes.add(name):classes.delete(name);}},setAttribute(key,value){this.attributes[key]=value;}};};
   elements.set('camera-orientation-status',element());
+  elements.set('camera-direction',element());
   elements.set('camera-panel',element());
   elements.set('camera-toggle',element());
   elements.set('camera-label',element());
   elements.set('camera-status',element());
   const layer=pixelCanvas(),mask=pixelCanvas();
-  const context=vm.createContext({console,Map,Boolean,Math,Number,Promise,performance:{now:()=>1000},
+  const context=vm.createContext({console,Map,Boolean,Math,Number,Promise,TextEncoder,crypto:require('node:crypto').webcrypto,performance:{now:()=>1000},
+    navigator:{mediaDevices:{enumerateDevices:async()=>cameraLabels.map(label=>({kind:'videoinput',label}))}},
     stage:'forest',started:true,windowBlurred:false,cameraActive:true,width:1000,height:800,help:{hidden:true},canvas:{dataset:{}},
     experience:{dataset:{}},document:{hidden:false,getElementById:id=>elements.get(id)},status:{textContent:''},
     photoTake:{disabled:false},photoCaptured:false,photoResult:{hidden:true},photoPreviewReady:false,photoMessage:{textContent:''},
@@ -76,7 +78,7 @@ function setup({stored=new Map(),storageBlocked=false}={}) {
   `,context);
   context.updateCameraOrientationButtons();
   return {api:context,calls,elements,writes,stored,layer,mask,
-    attach(deviceId){context.cameraVideo.srcObject={getVideoTracks:()=>[{getSettings:()=>deviceId?{deviceId}:{}}]};context.applyCameraDeviceOrientation();},
+    attach(deviceId,facingMode){context.cameraVideo.srcObject={getVideoTracks:()=>[{getSettings:()=>({deviceId,facingMode})}]};context.applyCameraDeviceOrientation();},
     include(...names){vm.runInContext(names.map(sourceFunction).join('\n'),context);}};
 }
 
@@ -156,16 +158,72 @@ test('an anonymous stream is not persisted, and blocked storage still permits pe
   blocked.attach('camera-a');assert.equal(blocked.api.orientationState().mirrored,false);
 });
 
+test('rightward audience motion stays rightward for front and rear cameras, including saved overrides',()=>{
+  const qa=setup();
+  for(const [device,facingMode,from,to] of [['front','user',.65,.35],['rear','environment',.35,.65]]){
+    qa.attach(device,facingMode);
+    qa.api.cameraPoints([{id:0,x:from,y:.5}]);qa.api.cameraPoints([{id:0,x:to,y:.5}]);
+    assert.ok(qa.calls.moves.at(-1).x>qa.calls.moves.at(-2).x);
+  }
+  qa.api.toggleCameraMirror();
+  const nextVisit=setup({stored:qa.stored});nextVisit.attach('rear','environment');
+  assert.equal(nextVisit.api.orientationState().mirrored,true,'manual calibration takes priority over facingMode');
+});
+
+test('an early calibration is saved to the incoming camera when its device ID is ready',()=>{
+  const prefix='mind-forest:camera-mirror:v2:', qa=setup();
+  qa.attach('previous','user');
+  qa.api.cameraVideo.srcObject=null;
+  qa.api.toggleCameraMirror();
+  assert.equal(qa.writes.length,0);
+  let deviceId='';
+  qa.api.cameraVideo.srcObject={getVideoTracks:()=>[{getSettings:()=>({deviceId,facingMode:'user'})}]};
+  qa.api.cameraState({status:'connecting',active:true,message:'연결 중'});
+  assert.equal(qa.api.orientationState().mirrored,false);
+  deviceId='incoming';
+  qa.api.applyCameraDeviceOrientation();
+  assert.deepEqual(qa.writes,[[prefix+'incoming','false']]);
+  const nextVisit=setup({stored:qa.stored});nextVisit.attach('incoming','user');
+  assert.equal(nextVisit.api.orientationState().mirrored,false);
+  nextVisit.attach('previous','user');
+  assert.equal(nextVisit.api.orientationState().mirrored,true);
+});
+
+test('a rotating ID restores one named webcam, while identical names and late results keep device choices separate',async()=>{
+  const label='Test webcam', stored=new Map();
+  const original=setup({stored,cameraLabels:[label]});
+  original.attach('old');original.api.toggleCameraMirror();
+  const bindModel=(qa,id)=>qa.api.restoreCameraModelPreference(qa.api.cameraVideo.srcObject,id,label);
+  await bindModel(original,'old');
+  assert.ok([...stored.keys()].some(key=>key.startsWith('mind-forest:camera-mirror:model:')));
+  assert.ok([...stored.keys()].every(key=>!key.includes(label)));
+  const next=setup({stored,cameraLabels:[label]});
+  next.attach('rotated');await bindModel(next,'rotated');
+  assert.equal(next.api.orientationState().mirrored,false);
+  const duplicate=setup({stored,cameraLabels:[label,label]});
+  duplicate.attach('second');await bindModel(duplicate,'second');
+  assert.equal(duplicate.api.orientationState().mirrored,true);
+  const photo=setup({stored,cameraLabels:[label]});
+  photo.attach('photo');photo.api.stage='photo';photo.api.photoTake.disabled=true;photo.api.photoBackdropLocked=true;
+  await bindModel(photo,'photo');assert.equal(photo.api.orientationState().mirrored,true,'keep an active countdown fixed');
+  photo.api.photoBackdropLocked=false;
+  await bindModel(photo,'photo');assert.equal(photo.api.orientationState().mirrored,false,'restore before framing is locked');
+  const pending=bindModel(next,'rotated');next.attach('different');
+  await pending;assert.equal(next.api.orientationState().mirrored,true);
+});
+
 test('help reports the direction while the shortcut cannot change a countdown or an already captured photo',()=>{
   const qa=setup();qa.attach('camera-a');qa.api.stage='photo';
   for(const state of [{disabled:true,captured:false,resultHidden:true},{disabled:false,captured:true,resultHidden:false}]){
     qa.api.photoTake.disabled=state.disabled;qa.api.photoCaptured=state.captured;qa.api.photoResult.hidden=state.resultHidden;
     qa.api.updateCameraOrientationButtons();qa.api.toggleCameraMirror();
     assert.equal(qa.api.orientationState().mirrored,true);
+    assert.equal(qa.elements.get('camera-direction').disabled,true);
     assert.match(qa.elements.get('camera-orientation-status').textContent,/좌우 반전 · 촬영 중에는 방향을 유지/);
   }
   qa.api.photoTake.disabled=false;qa.api.photoCaptured=false;qa.api.photoResult.hidden=true;
   qa.api.updateCameraOrientationButtons();qa.api.toggleCameraMirror();
+  assert.equal(qa.elements.get('camera-direction').disabled,false);
   assert.equal(qa.elements.get('camera-orientation-status').textContent,'현재 웹캠 방향: 반전 없음');
 });
 

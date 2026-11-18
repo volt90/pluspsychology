@@ -125,6 +125,31 @@ test('a different pointer cannot steal a drag and an outside drop returns the li
 const pinchPoint = (id, position, pinch = false, sequence = 0, extra = {}) =>
   ({id, ...position, pinch, pinchSequence: sequence, pinchValid: true, held: false, reset: false, ...extra});
 
+test('the wider pickup area accepts near misses and still requires a fresh pinch or press', () => {
+  const qa = setup(), origin = qa.api.fireOrigin();
+  const near = {x:origin.x + 69, y:origin.y}, far = {x:origin.x + 71, y:origin.y};
+  qa.feed([pinchPoint(1, far)]);
+  qa.feed([pinchPoint(1, far, true, 1)]);
+  assert.equal(qa.light.classList.contains('is-reachable'), false);
+  qa.feed([pinchPoint(1, near, true, 1)]);
+  assert.equal(qa.state.pickup, null);
+  qa.feed([pinchPoint(1, near, false, 1)]);
+  assert.equal(qa.light.classList.contains('is-reachable'), true);
+  qa.feed([pinchPoint(1, near, true, 2)]);
+  qa.advance(120);
+  assert.equal(qa.state.delivered, 1);
+
+  for (const type of ['touch', 'mouse']) {
+    const drag = setup(), target = drag.api.fireOrigin();
+    drag.pointer('pointerdown', target.x, target.y + 57, 3, type);
+    assert.equal(drag.state.pickup, null);
+    drag.pointer('pointerdown', target.x, target.y + 55, 3, type);
+    assert.equal(drag.state.pickup.kind, 'pointer');
+    drag.pointer('pointerup', drag.center.x, drag.center.y, 3, type);
+    assert.equal(drag.state.delivered, 1);
+  }
+});
+
 test('a fresh pinch at the corner flies to the fire without dragging', () => {
   const qa = setup(), origin = qa.api.fireOrigin();
   qa.feed([pinchPoint(2, origin, true, 4)]);

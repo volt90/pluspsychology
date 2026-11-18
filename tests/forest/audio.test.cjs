@@ -1,6 +1,37 @@
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),test=require('node:test'),assert=require('node:assert/strict');
 const html=fs.readFileSync(process.env.FOREST_QA_SOURCE||path.join(__dirname,'../../experience/mind-forest.html'),'utf8');
 const source=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]).find(s=>s.includes('/* Quiet, gesture-unlocked sound'));
+for(const firstInput of ['speaker','touch'])test('blocked opening music starts on the first '+firstInput+' and the speaker can then mute it',async()=>{
+  const section=(start,end)=>html.slice(html.indexOf(start),html.indexOf(end,html.indexOf(start)));
+  const handlers=new Map(),attributes=new Map(),events=new Map();
+  let allowed=false,muted=false,attempts=0;
+  const track={paused:true,addEventListener:(type,fn)=>events.set(type,fn),play(){
+    attempts++;
+    if(!allowed)return Promise.reject(Object.assign(new Error('Blocked'),{name:'NotAllowedError'}));
+    this.paused=false;events.get('play')();return Promise.resolve();
+  }};
+  const button={setAttribute:(key,value)=>attributes.set(key,value),addEventListener:(_,fn)=>handlers.set('speaker',fn)};
+  const context=vm.createContext({console,document:{hidden:false,addEventListener:(type,fn)=>handlers.set(type,fn)},
+    openingMusic:track,openingMusicVolume:.35,openingScreen:{hidden:false},startScreen:{hidden:true},started:false,
+    openingMusicButton:button,audio:{isMuted:()=>muted,setMuted:value=>{muted=value;},cancelMediaFade(){}},
+    fadeBackground(media){media.paused=true;events.get('pause')();}});
+  vm.runInContext(section('  function updateOpeningMusicButton()', '  function syncGuideMusic()')+
+    section("  openingMusicButton.addEventListener('click'", "  document.addEventListener('visibilitychange'"),context);
+  context.syncOpeningMusic();
+  await Promise.resolve();
+  assert.equal(attributes.get('aria-pressed'),'true');
+  assert.equal(attributes.get('aria-label'),'배경음 재생');
+  assert.equal(track.paused,true);
+  allowed=true;
+  if(firstInput==='speaker')handlers.get('speaker')();
+  else handlers.get('pointerup')({target:{closest:()=>false}});
+  assert.equal(track.paused,false);
+  assert.equal(attributes.get('aria-label'),'배경음 끄기');
+  handlers.get('speaker')();handlers.get('click')({target:{closest:()=>false}});
+  assert.equal(attributes.get('aria-pressed'),'false');
+  assert.equal(attributes.get('aria-label'),'배경음 켜기');
+  assert.equal(track.paused,true);assert.equal(attempts,2);
+});
 async function setup(){
   let time=0,oscillatorCount=0;const nodes=[],warnings=[];const failures={oscillator:0,param:false};
   class Param{

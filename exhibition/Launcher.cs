@@ -145,7 +145,8 @@ internal static class Launcher
             throw new InvalidOperationException("전시 웹사이트에 연결하지 못했어요.\n\n인터넷 연결과 전시장 Wi-Fi의 로그인 화면을 확인한 뒤 다시 실행해 주세요.\nChrome에서 아래 주소를 직접 열어 확인할 수도 있어요.\n\n" + SiteUrl + "\n\n" + networkError);
         Directory.CreateDirectory(ProfilePath);
         var start = new ProcessStartInfo(chrome,
-            "--user-data-dir=" + Quote(ProfilePath) + " --no-first-run --no-default-browser-check --start-fullscreen --app=" + Quote(SiteUrl));
+            "--user-data-dir=" + Quote(ProfilePath) + " --no-first-run --no-default-browser-check" +
+            " --autoplay-policy=no-user-gesture-required --start-fullscreen --app=" + Quote(SiteUrl));
         start.UseShellExecute = false;
         start.WorkingDirectory = Path.GetDirectoryName(chrome);
         Process launched = Process.Start(start);
