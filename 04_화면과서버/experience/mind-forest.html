@@ -189,6 +189,8 @@ button { -webkit-tap-highlight-color: transparent; }
 .world-mark { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.2; }
 h1 { font-family: "Black Han Sans", "Anemone Air"; font-weight: 400; font-size: clamp(44px,4.4vw,68px); letter-spacing: -.035em; margin: 0 0 12px; line-height: 1.14; }
 .intro { margin: 0; color: #bbc9c1; font-size: 18px; line-height: 1.55; word-break: keep-all; }
+.intro .hand-instruction, [data-input-source="camera"] .intro .pointer-instruction { display: none; }
+[data-input-source="camera"] .intro .hand-instruction { display: inline; }
 body.exploring .heading { opacity: .38; }
 body.exploring .heading .intro { opacity: 0; }
 .camera-panel { position: absolute; bottom: calc(76px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: min(360px, calc(100% - 32px)); pointer-events: none; border: 1px solid #3a5156; border-radius: 12px; background: rgba(9,25,31,.92); text-align: center; }
@@ -304,11 +306,11 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
     <header class="heading" aria-label="고요한 숲">
       <p class="world-name"><svg class="world-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5"/></svg> 김심리월드</p>
       <h1>고요한 숲</h1>
-      <p class="intro">친구들에게 빛을 건네 보세요.</p>
+      <p class="intro"><span class="hand-instruction">검지 끝이나 손바닥을 카메라 쪽으로 향해 주세요.</span><span class="pointer-instruction">마우스, 터치, 방향키로 빛을 움직여 보세요.</span></p>
     </header>
 
     <div id="encounters" aria-label="친구들의 이야기"></div>
-    <div id="rub-guide" class="rub-guide" hidden aria-hidden="true"><span class="rub-hand">👆</span><p>친구 주변을 빛으로 쓸어 보세요.</p></div>
+    <div id="rub-guide" class="rub-guide" hidden aria-hidden="true"><span class="rub-hand">🖐️</span><p>친구 위를 가볍게 문질러 주세요.</p></div>
     <p id="sleeping-notice" class="sleeping-notice" role="status" hidden>아직 깨어나지 않은 친구가 있어요!</p>
 
     <video id="camera-video" muted playsinline aria-hidden="true"></video>
@@ -1456,7 +1458,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   const TRACKING_GRACE_MS = 400;
   const MAX_HANDS = 4;
-  const HAND_SEARCH_MESSAGE = '검지 끝을 카메라 쪽으로 향해 주세요.';
+  const HAND_SEARCH_MESSAGE = '손을 찾고 있어요.';
   const clamp = value => Math.max(0, Math.min(1, value));
   const median = values => {const sorted=[...values].sort((a,b)=>a-b),middle=Math.floor(sorted.length/2);return sorted.length%2?sorted[middle]:(sorted[middle-1]+sorted[middle])/2;};
 
@@ -1490,7 +1492,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     if (![wrist, indexBase, middleBase, pinkyBase].every(valid)) return tip;
     const palm = {
       x: (wrist.x + indexBase.x + middleBase.x + pinkyBase.x) / 4,
-      y: (wrist.y + indexBase.y + middleBase.y + pinkyBase.y) / 4
+      y: (wrist.y + indexBase.y + middleBase.y + pinkyBase.y) / 4, palmDriven: true
     };
     if (!valid(tip) || !valid(middleTip) || tip.x < 0 || tip.x > 1 || tip.y < 0 || tip.y > 1) return palm;
     const distance = (a, b) => Math.hypot((a.x - b.x) * aspectRatio, a.y - b.y);
@@ -1502,7 +1504,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     // A single extended index finger aims precisely. An open or relaxed hand
     // uses the steadier palm, with continuous blending between the two poses.
     const tipWeight = clamp((indexReach - .35) / .28) * clamp((.62 - middleReach) / .26);
-    return {x: palm.x + (tip.x - palm.x) * tipWeight, y: palm.y + (tip.y - palm.y) * tipWeight};
+    return {x: palm.x + (tip.x - palm.x) * tipWeight, y: palm.y + (tip.y - palm.y) * tipWeight, palmDriven: tipWeight === 0};
   }
 
   function createPinchTracker(nextSequence) {
@@ -1535,10 +1537,12 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         history.push(mapped); if (history.length > 3) history.shift();
         if (history.length < 2) return null;
         const current = {x: median(history.map(p => p.x)), y: median(history.map(p => p.y))};
+        const smoothing = point.palmDriven ? .5 : .32;
         if (!smooth) smooth = current;
-        else smooth = {x: smooth.x + (current.x - smooth.x) * .32, y: smooth.y + (current.y - smooth.y) * .32};
+        else smooth = {x: smooth.x + (current.x - smooth.x) * smoothing, y: smooth.y + (current.y - smooth.y) * smoothing};
         const distance = emitted ? Math.hypot(smooth.x - emitted.x, smooth.y - emitted.y) : Infinity;
-        if (distance < .014) return null;
+        // The four-landmark palm center can resolve smaller sweeps than a fingertip.
+        if (distance < (point.palmDriven ? .0065 : .014)) return null;
         const reset = !emitted || distance > .35;
         // Rebase a new hand or a large jump instead of drawing a sweep across the forest.
         if (reset) smooth = current;
@@ -1682,7 +1686,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
             const points = (result.landmarks || []).flatMap(landmarks => {
               const point = data.usePalm ? forestLightPosition(landmarks, aspectRatio) : landmarks[8];
               const wrist = landmarks[0];
-              return point ? [{x: point.x, y: point.y, wristX: wrist?.x, wristY: wrist?.y,
+              return point ? [{x: point.x, y: point.y, palmDriven: point.palmDriven === true, wristX: wrist?.x, wristY: wrist?.y,
                 pinchRatio: calculatePinchRatio(landmarks, aspectRatio)}] : [];
             });
             self.postMessage({type: 'result', timestamp: data.timestamp, points});
@@ -1877,7 +1881,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     function permissionMessage(error) {
       if (error?.name === 'CameraRequestTimeoutError') return '카메라가 응답하지 않아요. 브라우저의 카메라 허용 창을 확인하고, 다른 전시 창이나 카메라 앱을 닫은 뒤 다시 켜 주세요.';
       if (error?.name === 'CameraPlaybackTimeoutError') return '카메라는 연결됐지만 영상이 들어오지 않아요. 웹캠 연결과 다른 앱의 사용 여부를 확인한 뒤 다시 켜 주세요.';
-      if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') return '카메라 권한이 차단됐어요. Chrome의 사이트 설정과 Windows의 카메라 접근을 허용한 뒤 다시 켜 주세요. 전시 실행 창은 별도로 허용해야 해요.';
+      if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') return '카메라가 꺼져 있어요. 다시 켜려면 브라우저와 기기 설정에서 카메라를 허용해 주세요.';
       if (error?.name === 'NotFoundError' || error?.name === 'DevicesNotFoundError') return '연결된 카메라가 없어요. 웹캠을 연결한 뒤 다시 켜 주세요.';
       if (error?.name === 'NotReadableError' || error?.name === 'TrackStartError') {
         if (error.cameraLabels?.length && error.cameraLabels.every(label => /OBS Virtual Camera/i.test(label))) return 'OBS 가상 카메라에서 영상이 오지 않아요. OBS에서 ‘가상 카메라 시작’을 누르거나 실제 웹캠을 연결한 뒤 다시 켜 주세요.';
@@ -2411,12 +2415,16 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   function moveLight(x,y,now,light=pointer) {
     if(!started || stage !== 'forest' || !help.hidden)return;
     const nx=clamp(x/width,0,1),ny=clamp(y/height,0,1);
-    if (!light.active || Math.hypot((nx - light.targetX) * width, (ny - light.targetY) * height) >= 2) {
+    const moved = Math.hypot((nx - light.targetX) * width, (ny - light.targetY) * height) >= 2;
+    if (!light.active || moved) {
       lastMovementAt = sceneTime;
       sleepingNotice.hidden = true;
     }
+    // Let a stationary first detection light up the scene while the visitor reads the cue.
+    if ((light.active && moved) || light === pointer) markExploring();
+    if (light === pointer && experience.dataset.cameraState === 'error') document.getElementById('camera-panel').hidden = true;
     if(!light.active){light.x=nx;light.y=ny;addTrail(nx*width,ny*height,now,light);light.trailDistance=0;}
-    light.targetX=nx;light.targetY=ny;light.active=true;light.lastInput=now;markExploring();
+    light.targetX=nx;light.targetY=ny;light.active=true;light.lastInput=now;
   }
   function releaseLight(){
     pointer.active=false;activePointerId=null;pointer.trailDistance=0;keys.clear();
@@ -3276,51 +3284,74 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     event.preventDefault();
     fireKeyHeld = false;
   }
+  // Die-cut outlines in the same local coordinates as each character crop.
+  // Each continuous curve bridges small gaps around the original illustration.
+  const photoStickerCutlines = {
+    simri: `M113 -7Q
+      118 -10 123 -9 129 -9 133 -4 137 0 138 5 138 11 137 17 136 23 135 29 134 36 133 42
+      132 48 134 54 136 60 137 66 139 72 142 75 144 78 146 81 149 84 150 89 152 94 151 101
+      151 108 147 114 144 121 141 127 137 133 133 135 129 137 122 136 115 134 111 136 107 137 108 145
+      109 152 111 160 112 168 113 175 114 183 116 190 117 198 118 205 119 213 119 218 119 224 119 229
+      119 235 116 239 112 244 111 249 110 254 109 259 109 264 106 266 103 269 98 270 93 270 88 271
+      83 272 76 272 70 271 63 271 56 271 49 271 42 270 35 270 28 270 24 266 19 263 18 256
+      18 249 21 246 24 243 26 240 29 236 29 230 29 224 29 218 28 212 29 205 30 199 31 192
+      32 185 28 182 24 178 22 172 20 167 18 162 16 157 15 153 15 149 15 144 15 140 11 136
+      6 132 2 129 -2 125 -3 121 -5 118 -4 110 -2 103 -1 96 0 88 -1 81 -2 74 -6 68
+      -10 63 -10 59 -10 55 -6 51 -2 47 2 42 6 38 5 33 4 27 3 21 2 15 1 10
+      0 4 1 0 3 -3 7 -6 12 -9 19 -8 25 -8 29 -6 33 -4 37 -2 41 0 47 -1
+      54 -3 60 -4 67 -6 72 -5 78 -4 84 -3 89 -2 95 -1 101 0 105 -2 109 -5 113 -7Z`,
+    seru: `M132 -7Q
+      142 -11 152 -8 162 -6 165 -1 169 4 172 8 176 13 182 12 188 11 194 11 200 10 209 15
+      218 20 220 27 221 35 222 42 223 50 219 55 216 60 212 65 209 71 209 75 209 79 215 84
+      221 88 228 92 234 96 240 101 247 105 249 110 251 116 253 122 255 127 253 136 251 144 249 153
+      247 161 240 167 233 173 227 179 220 185 221 191 221 197 226 202 231 208 235 214 240 219 242 226
+      243 232 245 239 247 245 245 252 244 259 238 265 233 270 233 277 233 283 233 290 233 296 230 302
+      228 308 225 314 223 320 221 324 218 329 211 333 204 338 196 340 187 341 179 343 170 344 162 345
+      153 347 144 346 135 345 126 343 117 342 108 341 99 340 90 334 81 329 78 320 75 312 75 301
+      75 290 70 288 64 286 58 284 52 282 49 277 45 272 42 267 38 262 39 252 40 242 45 238
+      50 234 48 228 46 222 44 216 43 210 44 202 44 194 45 187 46 179 47 172 48 164 44 160
+      40 156 35 153 31 149 21 147 10 144 5 139 0 133 -5 127 -10 122 -9 114 -7 106 -1 101
+      4 95 10 89 16 84 20 76 24 68 31 64 38 60 44 56 51 52 51 41 51 30 57 21
+      62 13 70 10 78 7 84 8 91 8 96 13 101 17 107 21 112 25 115 18 117 11 120 4
+      122 -3 132 -7Z`,
+    rubi: `M126 -6Q
+      133 -9 139 -7 144 -6 150 -4 156 -3 160 2 164 6 168 11 172 15 175 22 178 28 181 35
+      184 41 189 41 193 41 196 39 199 36 202 29 205 21 208 14 212 6 217 3 222 -1 227 -4
+      232 -8 238 -7 244 -6 251 -6 257 -5 260 1 263 6 266 12 270 18 270 23 270 28 271 34
+      271 39 269 45 267 52 266 59 264 65 262 72 261 79 263 86 266 93 269 101 272 108 279 115
+      285 122 284 128 284 134 280 138 276 142 273 151 271 161 273 171 275 180 278 190 280 200 280 207
+      281 214 281 220 282 227 282 234 282 241 279 249 276 257 271 263 266 269 261 275 255 281 250 287
+      245 293 244 301 243 309 242 317 241 325 236 328 230 332 225 335 219 339 213 339 208 340 202 340
+      196 340 191 338 186 336 182 335 177 333 171 334 164 335 158 335 152 336 146 335 141 334 133 329
+      126 324 125 314 124 304 126 298 128 291 124 287 120 284 118 276 116 268 109 268 102 268 95 268
+      88 268 83 264 79 260 77 252 75 243 74 234 72 226 68 221 64 217 61 212 57 208 57 199
+      58 190 59 182 59 173 60 165 61 156 53 155 45 153 37 152 30 151 22 147 14 143 8 135
+      1 128 -1 121 -3 115 -5 109 -8 103 -7 94 -6 85 -1 81 4 76 11 74 17 73 24 71
+      31 70 35 62 39 55 44 47 48 40 53 37 58 34 63 34 68 35 74 35 79 36 84 42
+      90 48 95 53 101 59 104 59 108 59 108 50 108 41 107 32 107 23 109 15 111 8 115 2
+      119 -4 126 -6Z`,
+    ahreu: `M14 -2Q
+      19 -5 24 -4 30 -4 35 -1 40 1 45 4 50 7 56 7 62 7 67 7 73 7 78 7
+      84 7 90 4 96 1 102 -2 107 -5 113 -5 120 -5 123 -2 126 0 128 6 131 12 130 18
+      130 23 129 29 129 35 128 40 128 46 129 50 130 55 131 59 132 63 133 68 134 72 136 77
+      137 81 141 84 146 88 150 91 154 94 156 99 158 105 160 110 162 115 161 122 160 129 159 136
+      159 143 156 147 153 152 150 156 147 161 140 164 134 167 130 167 126 167 122 167 118 167 114 168
+      110 170 106 171 102 173 96 173 89 172 83 172 77 172 71 172 65 172 59 172 52 172 46 172
+      40 172 35 170 31 168 26 165 21 163 21 159 20 155 19 151 19 147 21 142 23 137 24 132
+      24 127 25 122 25 117 26 112 26 106 22 103 18 99 12 97 7 95 4 91 1 88 -2 84
+      -5 80 -3 74 -1 68 0 62 2 56 4 50 6 44 6 38 6 32 6 27 6 21 6 15
+      6 9 8 5 10 1 14 -2Z`
+  };
   function drawPhotoSticker(context, friend, width, height) {
-    const scale = 2;
-    const radius = 4 * scale;
-    // Keep a clear margin so the circle never samples across rows.
-    const padding = radius * 2;
-    const sticker = document.createElement('canvas');
-    sticker.width = Math.ceil(width * scale) + padding * 2;
-    sticker.height = Math.ceil(height * scale) + padding * 2;
-    const c = sticker.getContext('2d');
-    c.imageSmoothingQuality = 'high';
-    const drawCharacter = () => c.drawImage(friend.image, ...friend.crop, padding, padding, width * scale, height * scale);
-    drawCharacter();
-
-    // Expand just the alpha channel by a disk and downsample after the colour
-    // artwork is back on top. This gives the white edge a continuous curve.
-    const stride = sticker.width * 4;
-    const source = c.getImageData(0, 0, sticker.width, sticker.height).data;
-    const outline = c.createImageData(sticker.width, sticker.height);
-    const offsets = [];
-    for (let y = -radius; y <= radius; y++) {
-      const reach = Math.floor(Math.sqrt(radius * radius - y * y));
-      for (let x = -reach; x <= reach; x++) offsets.push(y * stride + x * 4);
-    }
-    for (let y = radius; y < sticker.height - radius; y++) {
-      for (let x = radius; x < sticker.width - radius; x++) {
-        const pixel = y * stride + x * 4;
-        let alpha = source[pixel + 3];
-        if (alpha < 255) {
-          for (const offset of offsets) {
-            alpha = Math.max(alpha, source[pixel + offset + 3]);
-            if (alpha === 255) break;
-          }
-        }
-        if (!alpha) continue;
-        outline.data[pixel] = 255;
-        outline.data[pixel + 1] = 253;
-        outline.data[pixel + 2] = 247;
-        outline.data[pixel + 3] = alpha;
-      }
-    }
-    c.putImageData(outline, 0, 0);
-    drawCharacter();
+    const [, , sourceWidth, sourceHeight] = friend.crop;
+    context.save();
+    context.translate(-width / 2, -height);
+    context.scale(width / sourceWidth, height / sourceHeight);
+    context.fillStyle = '#fffdf7';
+    context.fill(new Path2D(photoStickerCutlines[friend.id]));
     context.imageSmoothingQuality = 'high';
-    context.drawImage(sticker, -width / 2 - padding / scale, -height - padding / scale,
-      sticker.width / scale, sticker.height / scale);
+    context.drawImage(friend.image, ...friend.crop, 0, 0, sourceWidth, sourceHeight);
+    context.restore();
   }
   function makePhotoDecoration() {
     const decoration = document.createElement('canvas');

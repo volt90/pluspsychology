@@ -31,22 +31,36 @@ test('a quick pass and overlapping lights do not trigger an instant wake',()=>{
   const single=setup(),group=setup();for(let t=0;t<200;t+=50){single.step(50,[light({movement:20})]);group.step(50,Array.from({length:4},()=>light({movement:20})));}
   assert.equal(single.friends[0].phase,'rest');assert.equal(group.friends[0].charge,single.friends[0].charge);
 });
+function simulateRub(dt, amplitude, palmDriven=false, duration=2200) {
+  const qa=setup(),tracker=qa.ctx.ForestHandTracking.createPointTracker();let lastSample=-100,point=null,current=null,wokeAt=0;
+  for(let t=0;t<duration;t+=dt){
+    if(t-lastSample>=50-.001){
+      lastSample=t;const rawX=.02+.96*(640/1920+amplitude*Math.sin(t/180));
+      point=tracker.push({x:rawX,y:.5,palmDriven},t).point||point;
+    }
+    if(!point){qa.step(dt,[]);continue;}
+    if(!current||point.reset)current={x:point.x,y:point.y};
+    point={...point,reset:false};
+    const ease=1-Math.exp(-dt/75),dx=(point.x-current.x)*ease,dy=(point.y-current.y)*ease;
+    current.x+=dx;current.y+=dy;
+    qa.step(dt,[light({...current,movement:Math.hypot(dx*1920,dy*800)})]);
+    if(qa.wakes.length){wokeAt=t;break;}
+  }
+  return {wokeAt,charge:qa.friends[0].charge};
+}
+
 test('short webcam rubbing survives the real position filter and rendering smoothing',()=>{
   for(const dt of [1000/60,1000/30,50]){
-    const qa=setup(),tracker=qa.ctx.ForestHandTracking.createPointTracker();let lastSample=-100,point=null,current=null,wokeAt=0;
-    for(let t=0;t<2200;t+=dt){
-      if(t-lastSample>=50-.001){
-        lastSample=t;const rawX=.02+.96*(640/1920+.025*Math.sin(t/180));
-        point=tracker.push({x:rawX,y:.5},t).point||point;
-      }
-      if(!point){qa.step(dt,[]);continue;}
-      if(!current||point.reset)current={x:point.x,y:point.y};
-      point={...point,reset:false};
-      const ease=1-Math.exp(-dt/75),dx=(point.x-current.x)*ease,dy=(point.y-current.y)*ease;
-      current.x+=dx;current.y+=dy;
-      qa.step(dt,[light({...current,movement:Math.hypot(dx*1920,dy*800)})]);
-      if(qa.wakes.length){wokeAt=t;break;}
-    }
+    const {wokeAt}=simulateRub(dt,.025);
     assert.ok(wokeAt>0&&wokeAt<2000,'short filtered gesture should wake at '+dt+' ms frames');
+  }
+});
+
+test('small palm sweeps wake a friend while fingertip and resting palm noise stay quiet',()=>{
+  for(const dt of [1000/60,1000/30,50]){
+    const {wokeAt}=simulateRub(dt,.01,true);
+    assert.ok(wokeAt>0&&wokeAt<2000,'one-percent palm sweep should wake at '+dt+' ms frames');
+    assert.equal(simulateRub(dt,.003,true,10000).charge,0);
+    assert.equal(simulateRub(dt,.01,false,10000).charge,0);
   }
 });

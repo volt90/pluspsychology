@@ -115,6 +115,26 @@ test('the first detection drives the light immediately while the camera panel on
   assert.equal(qa.api.experience.dataset.inputSource,'pointer');
 });
 
+test('a hand can light up before the first gesture, and pointer use clears a camera error',()=>{
+  const {api,elements,include}=setup();
+  let explored=false;
+  Object.assign(api,{sceneTime:0,lastMovementAt:0,sleepingNotice:{},addTrail(){},markExploring(){explored=true;},
+    pointer:{active:false,targetX:.5,targetY:.5}});
+  include('moveLight');
+  const handLight={active:false,targetX:.5,targetY:.5};
+  api.moveLight(600,400,0,handLight);
+  assert.equal(handLight.active,true);
+  assert.equal(explored,false);
+  api.moveLight(600,400,50,handLight);
+  assert.equal(explored,false);
+  api.moveLight(620,400,100,handLight);
+  assert.equal(explored,true);
+  api.cameraState({status:'error',active:false,message:'권한을 확인해 주세요.'});
+  assert.equal(elements.get('camera-panel').hidden,false);
+  api.moveLight(320,200,150,api.pointer);
+  assert.equal(elements.get('camera-panel').hidden,true);
+});
+
 test('the saved mirror choice belongs to the actual device and an unfamiliar webcam starts in the default direction',()=>{
   const prefix='mind-forest:camera-mirror:v2:',stored=new Map([[prefix+'camera-a','false'],['mind-forest:camera-mirror:camera-b','false']]);
   const qa=setup({stored});qa.attach('camera-a');assert.equal(qa.api.orientationState().mirrored,false);

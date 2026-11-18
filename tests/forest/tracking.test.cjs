@@ -271,11 +271,13 @@ test('the inference worker supports a steady palm light in the forest and precis
   };
   landmarks[12] = {x: .5, y: .44}; // Folded middle finger, extended index.
   const pointing = await observe(160, true);
+  assert.equal(pointing.palmDriven, false);
   assert.equal(pointing.x, landmarks[8].x);
   assert.equal(pointing.y, landmarks[8].y);
   landmarks[12] = {x: .5, y: .23}; // An open palm with several fingers extended.
   const openPalm = await observe(200, true);
   const expectedCenter = [0,5,9,17].reduce((y,index)=>y+landmarks[index].y,0)/4;
+  assert.equal(openPalm.palmDriven, true);
   assert.equal(openPalm.y, expectedCenter);
   landmarks[8] = {x: .55, y: .39};
   const movedTip = await observe(240, true);
@@ -285,9 +287,22 @@ test('the inference worker supports a steady palm light in the forest and precis
   const movedPalm = await observe(280, true);
   assert.ok(Math.abs(movedPalm.x - openPalm.x - .12) < 1e-10, 'moving the whole palm moves the light');
   const fire = await observe(320, false);
+  assert.equal(fire.palmDriven, false);
   assert.equal(fire.x, landmarks[8].x);
   assert.equal(fire.y, landmarks[8].y);
   assert.equal(closed,6);
+  // A small hand in the image, first relaxed into a fist, then open.
+  const smallHand = pinchLandmarks(.2,.06,16/9);
+  for (const [pose, timestamp] of [['closed',360],['open',440]]) {
+    smallHand[8] = pose==='closed' ? {...smallHand[5]} : {x:.5,y:.42};
+    smallHand[12] = pose==='closed' ? {...smallHand[9]} : {x:.5,y:.40};
+    for (const offset of [-.01,.01]) {
+      smallHand.forEach((point,index)=>{landmarks[index]={x:point.x+offset,y:point.y};});
+      const observed = await observe(timestamp+(offset>0?40:0),true);
+      assert.equal(observed.palmDriven,true,pose);
+      assert.ok(Math.abs(observed.x-(.5+offset))<1e-9,pose);
+    }
+  }
   qa.controller.stop();
 });
 

@@ -1,6 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
+  "redirects": [
+    {"source": "/mind-forest", "destination": "/experience/mind-forest", "permanent": true},
+    {"source": "/mind-care", "destination": "/experience/mind-care", "permanent": true}
+  ],
   "headers": [
     {
       "source": "/gallery",
