@@ -210,10 +210,12 @@ test('a stream arriving after cancellation releases every track, including on a 
   }
 });
 
-test('horizontal motion and camera preview use the corrected shared direction',()=>{
+test('horizontal motion keeps the corrected direction with a private inline video source',()=>{
   const {api}=setup(),a=api.mapPoint({x:.2,y:.25}),b=api.mapPoint({x:.8,y:.75});
   assert.ok(a.x<b.x);assert.ok(a.rawX<b.rawX);assert.ok(a.y<b.y);assert.ok(a.rawY<b.rawY);
-  assert.match(html,/#camera-video\s*\{[^}]*transform:\s*none/);
+  assert.match(html,/<video id="camera-video" muted playsinline aria-hidden="true"><\/video>/);
+  assert.match(html,/#camera-video\s*\{[^}]*opacity:\s*0/);
+  assert.doesNotMatch(html, /id="camera-preview"|id="camera-dot"/);
 });
 test('off-camera and invalid landmarks are missing hands, not stuck edge positions',()=>{
   const {api}=setup();
@@ -246,7 +248,7 @@ test('missing or malformed hand geometry cannot be interpreted as a pinch',()=>{
   for(const aspect of [0,-1,NaN,Infinity,undefined])assert.equal(api.calculatePinchRatio(valid,aspect),null);
 });
 
-test('the serialized inference worker sends a measured pinch ratio and closes its frame',async()=>{
+test('the inference worker supports a steady palm light in the forest and precise index aiming for the fire',async()=>{
   const qa=setup();await qa.controller.start();
   const messages=[],landmarks=pinchLandmarks(.2,.2,16/9);
   const self={postMessage:message=>messages.push(message),close(){},Vision:{HandLandmarker:{
@@ -262,7 +264,30 @@ test('the serialized inference worker sends a measured pinch ratio and closes it
   assert.ok(Math.abs(messages.at(-1).points[0].pinchRatio-.2)<1e-12);
   assert.equal(messages.at(-1).points[0].x,landmarks[8].x);
   assert.equal(messages.at(-1).points[0].wristX,landmarks[0].x);
-  assert.equal(closed,1);
+
+  const observe = async (timestamp, usePalm) => {
+    await self.onmessage({data:{type:'frame',timestamp,usePalm,bitmap:{width:1280,height:720,close(){closed++;}}}});
+    return messages.at(-1).points[0];
+  };
+  landmarks[12] = {x: .5, y: .44}; // Folded middle finger, extended index.
+  const pointing = await observe(160, true);
+  assert.equal(pointing.x, landmarks[8].x);
+  assert.equal(pointing.y, landmarks[8].y);
+  landmarks[12] = {x: .5, y: .23}; // An open palm with several fingers extended.
+  const openPalm = await observe(200, true);
+  const expectedCenter = [0,5,9,17].reduce((y,index)=>y+landmarks[index].y,0)/4;
+  assert.equal(openPalm.y, expectedCenter);
+  landmarks[8] = {x: .55, y: .39};
+  const movedTip = await observe(240, true);
+  assert.equal(movedTip.x, openPalm.x);
+  assert.equal(movedTip.y, openPalm.y, 'wiggling an index finger on an open hand does not move the light');
+  for (const landmark of landmarks) landmark.x += .12;
+  const movedPalm = await observe(280, true);
+  assert.ok(Math.abs(movedPalm.x - openPalm.x - .12) < 1e-10, 'moving the whole palm moves the light');
+  const fire = await observe(320, false);
+  assert.equal(fire.x, landmarks[8].x);
+  assert.equal(fire.y, landmarks[8].y);
+  assert.equal(closed,6);
   qa.controller.stop();
 });
 

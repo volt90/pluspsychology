@@ -52,21 +52,25 @@ function harness() {
   };
 }
 
-test('G walks every screen without answering questions and stops at the final screen', () => {
+test('G shows the first question, then the sunlight example and its recommended postcard', () => {
   const app = harness();
   app.key();
   assert.equal(app.screen, 'check');
-  for (let index = 0; index < 8; index++) {
-    assert.equal(app.position.index, index);
-    assert.match(app.html, /data-action="next" disabled/);
-    app.key();
-  }
+  assert.match(app.html, /data-action="next" disabled/);
+  app.key();
   assert.equal(app.screen, 'result');
-  assert.equal((app.html.match(/<small>아직 답하지 않았어요<\/small>/g) || []).length, 8);
-  assert.doesNotMatch(app.html, /<rect /);
-  assert.equal(app.position.selected, 0);
+  assert.match(app.html, /시연용 예시 응답/);
+  assert.match(app.html, /햇빛부터/);
+  const scores = [...app.html.matchAll(/aria-label="([^"]+) 응답 (\d) \/ 4"/g)];
+  assert.equal(scores.length, 8);
+  assert.deepEqual(scores.filter(match => Number(match[2]) < 3).map(match => match[1]), ['햇빛']);
+  assert.match(app.html, /aria-label="햇빛 응답 1 \/ 4"/);
+  assert.equal((app.html.match(/class="sc-more"/g) || []).length, 1);
+  assert.equal(app.position.selected, 2);
   app.key();
   assert.equal(app.screen, 'postcard');
+  assert.match(app.html, /03-sunlight\.png/);
+  assert.match(app.html, /밝은 공간에 잠깐 머무르기/);
   app.key();
   assert.equal(app.screen, 'quiz');
   for (let index = 0; index < 8; index++) {
@@ -85,42 +89,42 @@ test('G walks every screen without answering questions and stops at the final sc
   assert.doesNotMatch(app.html, /class="sc-feedback"/);
 });
 
-test('skipping preserves real answers and chooses the lowest answered area, excluding nulls', () => {
+test('the demo never writes example scores into an actual survey', () => {
   const app = harness();
-  app.key();
-  app.key(); // Skip rest, leaving it null.
+  app.click('action', 'check');
+  app.click('answer', 0);
+  app.click('action', 'next');
   app.click('answer', 3);
   app.key();
-  app.key(); // Skip sunlight.
-  app.click('answer', 1);
-  app.key();
-  for (let index = 4; index < 8; index++) app.key();
   assert.equal(app.screen, 'result');
-  assert.equal(app.position.selected, 3);
-  assert.match(app.html, /자기표현부터/);
-  assert.equal((app.html.match(/<small>아직 답하지 않았어요<\/small>/g) || []).length, 6);
-  assert.equal((app.html.match(/<rect /g) || []).length, 2);
-  assert.match(app.html, /aria-label="관계 응답 3 \/ 4"/);
-  assert.match(app.html, /aria-label="자기표현 응답 1 \/ 4"/);
-  assert.equal((app.html.match(/class="sc-more"/g) || []).length, 1);
+  assert.match(app.html, /햇빛부터/);
+  app.back();
+  assert.equal(app.position.index, 1);
+  assert.match(app.html, /data-answer="3" aria-pressed="true"/);
+  app.click('action', 'next');
+  assert.equal(app.position.index, 2);
+  assert.match(app.html, /data-action="next" disabled/);
+  for (let index = 2; index < 8; index++) {
+    app.click('answer', 4);
+    app.click('action', 'next');
+  }
+  assert.equal(app.screen, 'result');
+  assert.match(app.html, /휴식부터/);
+  assert.doesNotMatch(app.html, /시연용 예시 응답/);
+  assert.equal(app.position.selected, 0);
 });
 
-test('ordinary check buttons still require all answers, including after a shortcut skip', () => {
+test('ordinary check buttons require all answers and recommend the lowest area', () => {
   const app = harness();
   app.click('action', 'check');
   app.click('action', 'next');
   assert.equal(app.position.index, 0);
-  app.key();
-  for (let index = 1; index < 8; index++) {
+  for (let index = 0; index < 8; index++) {
     app.click('action', 'next');
     assert.equal(app.position.index, index);
     app.click('answer', index === 4 ? 0 : 4);
     app.click('action', 'next');
   }
-  assert.equal(app.screen, 'check');
-  assert.equal(app.position.index, 0, 'normal final button returns to the skipped question');
-  app.click('answer', 2);
-  for (let index = 0; index < 8; index++) app.click('action', 'next');
   assert.equal(app.screen, 'result');
   assert.equal(app.position.selected, 4);
   assert.doesNotMatch(app.html, /아직 답하지 않았어요/);
@@ -128,18 +132,19 @@ test('ordinary check buttons still require all answers, including after a shortc
 
 test('demo results and selected postcards survive Back/Forward but not a new visit', () => {
   const app = harness();
-  for (let press = 0; press < 9; press++) app.key();
+  app.key();
+  app.key();
   assert.equal(app.screen, 'result');
   app.click('area', 5);
   const oldPostcard = app.position;
   app.click('action', 'back-result');
   assert.equal(app.screen, 'result');
   assert.equal(app.position.selected, 5);
-  assert.equal((app.html.match(/<small>아직 답하지 않았어요<\/small>/g) || []).length, 8);
+  assert.match(app.html, /시연용 예시 응답/);
   app.forward();
   assert.equal(app.screen, 'postcard');
   assert.match(app.html, /06-sleep\.png/);
-  assert.deepEqual(Object.keys(app.position).sort(), ['index', 'mindCare', 'quizIndex', 'screen', 'selected', 'visit']);
+  assert.deepEqual(Object.keys(app.position).sort(), ['demo', 'index', 'mindCare', 'quizIndex', 'screen', 'selected', 'visit']);
   const reloaded = harness();
   reloaded.restore(oldPostcard);
   assert.equal(reloaded.screen, 'home');
@@ -170,9 +175,9 @@ test('physical G, lowercase and uppercase work while repeats, modifiers and edit
   assert.equal(app.key({ code: 'KeyG', key: 'ㅎ' }).defaultPrevented, true);
   assert.equal(app.screen, 'check');
   app.key({ code: '', key: 'g' });
-  assert.equal(app.position.index, 1);
+  assert.equal(app.screen, 'result');
   app.key({ code: '', key: 'G', shiftKey: true });
-  assert.equal(app.position.index, 2);
+  assert.equal(app.screen, 'postcard');
 });
 
 test('OX answers and normal feedback remain available when mixing clicks with G', () => {

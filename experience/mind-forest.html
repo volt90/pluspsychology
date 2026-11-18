@@ -70,18 +70,17 @@ button { -webkit-tap-highlight-color: transparent; }
 .opening-footprint::after { inset: 73% 23% 0 24%; border-radius: 28% 27% 47% 43%; }
 @keyframes opening-footprint { 0% { opacity: 0; } 14% { opacity: .95; } 100% { opacity: .42; } }
 @keyframes opening-darken { 0%, 86% { opacity: 0; } 100% { opacity: 1; } }
-.opening-content { zoom: 2; zoom: clamp(1.12,calc(100vw / 405px),2); }
 .opening-content { width: min(100%, 740px); text-align: center; }
 .opening-music { position: absolute; top: max(12px,env(safe-area-inset-top)); right: max(12px,env(safe-area-inset-right)); display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #536c61; border-radius: 50%; background: #0c191d; color: #c9dacd; cursor: pointer; }
 .opening-music svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .opening-music[aria-pressed="true"] .opening-music-slash, .opening-music[aria-pressed="false"] .opening-music-waves { display: none; }
 .opening-light { width: 34px; height: 34px; margin-bottom: 22px; fill: none; stroke: #e9eed7; stroke-width: 1; }
-.opening-world { margin: 0 0 30px; font-family: "Black Han Sans", "Anemone Air"; font-size: 13px; font-weight: 400; color: #a8bfb1; }
-#opening-title { margin: 0; font-family: "Anemone Air", "Black Han Sans"; font-size: clamp(27px,3.2vw,46px); line-height: 1.65; font-weight: 400; letter-spacing: -.02em; color: #f3f1df; word-break: keep-all; }
+.opening-world { margin: 0 0 20px; font-family: "Black Han Sans", "Anemone Air"; font-size: 16px; font-weight: 400; color: #a8bfb1; }
+#opening-title { margin: 0; font-family: "Anemone Air", "Black Han Sans"; font-size: clamp(34px,4.2vw,58px); line-height: 1.42; text-wrap: balance; font-weight: 400; letter-spacing: -.02em; color: #f3f1df; word-break: keep-all; }
 #opening-title span { display: block; animation: opening-words 1.2s ease both; }
 #opening-title span:first-child { animation-delay: .15s; }
 #opening-title span:last-child { animation-delay: .75s; }
-.opening-next { margin: 36px 0 0; min-height: 44px; border: 1px solid #536c61; border-radius: 24px; padding: 0 22px; background: transparent; color: #d1dece; font-size: 15px; cursor: pointer; }
+.opening-next { margin: 28px 0 0; min-height: 48px; border: 1px solid #536c61; border-radius: 24px; padding: 0 22px; background: transparent; color: #d1dece; font-size: 17px; cursor: pointer; }
 .opening-next:hover { background: #203a35; border-color: #9ab398; }
 .opening-next.is-inviting, #start-button.is-inviting { animation: opening-invite 2.5s ease-in-out infinite; }
 @keyframes opening-invite {
@@ -93,18 +92,11 @@ button { -webkit-tap-highlight-color: transparent; }
 @keyframes opening-words { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { #opening-title span, .start-screen.from-opening .start-content { animation: none; } .opening-next.is-inviting, #start-button.is-inviting { animation: none; box-shadow: 0 0 14px rgba(235,246,186,.4); } .opening-footprint { animation-timing-function: steps(1,end); animation-duration: .01ms; } .opening-screen.is-walking::after { animation-timing-function: steps(1,end); } }
 .start-content { text-align: center; width: min(100%, 470px); }
-.start-world { font-family: "Black Han Sans", "Anemone Air"; font-size: 14px; color: #b8cabe; margin: 7px 0 14px; }
-.start-content h2 { font-family: "Black Han Sans", "Anemone Air"; font-size: clamp(29px,3.3vw,44px); font-weight: 400; line-height: 1.25; margin: 0 0 12px; letter-spacing: -.035em; color: #f6f5df; }
-#start-description { font-size: 20px; line-height: 1.45; color: #ccd7c9; margin: 0 0 clamp(16px,3.2svh,32px); word-break: keep-all; }
-#start-description strong { font-weight: 400; color: #faf8e4; }
-.start-group { white-space: nowrap; }
-.start-group svg { width: 1.05em; height: 1.05em; margin-inline-end: .28em; vertical-align: -.17em; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+.start-content h2 { font-family: "Black Han Sans", "Anemone Air"; font-size: clamp(27px,3.2vw,42px); font-weight: 400; line-height: 1.25; margin: 12px 0 8px; letter-spacing: -.025em; word-break: keep-all; text-wrap: balance; color: #f6f5df; }
+#start-description { font-size: 17px; line-height: 1.45; color: #ccd7c9; margin: 0 0 20px; }
 #start-button { --invite-color: #edf6df; display: block; width: min(290px,100%); margin: 0 auto; border: 1px solid #c2d3ac; border-radius: 28px; background: #d4dfc5; color: #132b29; min-height: 52px; font-size: 20px; cursor: pointer; }
 #start-button:hover { background: #e5eddb; }
 .start-keyboard { font-size: 13px; line-height: 1.6; margin: 8px 0 0; color: #a6b9ad; word-break: keep-all; }
-.start-input-icons { display: inline-flex; align-items: center; vertical-align: middle; gap: 7px; margin: 0 4px; color: #c4d4c2; }
-.start-input-icons svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.start-input-icons .direction-keys-icon { width: 27px; height: 18px; stroke-width: 1.25; }
 .direction-demo { width: 126px; height: 126px; position: relative; margin: 0 auto; display: grid; place-items: center; }
 .direction-demo img { height: 86px; width: auto; }
 .demo-orbit { position: absolute; inset: 3px; border: 1px dashed rgba(206,225,196,.28); border-radius: 50%; animation: show-orbit 4s linear infinite; }
@@ -195,19 +187,14 @@ button { -webkit-tap-highlight-color: transparent; }
 .heading { position: absolute; left: clamp(24px, 4.3vw, 80px); top: clamp(25px, 5vh, 64px); pointer-events: none; transition: opacity 2.8s ease; }
 .world-name { display: flex; align-items: center; gap: 8px; margin: 0 0 24px; font-family: "Black Han Sans", "Anemone Air"; font-size: 13px; color: #c2cdc2; letter-spacing: .015em; }
 .world-mark { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.2; }
-h1 { font-family: "Black Han Sans", "Anemone Air"; font-weight: 400; font-size: clamp(34px, 3.2vw, 55px); letter-spacing: -.035em; margin: 0 0 20px; line-height: 1.2; }
-.intro { margin: 0; color: #bbc9c1; font-size: 16px; line-height: 1.65; letter-spacing: 0; }
-body.exploring .heading { opacity: .16; }
+h1 { font-family: "Black Han Sans", "Anemone Air"; font-weight: 400; font-size: clamp(44px,4.4vw,68px); letter-spacing: -.035em; margin: 0 0 12px; line-height: 1.14; }
+.intro { margin: 0; color: #bbc9c1; font-size: 18px; line-height: 1.55; word-break: keep-all; }
+body.exploring .heading { opacity: .38; }
 body.exploring .heading .intro { opacity: 0; }
-.camera-panel { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(1.5); width: clamp(126px, 22vw, 176px); pointer-events: none; border: 1px solid #3a5156; border-radius: 12px; background: rgba(9,25,31,.92); overflow: hidden; }
-.camera-panel { transition: opacity .22s ease; }
-.camera-panel.is-dismissed { opacity: 0; }
-#experience:has(.camera-panel:not([hidden]):not(.is-dismissed)) .sleeping-notice { top: max(12px, 5svh); }
-.camera-preview { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #08151b; }
-#camera-video { width: 100%; height: 100%; object-fit: fill; opacity: .8; display: block; transform: none; }
-.camera-dot { position: absolute; width: 9px; height: 9px; transform: translate(-50%,-50%); border-radius: 50%; background: #fffce5; box-shadow: 0 0 8px #f5f5cd; }
+.camera-panel { position: absolute; bottom: calc(76px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: min(360px, calc(100% - 32px)); pointer-events: none; border: 1px solid #3a5156; border-radius: 12px; background: rgba(9,25,31,.92); text-align: center; }
+/* Keep the inline video available to the tracker and photo canvas without displaying it. */
+#camera-video { position: absolute; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 #camera-status { font-size: 13px; line-height: 1.5; margin: 0; padding: 10px 12px; color: #d4ded4; overflow-wrap: anywhere; }
-#experience[data-camera-state="tracking"] .camera-panel { border-color: #99b298; }
 nav button[aria-pressed="true"]#camera-toggle { border-color: #718d80; background: #233d40; }
 .controls { position: absolute; bottom: max(22px, env(safe-area-inset-bottom)); left: clamp(22px, 4.3vw, 80px); right: clamp(22px, 4.3vw, 80px); display: flex; justify-content: space-between; align-items: center; gap: 16px; pointer-events: none; }
 .quiet-note { font-size: 14px; color: #c0cdc4; opacity: .75; letter-spacing: 0; }
@@ -224,7 +211,6 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
 .help-panel dl { display: grid; grid-template-columns: 70px 1fr; row-gap: 5px; margin: 22px 0; font-size: 15px; }
 .help-panel dt { color: #f2ecd7; }
 .help-panel dd { margin: 0; }
-#experience[data-camera-mirrored="true"] #camera-video { transform: scaleX(-1); }
 #encounters { position: absolute; inset: 0; pointer-events: none; }
 .encounter { position: absolute; pointer-events: none; text-align: center; display: flex; align-items: center; flex-direction: column; gap: 7px; opacity: 0; transform: translate(-50%, -100%); transition: opacity .45s ease; width: max-content; max-width: min(260px, calc(100vw - 32px)); }
 .encounter.visible { opacity: 1; }
@@ -234,18 +220,21 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
 .load-error { position: absolute; inset: 40% 20px auto; max-width: 540px; margin: auto; padding: 22px; background: #173039; color: #ffebd2; border: 1px solid #829183; border-radius: 6px; font-size: 14px; line-height: 1.8; }
 @media (pointer: coarse) { #forest { cursor: auto; } }
 @media (max-width: 620px) {
-  .camera-panel { top: 42%; }
+  .opening-world { margin-bottom: 16px; font-size: 13px; }
+  #opening-title { font-size: clamp(23px,6.15vw,34px); }
+  .opening-next { margin-top: 24px; min-height: 44px; font-size: 15px; }
   .heading { top: max(16px, env(safe-area-inset-top)); left: 18px; }
   .world-name { margin-bottom: 8px; font-size: 11px; }
-  .heading h1 { font-size: 26px; margin-bottom: 8px; }
-  .intro { font-size: 12px; line-height: 1.45; }
+  .heading h1 { font-size: clamp(34px,9vw,46px); margin-bottom: 8px; }
+  .intro { font-size: 15px; line-height: 1.45; }
   .quiet-note { display: none; }
   .controls { left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); justify-content: center; }
   nav { gap: 3px; width: 100%; justify-content: center; }
   nav button { background: rgba(7,23,29,.7); padding: 5px 6px; min-height: 50px; min-width: 44px; font-size: clamp(10px,2.9vw,11px); flex-direction: column; gap: 4px; white-space: nowrap; }
   #camera-status { font-size: 12px; padding: 8px; }
-  .start-content h2 { font-size: 31px; }
-  #start-description { font-size: 18px; }
+  .start-content h2 { font-size: clamp(23px,6.3vw,31px); }
+  #start-description { font-size: 15px; margin-bottom: 16px; }
+  #start-button { min-height: 46px; font-size: 17px; }
   .direction-demo { width: 106px; height: 106px; }
   .direction-demo img { height: 76px; }
   .encounter { max-width: 200px; }
@@ -253,9 +242,14 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
   .friend-words { font-size: 14px; line-height: 1.4; padding: 8px 10px; }
 }
 @media (max-height: 460px) {
-  .camera-panel { top: 50%; width: 116px; transform: translate(-50%, -50%) scale(clamp(1, calc((100svh - 144px) / 154px), 1.5)); }
-  #camera-status { font-size: 12px; padding: 6px 8px; }
-  #experience:has(.camera-panel:not([hidden]):not(.is-dismissed)) .sleeping-notice { padding-block: 8px; font-size: 22px; }
+  .opening-light { margin-bottom: 12px; }
+  .opening-world { margin-bottom: 12px; }
+  #opening-title { font-size: clamp(23px,6.3svh,36px); }
+  .opening-next { margin-top: 16px; }
+  .direction-demo { width: 76px; height: 76px; }
+  .direction-demo img { height: 52px; }
+  .start-content h2 { font-size: clamp(23px,6.5svh,32px); }
+  #start-description { margin-bottom: 10px; }
 }
 @media (max-width: 620px) and (orientation: portrait) {
   #experience[data-stage="forest"] #camera-status { font-size: 12px; line-height: 1.4; padding: 7px 10px; text-align: center; }
@@ -266,7 +260,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
   }
   #experience[data-stage="forest"] .rub-hand { font-size: 22px; animation: none; }
   #experience[data-stage="forest"] .rub-guide p { padding: 0; font-size: 13px; line-height: 1.4; }
-  #experience[data-stage="forest"]:not([data-camera-state="tracking"]):has(.camera-panel:not([hidden]):not(.is-dismissed)) .rub-guide { visibility: hidden; }
+  #experience[data-stage="forest"]:has(.camera-panel:not([hidden])) .rub-guide { visibility: hidden; }
   #experience[data-stage="forest"] .sleeping-notice { display: none; }
   #experience[data-stage="forest"] .encounter {
     top: calc(128px + env(safe-area-inset-top)) !important; left: 50% !important;
@@ -279,7 +273,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
 </head>
 <body>
   <main id="experience" data-started="false" aria-label="김심리월드, 고요한 숲">
-    <canvas id="forest" tabindex="-1" aria-label="고요한 숲. 카메라 앞에서 검지 끝으로 빛을 옮겨 보세요. 카메라를 끄면 마우스, 화면 터치, 방향키로 조작할 수 있어요.">손끝의 빛으로 친구들을 깨우고, 함께 온기를 나누는 김심리월드 체험전시.</canvas>
+    <canvas id="forest" tabindex="-1" aria-label="고요한 숲. 검지나 손바닥을 움직이면 빛이 따라와요. 마우스, 화면 터치, 방향키로도 조작할 수 있어요.">손끝의 빛으로 친구들을 깨우고, 함께 온기를 나누는 김심리월드 체험전시.</canvas>
 
     <section id="opening-screen" class="opening-screen" role="dialog" aria-modal="true" aria-labelledby="opening-title">
       <button id="opening-music" class="opening-music" type="button" aria-label="첫 화면 배경음" aria-pressed="false" title="배경음 켜기">
@@ -300,39 +294,25 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
           <img src="data:image/png;base64,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" alt="">
           <span class="demo-orbit"><span></span></span>
         </div>
-        <p class="start-world">김심리월드 · 서로의 빛을 느낀다는 것</p>
-        <h2 id="start-title">친구 주변에<br>빛을 비춰 주세요.</h2>
-        <p id="start-description">검지 끝으로 화면을 가리키고<br><strong>캐릭터 친구 위에 빛이 머물게 해주세요.</strong><br><span class="start-group"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="2.5"/><path d="M4 18v-1a5 5 0 0 1 10 0v1M15.5 5.5a2.2 2.2 0 0 1 0 4.4M16 13a4 4 0 0 1 4 4v1"/></svg>1~4명</span>이 함께 할 수 있어요.</p>
+        <h2 id="start-title">숲의 친구들을 깨워 주세요.</h2>
+        <p id="start-description">1~4명이 함께할 수 있어요.</p>
         <button id="start-button" type="button">시작하기</button>
-        <p class="start-keyboard">카메라 없이도
-          <span class="start-input-icons" role="img" aria-label="마우스, 화면 터치, 방향키" title="마우스 · 화면 터치 · 방향키">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="6"/><path d="M12 6v4"/></svg>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 21 6 16a1.7 1.7 0 0 1 2.5-2.2l1.5 1.7V7a1.6 1.6 0 0 1 3.2 0v5l3.5.7a2.8 2.8 0 0 1 2.2 3.1L18 21Z"/><path d="M7 6a5 5 0 0 1 9.3-2"/></svg>
-            <svg class="direction-keys-icon" viewBox="0 0 34 22" aria-hidden="true">
-              <rect x="12" y="1" width="10" height="9" rx="1.5"/><rect x="1" y="12" width="10" height="9" rx="1.5"/>
-              <rect x="12" y="12" width="10" height="9" rx="1.5"/><rect x="23" y="12" width="10" height="9" rx="1.5"/>
-              <path d="M17 8V3.5m-2 2 2-2 2 2M8.3 16.5H3.8m2-2-2 2 2 2m11.2-4.2v4.5m-2-2 2 2 2-2m6.7-.3h4.5m-2-2 2 2-2 2"/>
-            </svg>
-          </span>로 즐길 수 있어요.
-        </p>
+        <p class="start-keyboard">카메라 없이도 마우스나 터치, 방향키로 체험할 수 있어요.</p>
       </div>
     </section>
 
     <header class="heading" aria-label="고요한 숲">
       <p class="world-name"><svg class="world-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5"/></svg> 김심리월드</p>
       <h1>고요한 숲</h1>
-      <p class="intro">친구들에게<br>당신의 빛을 건네 보세요.</p>
+      <p class="intro">친구들에게 빛을 건네 보세요.</p>
     </header>
 
     <div id="encounters" aria-label="친구들의 이야기"></div>
-    <div id="rub-guide" class="rub-guide" hidden aria-hidden="true"><span class="rub-hand">👆</span><p>친구에게 빛을 비춰주세요.</p></div>
+    <div id="rub-guide" class="rub-guide" hidden aria-hidden="true"><span class="rub-hand">👆</span><p>친구 주변을 빛으로 쓸어 보세요.</p></div>
     <p id="sleeping-notice" class="sleeping-notice" role="status" hidden>아직 깨어나지 않은 친구가 있어요!</p>
 
-    <aside id="camera-panel" class="camera-panel" hidden aria-label="손끝으로 빛 옮기기">
-      <div id="camera-preview" class="camera-preview" hidden>
-        <video id="camera-video" autoplay muted playsinline aria-hidden="true"></video>
-        <span id="camera-dot" class="camera-dot" hidden aria-hidden="true"></span>
-      </div>
+    <video id="camera-video" muted playsinline aria-hidden="true"></video>
+    <aside id="camera-panel" class="camera-panel" hidden aria-label="손 인식 상태">
       <p id="camera-status" role="status" aria-live="polite"></p>
     </aside>
 
@@ -359,7 +339,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
 
     <aside id="help-panel" class="help-panel" hidden aria-label="조작 안내">
       <div class="help-title"><h2>빛으로 깨우는 친구들</h2><button id="help-close" type="button" aria-label="안내 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div>
-      <p>카메라 앞에 최대 네 명이 함께할 수 있어요.<br>각자 검지를 화면쪽으로 가리키면<br>손끝마다 색이 다른 빛이 따라가요.</p>
+      <p>카메라 앞에서 검지나 손바닥을 움직이면 빛이 따라가요. 최대 네 명이 한 손씩 사용할 수 있어요.</p>
       <p>‘카메라 끄기’를 누르고<br>마우스/화면 터치/방향키로<br>빛을 옮길 수 있어요.</p>
       <p>친구의 얼굴과 몸 주변을 빙글빙글 맴돌아 보세요. 잔잔한 소리와 함께 빛이 모여요.<br>충분한 빛이 모이면 친구가 깨어나 인사를 건네요.</p>
       <p>오른쪽으로 움직였을 때 빛도 오른쪽으로 움직이는지 확인해 주세요. 반대로 움직인다면 <strong>N키</strong>를 눌러 웹캠의 좌우 방향을 바꿔 주세요. 숲과 모닥불, 사진에 함께 적용돼요.</p>
@@ -1476,7 +1456,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   const TRACKING_GRACE_MS = 400;
   const MAX_HANDS = 4;
-  const HAND_SEARCH_MESSAGE = '한 사람에 한 손씩, 최대 네 손을 카메라에 보여 주세요.';
+  const HAND_SEARCH_MESSAGE = '검지 끝을 카메라 쪽으로 향해 주세요.';
   const clamp = value => Math.max(0, Math.min(1, value));
   const median = values => {const sorted=[...values].sort((a,b)=>a-b),middle=Math.floor(sorted.length/2);return sorted.length%2?sorted[middle]:(sorted[middle-1]+sorted[middle])/2;};
 
@@ -1484,7 +1464,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) return null;
     // Out-of-frame landmarks are a lost hand, not a light pinned to an edge.
     if (point.x < 0 || point.x > 1 || point.y < 0 || point.y > 1) return null;
-    // Use the same horizontal direction for the forest, fire and camera preview.
+    // Use the same horizontal direction for the forest and fire.
     // Do not apply a second scene-specific flip to the detector coordinates.
     const rawX = point.x, rawY = point.y;
     // A wider working area and gentler filtering reduce motion amplification.
@@ -1502,6 +1482,27 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     const palmSize = Math.max(distance(landmarks[5], landmarks[17]), distance(landmarks[0], landmarks[9]));
     if (palmSize <= 1e-6) return null;
     return distance(landmarks[4], landmarks[8]) / palmSize;
+  }
+
+  function forestLightPosition(landmarks, aspectRatio) {
+    const [wrist, indexBase, tip, middleBase, middleTip, pinkyBase] = [0, 5, 8, 9, 12, 17].map(index => landmarks[index]);
+    const valid = point => Number.isFinite(point?.x) && Number.isFinite(point?.y);
+    if (![wrist, indexBase, middleBase, pinkyBase].every(valid)) return tip;
+    const palm = {
+      x: (wrist.x + indexBase.x + middleBase.x + pinkyBase.x) / 4,
+      y: (wrist.y + indexBase.y + middleBase.y + pinkyBase.y) / 4
+    };
+    if (!valid(tip) || !valid(middleTip) || tip.x < 0 || tip.x > 1 || tip.y < 0 || tip.y > 1) return palm;
+    const distance = (a, b) => Math.hypot((a.x - b.x) * aspectRatio, a.y - b.y);
+    const palmSize = Math.max(distance(indexBase, pinkyBase), distance(wrist, middleBase));
+    if (palmSize < 1e-6) return palm;
+    const indexReach = distance(indexBase, tip) / palmSize;
+    const middleReach = distance(middleBase, middleTip) / palmSize;
+    const clamp = value => Math.max(0, Math.min(1, value));
+    // A single extended index finger aims precisely. An open or relaxed hand
+    // uses the steadier palm, with continuous blending between the two poses.
+    const tipWeight = clamp((indexReach - .35) / .28) * clamp((.62 - middleReach) / .26);
+    return {x: palm.x + (tip.x - palm.x) * tipWeight, y: palm.y + (tip.y - palm.y) * tipWeight};
   }
 
   function createPinchTracker(nextSequence) {
@@ -1656,7 +1657,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   // A classic worker supports opaque file:// origins in the single-HTML build.
   // The official IIFE bundle and classic Wasm loader need no module imports.
   // MediaPipe's synchronous inference never runs on the UI thread.
-  function workerMain(maxHands, calculatePinchRatio) {
+  function workerMain(maxHands, calculatePinchRatio, forestLightPosition) {
     let detector = null;
     self.onmessage = async event => {
       const data = event.data;
@@ -1677,10 +1678,12 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
           try {
             if (!detector) throw new Error('The hand detector is not ready.');
             const result = detector.detectForVideo(data.bitmap, data.timestamp);
+            const aspectRatio = data.bitmap.width / data.bitmap.height;
             const points = (result.landmarks || []).flatMap(landmarks => {
-              const tip = landmarks[8], wrist = landmarks[0];
-              return tip ? [{x: tip.x, y: tip.y, wristX: wrist?.x, wristY: wrist?.y,
-                pinchRatio: calculatePinchRatio(landmarks, data.bitmap.width / data.bitmap.height)}] : [];
+              const point = data.usePalm ? forestLightPosition(landmarks, aspectRatio) : landmarks[8];
+              const wrist = landmarks[0];
+              return point ? [{x: point.x, y: point.y, wristX: wrist?.x, wristY: wrist?.y,
+                pinchRatio: calculatePinchRatio(landmarks, aspectRatio)}] : [];
             });
             self.postMessage({type: 'result', timestamp: data.timestamp, points});
           } finally { data.bitmap?.close(); }
@@ -1826,7 +1829,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     throw cameraError;
   }
 
-  function create({video, onPoints = () => {}, onState = () => {}}) {
+  function create({video, onPoints = () => {}, onState = () => {}, usePalm = () => false}) {
     if (!video) throw new Error('A webcam video element is required.');
     let epoch = 0, stream = null, worker = null, startPromise = null;
     let animation = 0, timeout = 0, inFlight = false, frameStarted = 0;
@@ -1918,7 +1921,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       try {
         const bitmap = await createImageBitmap(video);
         if (session !== epoch || !ready || paused) { bitmap.close(); if (session === epoch) inFlight = false; return; }
-        worker.postMessage({type: 'frame', bitmap, timestamp: now}, [bitmap]);
+        worker.postMessage({type: 'frame', bitmap, timestamp: now, usePalm: usePalm()}, [bitmap]);
       } catch (error) {
         if (session === epoch) { inFlight = false; fail('카메라 영상을 읽지 못했어요. 카메라를 다시 켜 주세요.', error); }
       }
@@ -1965,8 +1968,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       }
       let playbackReady = false;
       try {
-        video.muted = true; video.autoplay = true; video.playsInline = true; video.srcObject = stream;
-        // Show the preview before waiting for playback or loading the model.
+        video.muted = true; video.playsInline = true; video.srcObject = stream;
         notify('connecting', '카메라 영상을 연결하고 있어요.', true);
         const play = video.play();
         await new Promise((resolve, reject) => {
@@ -1979,7 +1981,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         playbackReady = true;
         notify('loading', '카메라가 연결됐어요. 손 인식을 준비하고 있어요.', true);
         const assets = Object.fromEntries(Object.entries(ASSETS).map(([key, path]) => [key, assetURL(path)]));
-        const source = '(' + workerMain.toString() + ')(' + MAX_HANDS + ',' + calculatePinchRatio.toString() + ');';
+        const source = '(' + workerMain.toString() + ')(' + MAX_HANDS + ',' + calculatePinchRatio.toString() + ',' + forestLightPosition.toString() + ');';
         const workerURL = URL.createObjectURL(new Blob([source], {type: 'text/javascript'})); objectURLs.add(workerURL);
         worker = new Worker(workerURL, {name: 'forest-hand-tracking'});
         await new Promise((resolve, reject) => {
@@ -2066,27 +2068,6 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const asset = window.resolveForestAsset || (path => path);
   const startScreen = document.getElementById('start-screen');
   const startButton = document.getElementById('start-button');
-  function fitStartScreen() {
-    if (startScreen.hidden) return;
-    const content = startScreen.querySelector('.start-content');
-    const style = getComputedStyle(startScreen);
-    const spaceWidth = startScreen.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-    const spaceHeight = startScreen.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) - 16;
-    let scale = Math.min(2, Math.max(1.12, startScreen.clientWidth / 405));
-    content.style.zoom = scale;
-    // Fit the complete guide, including its button and input icons, to the
-    // actual viewport. Font loading and OS/browser scaling can change its size.
-    for (let pass = 0; pass < 2; pass++) {
-      const bounds = content.getBoundingClientRect();
-      if (!bounds.width || !bounds.height) return;
-      const ratio = Math.min(1, spaceWidth / bounds.width, spaceHeight / bounds.height);
-      if (ratio >= 1) break;
-      scale *= ratio;
-      content.style.zoom = scale;
-    }
-  }
-  new ResizeObserver(fitStartScreen).observe(startScreen);
-  document.fonts.ready.then(fitStartScreen);
   const openingScreen = document.getElementById('opening-screen');
   const openingNext = document.getElementById('opening-next');
   const openingFootprints = document.getElementById('opening-footprints');
@@ -2268,8 +2249,6 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const compactForest = matchMedia('(max-width: 620px) and (orientation: portrait)');
   let activePointerId = null;
   let hand = null, cameraActive = false, windowBlurred = false, resumeCamera = false;
-  let cameraPreviewDismissed = false, cameraPreviewStartedAt = 0;
-  const cameraPreviewOrigins = new Map();
   const keys = new Set();
   const lightColors = ['#fffef0', '#aef4cd', '#a9dcff', '#ffc6de'];
   function newLight(color) {
@@ -2278,14 +2257,6 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   }
   const pointer = newLight(lightColors[0]);
   const cameraLights = new Map();
-  const firstDot = document.getElementById('camera-dot');
-  const cameraDots = lightColors.map((color, id) => {
-    const dot = id === 0 ? firstDot : firstDot.cloneNode();
-    if (id !== 0) { dot.removeAttribute('id'); firstDot.parentNode.append(dot); }
-    dot.style.backgroundColor = color;
-    dot.style.boxShadow = `0 0 8px ${color}`;
-    return dot;
-  });
   const particles = [];
   const maxParticles = 240;
   const friends = [
@@ -2450,7 +2421,6 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   function releaseLight(){
     pointer.active=false;activePointerId=null;pointer.trailDistance=0;keys.clear();
     cameraLights.clear();
-    for (const dot of cameraDots) dot.hidden = true;
     canvas.dataset.cameraLights = '0';
     audio.updateCharge({active:false});
   }
@@ -2459,49 +2429,19 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     const tracking = help.hidden && (stage === 'forest' || (stage === 'fire' && !fireTimer));
     hand?.setPaused(!tracking || unavailable, stage === 'photo' && !unavailable);
   }
-  function resetCameraPreview() {
-    cameraPreviewDismissed = false;
-    cameraPreviewStartedAt = performance.now();
-    cameraPreviewOrigins.clear();
-    const panel = document.getElementById('camera-panel');
-    panel.classList.remove('is-dismissed');
-    panel.setAttribute('aria-hidden', 'false');
-  }
-  function updateCameraPreview(points, now) {
-    if (cameraPreviewDismissed || !cameraActive) return;
-    const visibleIds = new Set(points.map(point => point.id));
-    for (const id of cameraPreviewOrigins.keys()) if (!visibleIds.has(id)) cameraPreviewOrigins.delete(id);
-    for (const point of points) {
-      if (point.held || !Number.isFinite(point.x) || !Number.isFinite(point.y)) continue;
-      const origin = cameraPreviewOrigins.get(point.id);
-      if (!origin || point.reset) {
-        cameraPreviewOrigins.set(point.id, {x: point.x, y: point.y});
-        continue;
-      }
-      // Ignore tracking tremor; allow a short first look before clearing the characters.
-      if (now - cameraPreviewStartedAt < 700 || Math.hypot(point.x - origin.x, point.y - origin.y) < .03) continue;
-      cameraPreviewDismissed = true;
-      const panel = document.getElementById('camera-panel');
-      panel.classList.add('is-dismissed');
-      panel.setAttribute('aria-hidden', 'true');
-      // Only hide the display: the video and hand tracker keep running.
-      break;
-    }
-  }
   function cameraPoints(points) {
     // Apply the display preference after filtering, once for every scene.
-    if (cameraMirrored) points = points.map(point => ({...point, x: 1 - point.x, rawX: 1 - point.rawX}));
+    if (cameraMirrored) points = points.map(point => ({...point, x: 1 - point.x}));
     if (stage === 'fire') {
       if (started && cameraActive && help.hidden && !document.hidden && !windowBlurred && !fireTimer) moveCameraEmber(points);
       return;
     }
     const visibleIds = new Set(points.map(point => point.id));
     for (const id of cameraLights.keys()) {
-      if (!visibleIds.has(id)) { cameraLights.delete(id); cameraDots[id].hidden = true; }
+      if (!visibleIds.has(id)) cameraLights.delete(id);
     }
     if (!started || stage !== 'forest' || !help.hidden || document.hidden || windowBlurred) return;
     const now = performance.now();
-    updateCameraPreview(points, now);
     for (const point of points) {
       let light = cameraLights.get(point.id);
       if (!light || point.reset) {
@@ -2516,23 +2456,17 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
         moveLight(point.x * width, point.y * height, now, light);
       }
       light.held = point.held;
-      const dot = cameraDots[point.id];
-      dot.hidden = false;
-      dot.style.left = point.rawX * 100 + '%';
-      dot.style.top = point.rawY * 100 + '%';
     }
     canvas.dataset.cameraLights = String(cameraLights.size);
   }
   function cameraState(info){
     const changed=cameraActive!==Boolean(info.active);cameraActive=Boolean(info.active);
-    if (changed || info.status === 'idle' || info.status === 'error') resetCameraPreview();
     if(changed||info.status!=='tracking')releaseLight();
     if (stage === 'fire') updateFireGuide();
     const experience=document.getElementById('experience');experience.dataset.cameraState=info.status;experience.dataset.inputSource=cameraActive?'camera':'pointer';
     const button=document.getElementById('camera-toggle');
     const label=cameraActive?'카메라 끄기':'카메라 켜기';button.setAttribute('aria-pressed',String(cameraActive));button.setAttribute('aria-label',label);document.getElementById('camera-label').textContent=label;
-    document.getElementById('camera-panel').hidden=!started||info.status==='idle';
-    document.getElementById('camera-preview').hidden=!cameraActive||!document.getElementById('camera-video').srcObject;
+    document.getElementById('camera-panel').hidden = !started || info.status === 'idle' || info.status === 'tracking';
     document.getElementById('camera-status').textContent=info.message;
   }
   function toggleCamera(){if(!started||!hand)return;if(cameraActive)hand.stop();else{syncCameraPause();void hand.start();}}
@@ -3342,6 +3276,52 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     event.preventDefault();
     fireKeyHeld = false;
   }
+  function drawPhotoSticker(context, friend, width, height) {
+    const scale = 2;
+    const radius = 4 * scale;
+    // Keep a clear margin so the circle never samples across rows.
+    const padding = radius * 2;
+    const sticker = document.createElement('canvas');
+    sticker.width = Math.ceil(width * scale) + padding * 2;
+    sticker.height = Math.ceil(height * scale) + padding * 2;
+    const c = sticker.getContext('2d');
+    c.imageSmoothingQuality = 'high';
+    const drawCharacter = () => c.drawImage(friend.image, ...friend.crop, padding, padding, width * scale, height * scale);
+    drawCharacter();
+
+    // Expand just the alpha channel by a disk and downsample after the colour
+    // artwork is back on top. This gives the white edge a continuous curve.
+    const stride = sticker.width * 4;
+    const source = c.getImageData(0, 0, sticker.width, sticker.height).data;
+    const outline = c.createImageData(sticker.width, sticker.height);
+    const offsets = [];
+    for (let y = -radius; y <= radius; y++) {
+      const reach = Math.floor(Math.sqrt(radius * radius - y * y));
+      for (let x = -reach; x <= reach; x++) offsets.push(y * stride + x * 4);
+    }
+    for (let y = radius; y < sticker.height - radius; y++) {
+      for (let x = radius; x < sticker.width - radius; x++) {
+        const pixel = y * stride + x * 4;
+        let alpha = source[pixel + 3];
+        if (alpha < 255) {
+          for (const offset of offsets) {
+            alpha = Math.max(alpha, source[pixel + offset + 3]);
+            if (alpha === 255) break;
+          }
+        }
+        if (!alpha) continue;
+        outline.data[pixel] = 255;
+        outline.data[pixel + 1] = 253;
+        outline.data[pixel + 2] = 247;
+        outline.data[pixel + 3] = alpha;
+      }
+    }
+    c.putImageData(outline, 0, 0);
+    drawCharacter();
+    context.imageSmoothingQuality = 'high';
+    context.drawImage(sticker, -width / 2 - padding / scale, -height - padding / scale,
+      sticker.width / scale, sticker.height / scale);
+  }
   function makePhotoDecoration() {
     const decoration = document.createElement('canvas');
     decoration.width = photoCanvas.width;
@@ -3388,14 +3368,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       const [x, y, h, angle] = stickers[friend.id];
       const w = h * friend.crop[2] / friend.crop[3];
       c.save(); c.translate(x, y); c.rotate(angle);
-      // The ivory outline gives each character the edge of a cut-out sticker.
-      c.filter = 'brightness(0) invert(1)';
-      for (let i = 0; i < 8; i++) {
-        const edge = i * Math.PI / 4;
-        c.drawImage(friend.image, ...friend.crop, -w / 2 + Math.cos(edge) * 5, -h + Math.sin(edge) * 5, w, h);
-      }
-      c.filter = 'none';
-      c.drawImage(friend.image, ...friend.crop, -w / 2, -h, w, h);
+      drawPhotoSticker(c, friend, w, h);
       c.restore();
     }
     c.lineWidth = 2.5;
@@ -4094,7 +4067,9 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   document.getElementById('camera-toggle').addEventListener('click',toggleCamera);
   cameraVideo.addEventListener('loadedmetadata', applyCameraDeviceOrientation);
   updateCameraOrientationButtons();
-  hand=window.ForestHandTracking?.create({video:document.getElementById('camera-video'),onPoints:cameraPoints,onState:cameraState})||null;
+  hand = window.ForestHandTracking?.create({
+    video: cameraVideo, onPoints: cameraPoints, onState: cameraState, usePalm: () => stage === 'forest'
+  }) || null;
   window.ForestCamera=hand;
   experience.dataset.stage='forest';experience.dataset.cameraState='idle';experience.dataset.inputSource='pointer';
   addEventListener('resize',()=>{resize();if(!openingFootprints.hidden)placeOpeningFootprints();if(stage==='fire')parkEmber();});
