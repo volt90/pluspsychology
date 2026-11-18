@@ -69,12 +69,16 @@ function photoSetup() {
     stage: 'photo', flowVersion: 3, photoCaptured: true, photoPreviewReady: true, photoPersonMode: 'mediapipe',
     photoBackdropIndex: 0, photoBackdropChosen: true, photoBackdropLocked: true, photoBackdropCandidate: 2,
     returnTimer: 10, photoAutoTimer: 11, idleTimer: 12, photoAutoDelay: 7000,
+    photoResultSeconds: 30, performance: {now: () => 1000},
     photoObjectURL: 'blob:previous-photo', document: {hidden: false}, help: {hidden: true},
     photoResult: element(), photoPrepare: element({hidden: true}),
     photoTake: element({disabled: true}), photoMessage: element(),
     photoCountdown: element({textContent: '찰칵!'}), photoReturn: element({textContent: '2초 후에 처음으로 돌아갑니다.'}),
-    photoDownload: element({href: 'blob:previous-photo'}), photoQr: element({src: 'data:image/old-qr'}),
+    photoReturnNotice: element(), capturedPhoto: element({src: 'blob:previous-photo'}), photoCanvas: element({hidden: true}),
+    photoShareData: {files: ['previous photo']}, photoSharePending: false, photoSave: element(),
+    photoDownload: element({href: 'blob:previous-photo', download: '단체사진.jpg'}), photoQr: element({src: 'data:image/old-qr'}),
     clearInterval: id => timers.delete(id), clearTimeout: id => timers.delete(id),
+    setInterval(callback, delay) { timers.set(++serial, {callback, delay}); return serial; },
     setTimeout(callback, delay) { timers.set(++serial, {callback, delay}); return serial; },
     audio: {stopAll() { calls.stoppedAudio++; }},
     stopPhotoCamera() { calls.stoppedCamera++; context.photoPreviewReady = false; },
@@ -84,7 +88,7 @@ function photoSetup() {
     drawGroupPhoto() { calls.draw++; }, preparePhotoPreview: async () => { calls.preview++; },
     takePhoto: async () => { calls.capture++; },
   });
-  vm.runInContext(['beginPhoto', 'retakePhoto', 'scheduleAutoPhoto'].map(sourceFunction).join('\n'), context);
+  vm.runInContext(['beginPhoto', 'retakePhoto', 'scheduleAutoPhoto', 'clearCapturedPhoto'].map(sourceFunction).join('\n'), context);
   return {api: context, timers, calls, include(name) { vm.runInContext(sourceFunction(name), context); }};
 }
 
@@ -95,6 +99,10 @@ test('retaking clears the old photo and its return timers before opening a fresh
   for (const id of [10, 11, 12]) assert.equal(qa.timers.has(id), false, 'the previous session timer must be cancelled');
   assert.deepEqual(qa.calls.revoked, ['blob:previous-photo']);
   assert.equal(qa.api.photoObjectURL, null);
+  assert.equal(qa.api.photoShareData, null);
+  assert.equal(qa.api.capturedPhoto.src, undefined);
+  assert.equal(qa.api.capturedPhoto.hidden, true);
+  assert.equal(qa.api.photoCanvas.hidden, false);
   assert.equal(qa.api.photoDownload.href, undefined);
   assert.equal(qa.api.photoQr.src, undefined); assert.equal(qa.api.photoQr.hidden, true);
   assert.equal(qa.api.photoReturn.textContent, ''); assert.equal(qa.api.photoCountdown.textContent, '');
@@ -146,20 +154,67 @@ test('automatic capture waits for a valid person mask, and a failed manual attem
   }
 });
 
-test('mobile photo results offer direct download while desktop retains the QR and matching instructions',()=>{
+test('mobile photos offer native saving and a file fallback while desktop retains the QR',()=>{
   const qa=photoSetup();qa.api.mobilePhotoLayout={matches:true};
   qa.include('updatePhotoResultPresentation');qa.api.updatePhotoResultPresentation();
   assert.equal(qa.api.photoQr.hidden,true);
-  assert.match(qa.api.photoMessage.textContent,/다운로드 버튼/);
+  assert.equal(qa.api.photoSave.hidden,false);
+  assert.match(qa.api.photoMessage.textContent,/길게 눌러/);
   assert.doesNotMatch(qa.api.photoMessage.textContent,/QR/);
   assert.equal(qa.api.photoDownload.href,'blob:previous-photo');
   qa.api.mobilePhotoLayout.matches=false;qa.api.updatePhotoResultPresentation();
+  assert.equal(qa.api.photoSave.hidden,true);
   assert.equal(qa.api.photoQr.hidden,false);assert.match(qa.api.photoMessage.textContent,/QR/);
-  qa.api.photoQr.removeAttribute('src');qa.api.mobilePhotoLayout.matches=true;
+  qa.api.photoQr.removeAttribute('src');qa.api.mobilePhotoLayout.matches=true;qa.api.photoShareData=null;
   qa.api.updatePhotoResultPresentation();
-  assert.match(qa.api.photoMessage.textContent,/다운로드 버튼/,'mobile does not need a successful QR upload');
+  assert.equal(qa.api.photoSave.hidden,true);
+  assert.match(qa.api.photoMessage.textContent,/파일을 다운로드/,'mobile fallback is available when both sharing and QR are unavailable');
   qa.api.mobilePhotoLayout.matches=false;qa.api.updatePhotoResultPresentation();
   assert.equal(qa.api.photoQr.hidden,true);assert.match(qa.api.photoMessage.textContent,/아래 버튼/);
   qa.api.photoResult.hidden=true;qa.api.photoMessage.textContent='촬영 준비';
   qa.api.updatePhotoResultPresentation();assert.equal(qa.api.photoMessage.textContent,'촬영 준비');
+});
+
+test('the save button hands the actual JPEG to the native sheet and keeps a fallback after rejection', async () => {
+  const {api, include} = photoSetup();
+  const files = [];
+  api.mobilePhotoLayout = {matches: true};
+  api.File = File;
+  api.navigator = {
+    canShare: data => data.files[0].type === 'image/jpeg',
+    share: async data => { files.push(data.files[0]); }
+  };
+  include('getPhotoShareData'); include('savePhotoOnDevice'); include('updatePhotoResultPresentation');
+  const jpeg = new Blob([Uint8Array.of(255, 216, 255, 217)], {type: 'image/jpeg'});
+  api.photoShareData = api.getPhotoShareData(jpeg);
+  const save = api.savePhotoOnDevice();
+  assert.equal(files.length, 1, 'native sharing starts synchronously in the click handler');
+  assert.equal(files[0].name, api.photoDownload.download);
+  assert.deepEqual(await files[0].arrayBuffer(), await jpeg.arrayBuffer());
+  await save;
+
+  api.navigator.share = async () => { throw new DOMException('User closed the sheet', 'AbortError'); };
+  await api.savePhotoOnDevice();
+  assert.ok(api.photoShareData, 'cancelling still allows another attempt');
+
+  api.navigator.share = async () => { throw new DOMException('File sharing blocked', 'NotAllowedError'); };
+  await api.savePhotoOnDevice();
+  assert.equal(api.photoSave.hidden, true);
+  assert.equal(api.capturedPhoto.src, 'blob:previous-photo');
+  assert.equal(api.photoDownload.href, 'blob:previous-photo');
+  assert.equal(api.photoDownload.focused, true);
+});
+
+test('mobile results stay available while using native save and desktop keeps the 30-second return', () => {
+  const {api, include, timers} = photoSetup();
+  api.mobilePhotoLayout = {matches: true};
+  include('updatePhotoReturnTimer');
+  api.updatePhotoReturnTimer();
+  assert.equal(api.photoReturnNotice.hidden, true);
+  assert.equal(timers.has(api.returnTimer), false);
+  api.mobilePhotoLayout.matches = false;
+  api.updatePhotoReturnTimer();
+  assert.equal(api.photoReturnNotice.hidden, false);
+  assert.match(api.photoReturn.textContent, /^30초/);
+  assert.ok(timers.has(api.returnTimer));
 });

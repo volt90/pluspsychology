@@ -168,7 +168,8 @@ button { -webkit-tap-highlight-color: transparent; }
 #finale-fire-camera { position: absolute; left: max(14px,env(safe-area-inset-left)); bottom: max(16px,env(safe-area-inset-bottom)); max-width: calc(50% - 20px); font-size: clamp(32px,4vw,52px); line-height: 1.2; }
 #finale-photo-stage { width: min(100%,1240px); display: grid; grid-template-columns: minmax(0,1fr) minmax(190px,270px); gap: clamp(12px,3vw,40px); align-items: center; }
 .photo-frame { position: relative; width: min(100%,calc(100svh - 64px)); margin: 0 auto; aspect-ratio: 1; }
-.photo-frame canvas { display: block; width: 100%; height: 100%; border-radius: 14px; box-shadow: 0 14px 45px #020907aa; }
+.photo-frame canvas, .photo-frame img { display: block; width: 100%; height: 100%; border-radius: 14px; box-shadow: 0 14px 45px #020907aa; }
+.photo-frame img { -webkit-touch-callout: default; }
 .photo-info { min-width: 0; }
 #photo-message { white-space: pre-line; word-break: keep-all; text-wrap: balance; }
 .photo-countdown { position: fixed; inset: 0; z-index: 2; display: grid; place-items: center; pointer-events: none; font: 400 clamp(70px,16vw,160px) "Black Han Sans","Anemone Air"; color: #fff8d8; text-shadow: 0 3px 18px #121513; }
@@ -177,6 +178,7 @@ button { -webkit-tap-highlight-color: transparent; }
 @keyframes photo-return-pulse { 0%, 100% { transform: scale(1); } 45% { transform: scale(1.09); color: #ffaca0; text-shadow: 0 0 14px #ff5a4d99; } }
 @media (prefers-reduced-motion: reduce) { .finale .photo-return-notice { animation: none; } }
 .photo-actions { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.finale #photo-save { background: #f1d7a2; border-color: #f1d7a2; color: #202c24; font-weight: 700; }
 .photo-qr { display: block; width: 120px; height: 120px; background: white; border-radius: 4px; image-rendering: pixelated; }
 @media (max-width: 620px) {
   .finale button, .finale a { font-size: clamp(15px,4.2vw,18px); line-height: 1.25; white-space: nowrap; }
@@ -390,6 +392,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
       <section id="finale-photo-stage" aria-labelledby="finale-photo-title" hidden>
         <div class="photo-frame">
           <canvas id="group-photo" width="720" height="720" aria-label="네 캐릭터가 함께하는 단체 사진 프레임"></canvas>
+          <img id="captured-photo" width="720" height="720" alt="캐릭터들과 함께 찍은 단체 사진" hidden>
           <div id="photo-countdown" class="photo-countdown" aria-live="assertive" hidden></div>
         </div>
         <div class="photo-info">
@@ -402,9 +405,10 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
           <div id="photo-result" hidden>
             <div class="photo-actions">
               <img id="photo-qr" class="photo-qr" alt="단체 사진 다운로드 QR 코드" width="120" height="120" hidden>
+              <button id="photo-save" type="button" hidden>사진 저장</button>
               <a id="photo-download" download="서로의-빛-단체사진.jpg">사진 다운로드</a>
             </div>
-            <p class="photo-return-notice"><span class="warning-icon" aria-hidden="true">⚠︎</span><span id="photo-return">30초 후에 처음으로 돌아갑니다.</span></p>
+            <p id="photo-return-notice" class="photo-return-notice" hidden><span class="warning-icon" aria-hidden="true">⚠︎</span><span id="photo-return"></span></p>
             <button id="photo-retake" type="button">다시 찍기</button>
             <button id="photo-result-home" type="button">처음으로 돌아가기</button>
           </div>
@@ -2862,6 +2866,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const fireCamera = document.getElementById('finale-fire-camera');
   const photoCanvas = document.getElementById('group-photo');
   const photoContext = photoCanvas.getContext('2d', {alpha: false});
+  const capturedPhoto = document.getElementById('captured-photo');
   const photoWindow = {x: 37, y: 46, width: 646, height: 510};
   const photoCameraLayer = document.createElement('canvas');
   const photoCameraContext = photoCameraLayer.getContext('2d', {willReadFrequently: true});
@@ -2888,9 +2893,11 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   const photoPrepare = document.getElementById('photo-prepare');
   const photoResult = document.getElementById('photo-result');
   const photoQr = document.getElementById('photo-qr');
+  const photoSave = document.getElementById('photo-save');
   const photoDownload = document.getElementById('photo-download');
   const mobilePhotoLayout = matchMedia('(max-width: 760px), (max-height: 500px) and (pointer: coarse)');
   const photoReturn = document.getElementById('photo-return');
+  const photoReturnNotice = document.getElementById('photo-return-notice');
   const photoResultSeconds = 30;
   const photoAutoDelay = 5000;
   const photoInvitation = media.voices?.simriPhoto;
@@ -2902,6 +2909,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   let activeVideoPart = 0;
   let photoAutoTimer = 0;
   let extraPhotoStream = null, photoObjectURL = null, finaleConfig = null, resolvedFinaleConfig = null, photoCameraRequest = null;
+  let photoShareData = null, photoSharePending = false;
   let photoPreviewReady = false;
   let photoSegmenter = null, photoSegmentationRequest = null, photoPersonMode = 'loading';
   let fireTracksHand = false, fireBurst = null, lastFireMovement = null;
@@ -3616,11 +3624,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     clearTimeout(idleTimer);
     audio.stopAll();
     stopPhotoCamera();
-    if (photoObjectURL) URL.revokeObjectURL(photoObjectURL);
-    photoObjectURL = null;
-    photoDownload.removeAttribute('href');
-    photoQr.removeAttribute('src');
-    photoQr.hidden = true;
+    clearCapturedPhoto();
     photoReturn.textContent = '';
     photoCountdown.textContent = '';
     beginPhoto();
@@ -3713,14 +3717,68 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       return shared;
     } catch { return null; }
   }
+  function clearCapturedPhoto() {
+    capturedPhoto.hidden = true;
+    capturedPhoto.removeAttribute('src');
+    photoCanvas.hidden = false;
+    photoDownload.removeAttribute('href');
+    photoQr.removeAttribute('src');
+    photoQr.hidden = photoSave.hidden = photoReturnNotice.hidden = true;
+    photoShareData = null;
+    photoSharePending = false;
+    if (photoObjectURL) URL.revokeObjectURL(photoObjectURL);
+    photoObjectURL = null;
+  }
+  function getPhotoShareData(blob) {
+    if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function' || typeof File !== 'function') return null;
+    try {
+      const data = {files: [new File([blob], photoDownload.download, {type: blob.type})]};
+      return navigator.canShare(data) ? data : null;
+    } catch { return null; }
+  }
+  async function savePhotoOnDevice() {
+    if (stage !== 'photo' || photoResult.hidden || !photoShareData) return;
+    const version = flowVersion;
+    try {
+      // Open the native sheet within the button's click, using the JPEG already in memory.
+      await navigator.share(photoShareData);
+    } catch (error) {
+      if (error?.name === 'AbortError' || version !== flowVersion || stage !== 'photo') return;
+      photoShareData = null;
+      updatePhotoResultPresentation();
+      if (help.hidden) photoDownload.focus({preventScroll: true});
+    }
+  }
   function updatePhotoResultPresentation() {
     if (stage !== 'photo' || photoResult.hidden) return;
+    const mobile = mobilePhotoLayout.matches;
     const hasQr = photoQr.hasAttribute('src');
-    photoQr.hidden = mobilePhotoLayout.matches || !hasQr;
-    photoMessage.textContent = mobilePhotoLayout.matches
-      ? '아래 다운로드 버튼을 눌러\n사진을 저장하세요.'
-      : hasQr ? '휴대폰으로 QR을 찍어\n사진을 저장하세요.'
-      : '웹사이트에 사진을 저장하지 못했어요. 아래 버튼으로 이 기기에 저장할 수 있어요.';
+    photoSave.hidden = !mobile || !photoShareData;
+    photoDownload.textContent = mobile ? '파일 다운로드' : '사진 다운로드';
+    photoQr.hidden = mobile || !hasQr;
+    if (mobile) {
+      photoMessage.textContent = photoSave.hidden
+        ? '사진을 길게 눌러 저장하거나 아래에서 파일을 다운로드하세요.'
+        : '공유 메뉴에서 저장할 수 있어요. 사진을 길게 눌러 저장할 수도 있어요.';
+    } else if (hasQr) {
+      photoMessage.textContent = '휴대폰으로 QR을 찍어\n사진을 저장하세요.';
+    } else {
+      photoMessage.textContent = photoSharePending ? '휴대폰용 QR을 준비하고 있어요.'
+        : '웹사이트에 사진을 저장하지 못했어요. 아래 버튼으로 이 기기에 저장할 수 있어요.';
+    }
+  }
+  function updatePhotoReturnTimer() {
+    if (stage !== 'photo' || photoResult.hidden) return;
+    clearInterval(returnTimer);
+    photoReturnNotice.hidden = mobilePhotoLayout.matches;
+    if (photoReturnNotice.hidden) return;
+    photoReturn.textContent = photoResultSeconds + '초 후에 처음으로 돌아갑니다.';
+    const deadline = performance.now() + photoResultSeconds * 1000;
+    returnTimer = setInterval(() => {
+      const remaining = Math.ceil((deadline - performance.now()) / 1000);
+      if (remaining <= 0) returnToOpening();
+      else photoReturn.textContent = remaining + '초 후에 처음으로 돌아갑니다.';
+    }, 125);
   }
   async function takePhoto(automatic = false) {
     if (stage !== 'photo' || photoTake.disabled || photoCaptured || !photoResult.hidden || document.hidden || !help.hidden) return;
@@ -3759,23 +3817,22 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
       if (!blob) throw new Error('Photo encoding failed.');
       photoObjectURL = URL.createObjectURL(blob);
       photoDownload.href = photoObjectURL;
-      photoMessage.textContent = '사진을 준비하고 있어요.';
-      const [shared] = await Promise.all([sharePhoto(blob), new Promise(resolve => setTimeout(resolve, 700))]);
-      if (flowVersion !== version) return;
+      capturedPhoto.src = photoObjectURL;
+      capturedPhoto.hidden = false;
+      photoCanvas.hidden = true;
+      photoShareData = getPhotoShareData(blob);
+      photoSharePending = true;
       photoCountdown.hidden = photoPrepare.hidden = true;
       photoResult.hidden = false;
-      if (shared?.qr) photoQr.src = shared.qr;
-      else photoQr.removeAttribute('src');
-      updatePhotoResultPresentation();
       clearTimeout(idleTimer);
-      photoReturn.textContent = photoResultSeconds + '초 후에 처음으로 돌아갑니다.';
-      const deadline = performance.now() + photoResultSeconds * 1000;
-      returnTimer = setInterval(() => {
-        const remaining = Math.ceil((deadline - performance.now()) / 1000);
-        if (remaining <= 0) returnToOpening();
-        else photoReturn.textContent = remaining + '초 후에 처음으로 돌아갑니다.';
-      }, 125);
-      if (help.hidden) photoDownload.focus({preventScroll: true});
+      updatePhotoResultPresentation();
+      updatePhotoReturnTimer();
+      if (help.hidden) (photoSave.hidden ? photoDownload : photoSave).focus({preventScroll: true});
+      const shared = await sharePhoto(blob);
+      if (flowVersion !== version) return;
+      photoSharePending = false;
+      if (shared?.qr) photoQr.src = shared.qr;
+      updatePhotoResultPresentation();
     } catch {
       if (flowVersion !== version) return;
       photoCaptured = false;
@@ -3809,11 +3866,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     clearTimeout(idleTimer);
     clearInterval(returnTimer);
     stopPhotoCamera();
-    if (photoObjectURL) URL.revokeObjectURL(photoObjectURL);
-    photoObjectURL = null;
-    photoDownload.removeAttribute('href');
-    photoQr.removeAttribute('src');
-    photoQr.hidden = true;
+    clearCapturedPhoto();
     photoContext.clearRect(0, 0, 720, 720);
     finale.hidden = true;
     controls.inert = false;
@@ -3882,7 +3935,11 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     emberPlayfield.append(cursor); return cursor;
   });
   photoTake.addEventListener('click', () => void takePhoto());
-  mobilePhotoLayout.addEventListener('change', updatePhotoResultPresentation);
+  photoSave.addEventListener('click', () => void savePhotoOnDevice());
+  mobilePhotoLayout.addEventListener('change', () => {
+    updatePhotoResultPresentation();
+    updatePhotoReturnTimer();
+  });
   document.getElementById('photo-retake').addEventListener('click', retakePhoto);
   document.getElementById('photo-home').addEventListener('click', returnToOpening);
   document.getElementById('photo-result-home').addEventListener('click', returnToOpening);
