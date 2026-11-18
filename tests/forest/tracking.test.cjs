@@ -45,17 +45,24 @@ test('hand counts use natural Korean for one through four visible hands',async()
   }
 });
 
-test('the preview has its stream while playback and hand model initialization are still pending',async()=>{
+test('a secure browser without a camera API offers touch or mouse controls',async()=>{
+  const qa=setup({mediaDevices:{}});
+  assert.equal(await qa.controller.start(),false);
+  assert.match(qa.controller.getState().message,/화면을 터치/);
+  assert.doesNotMatch(qa.controller.getState().message,/https:/);
+});
+
+test('the tracking video receives its stream before the hand model is ready',async()=>{
   let startPlayback;
   const qa=setup({workerReady:false,play:()=>new Promise(resolve=>{startPlayback=resolve;})});
   const started=qa.controller.start();
   await new Promise(setImmediate);
   assert.equal(qa.controller.getState().status,'connecting');
-  assert.ok(qa.previews.at(-1).stream,'the visible preview must receive the connected stream');
+  assert.ok(qa.previews.at(-1).stream,'the tracking video must receive the connected stream');
   assert.equal(qa.workers.length,0);
   startPlayback();await new Promise(setImmediate);
   assert.equal(qa.controller.getState().status,'loading');
-  assert.ok(qa.previews.at(-1).stream,'slow model downloads must not hide a working webcam');
+  assert.ok(qa.previews.at(-1).stream,'the stream stays attached while the model loads');
   assert.equal(qa.track.stopped,false);
   qa.workers[0].onmessage({data:{type:'ready'}});
   assert.equal(await started,true);qa.controller.stop();

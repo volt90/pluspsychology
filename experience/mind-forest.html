@@ -1950,8 +1950,12 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     }
     async function begin(session) {
       frames = 0; points = 0; lastPoints = [];
-      if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
-        fail('카메라는 보안 연결에서 열 수 있어요. https://www.pluspsychology.ai/experience/mind-forest 또는 이 PC의 localhost 주소로 열어 주세요.', new Error('Camera requires a secure context.'));
+      if (!window.isSecureContext) {
+        fail('카메라를 켜려면 https://www.pluspsychology.ai/experience/mind-forest 에서 열어 주세요.', new Error('Camera requires a secure context.'));
+        return false;
+      }
+      if (!navigator.mediaDevices?.getUserMedia) {
+        fail('이 브라우저에서 카메라를 사용할 수 없어요. 화면을 터치하거나 마우스를 움직여 보세요.', new Error('Camera API unavailable.'));
         return false;
       }
       if (!window.Worker || !window.OffscreenCanvas || !window.createImageBitmap) {
