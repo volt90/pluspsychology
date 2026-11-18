@@ -65,45 +65,37 @@
     },
     "simriPhoto": {
       "text": "이제 우리 함께 사진 찍자!",
-      "output": "D:\\pluspsychology-qa\\voice-update-20261113\\simri-photo-invitation-v2.wav",
+      "asset": "/03_체험자료/assets/mind-forest/audio/simri-photo-invitation-v3.wav",
       "generation": {
-        "status": "generated_audition_not_yet_reviewed",
-        "provider": "local Qwen3-TTS",
+        "provider": "Local Qwen3-TTS and Korean MeloTTS prosody guide",
         "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
-        "modelPath": "D:\\kimsimri-quiet-forest\\production\\qwen-korean-review\\models\\Qwen3-TTS-12Hz-1.7B-Base",
-        "license": "Apache-2.0",
-        "text": "이제 우리 함께 사진 찍자!",
         "language": "Korean",
-        "seed": 20261111,
+        "seed": 20261119,
         "reference": "D:\\kimsimri-quiet-forest\\production\\voice-reference\\simri-reference-9.98-14.40.wav",
         "referenceSha256": "0e53482d593e2321935a91b99658b8dd3d970ac173601bca943b5879549b4913",
-        "voiceProfile": "Qwen/Qwen3-TTS-12Hz-1.7B-Base:0e53482d593e2321935a",
         "refText": "찾을게요! 연습도 늦지 않게 하고요!",
-        "xVectorOnly": false,
-        "output": "D:\\pluspsychology-qa\\voice-update-20261113\\simri-photo-qwen17b-icl.wav",
-        "sampleRate": 24000,
-        "duration": 2.64,
-        "peak": 0.6710973978042603,
-        "rms": 0.0848051980137825,
-        "generationSeconds": 16.360000000000582,
-        "totalSeconds": 21.047000000005937,
-        "maxNewTokens": 128,
-        "device": "cpu",
-        "dtype": "float32",
-        "versions": {
-          "qwen-tts": "0.1.1",
-          "torch": "2.15.0+cpu",
-          "torchaudio": "2.11.1+cpu",
-          "transformers": "4.57.3",
-          "soundfile": "0.14.0"
-        },
-        "review": "Direct listening and character timbre review are still required. A generated file alone does not prove likeness or accurate pronunciation."
+        "referenceRangeSeconds": [
+          9.98,
+          14.4
+        ],
+        "generationText": "이제 우리 함께 사진 찍자.",
+        "prosody": {
+          "nativeModel": "myshell-ai/MeloTTS-Korean",
+          "referenceRead": "simri-photo-calm-melo-native.wav",
+          "nativeRate": 1.06,
+          "nativeText": "이제 우리 함께 사진 찍자.",
+          "method": "MFCC dynamic time alignment, smoothed duration transfer and pitch-synchronous overlap-add",
+          "pitchBlend": 0.75,
+          "durationBlend": 0.83,
+          "targetMedianPitchHz": 374.8,
+          "nativeMedianPitchHz": 226.5
+        }
       },
       "processing": {
         "trim": {
-          "originalDuration": 2.64,
-          "startSeconds": 0.16,
-          "endSeconds": 2.21,
+          "originalDuration": 2.266625,
+          "startSeconds": 0.01,
+          "endSeconds": 2.266625,
           "thresholdDbfs": -45,
           "headRoomSeconds": 0.12,
           "tailRoomSeconds": 0.18
@@ -113,15 +105,11 @@
         "bitDepth": 16,
         "targetLufs": -19,
         "truePeakCeilingDb": -2,
-        "measuredLufs": -19.01,
-        "measuredTruePeakDb": -2.9,
-        "samplePeak": 0.707977294921875,
-        "sha256": "2d0021b140a97b8cd0761197a3ca2321c2eb1f1a63f6e0bca0cc10827aadf9c8"
-      },
-      "sourceMP3": null,
-      "sourceMP3Sha256": null,
-      "referenceRangeSeconds": null,
-      "suppliedSourceContainsTargetDialogue": null
+        "measuredLufs": -19.0,
+        "measuredTruePeakDb": -3.4,
+        "samplePeak": 0.675140380859375,
+        "sha256": "f0365b0777da5440aca66e6eed9af762effb8698b50fd7ec9ac88b478d2e28ff"
+      }
     },
     "rubi": {
       "text": "이 빛, 네가 건넨 거구나.",
@@ -178,7 +166,11 @@
     },
     "simriPhoto": {
       "asrMatchesTarget": true,
-      "transcript": "이제 우리 함께 사진 찍자"
+      "transcript": "이제 우리 함께 사진 찍자",
+      "model": "Systran/faster-whisper-medium",
+      "expectedScriptPrompt": false,
+      "finalAsset": "simri-photo-invitation-v3.wav",
+      "review": "Generated against the original recording. Korean word alignment and prosody were checked automatically; perceptual review by a listener is pending."
     },
     "rubi": {
       "status": "user_selected_B_applied",
