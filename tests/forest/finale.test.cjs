@@ -76,7 +76,7 @@ function photoSetup() {
     photoCountdown: element({textContent: '찰칵!'}), photoReturn: element({textContent: '2초 후에 처음으로 돌아갑니다.'}),
     photoReturnNotice: element(), capturedPhoto: element({src: 'blob:previous-photo'}), photoCanvas: element({hidden: true}),
     photoShareData: {files: ['previous photo']}, photoSharePending: false, photoSave: element(),
-    photoDownload: element({href: 'blob:previous-photo', download: '단체사진.jpg'}), photoQr: element({src: 'data:image/old-qr'}),
+    photoDownload: element({href: 'blob:previous-photo', download: '단체사진.jpg'}), photoDownloadLabel: element(), photoQr: element({src: 'data:image/old-qr'}),
     clearInterval: id => timers.delete(id), clearTimeout: id => timers.delete(id),
     setInterval(callback, delay) { timers.set(++serial, {callback, delay}); return serial; },
     setTimeout(callback, delay) { timers.set(++serial, {callback, delay}); return serial; },
@@ -159,11 +159,13 @@ test('mobile photos offer native saving and a file fallback while desktop retain
   qa.include('updatePhotoResultPresentation');qa.api.updatePhotoResultPresentation();
   assert.equal(qa.api.photoQr.hidden,true);
   assert.equal(qa.api.photoSave.hidden,false);
+  assert.equal(qa.api.photoDownloadLabel.textContent,'파일 다운로드');
   assert.match(qa.api.photoMessage.textContent,/길게 눌러/);
   assert.doesNotMatch(qa.api.photoMessage.textContent,/QR/);
   assert.equal(qa.api.photoDownload.href,'blob:previous-photo');
   qa.api.mobilePhotoLayout.matches=false;qa.api.updatePhotoResultPresentation();
   assert.equal(qa.api.photoSave.hidden,true);
+  assert.equal(qa.api.photoDownloadLabel.textContent,'사진 다운로드');
   assert.equal(qa.api.photoQr.hidden,false);assert.match(qa.api.photoMessage.textContent,/QR/);
   qa.api.photoQr.removeAttribute('src');qa.api.mobilePhotoLayout.matches=true;qa.api.photoShareData=null;
   qa.api.updatePhotoResultPresentation();

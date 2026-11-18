@@ -95,6 +95,24 @@ test('four corners appear in order and each completed drag grows the fire once',
   qa.advance(1); assert.deepEqual(qa.videos, [2], 'only the fourth delivery continues the existing second video');
 });
 
+test('each glass hand announces its corner and only shows copy during a drag or on completion', () => {
+  const qa = setup();
+  for (const [index, name] of ['왼쪽 위','오른쪽 위','오른쪽 아래','왼쪽 아래'].entries()) {
+    const origin = qa.api.fireOrigin();
+    assert.equal(qa.light['aria-label'], name + ' 빛 모으기');
+    assert.equal(qa.api.fireGuide.textContent, '');
+    qa.pointer('pointerdown', origin.x, origin.y);
+    assert.equal(qa.api.fireGuide.textContent, '잡은 빛을 중앙 모닥불에 놓아 주세요.');
+    qa.pointer('pointerup', qa.center.x, qa.center.y);
+    if (index < 3) {
+      assert.equal(qa.api.fireGuide.textContent, '');
+      qa.advance(700);
+    }
+  }
+  assert.equal(qa.light.disabled, true);
+  assert.equal(qa.api.fireGuide.textContent, '많은 빛이 모여, 더 따듯해졌어요.');
+});
+
 test('hovering or clicking the fire cannot teleport a light from its corner', () => {
   const qa = setup(), {x,y} = qa.center;
   qa.pointer('pointermove', x, y);
