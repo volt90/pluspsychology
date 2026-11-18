@@ -15,7 +15,7 @@ function handTracker() {
   return context.ForestHandTracking.createHandTracker();
 }
 
-function setup(width = 1000, height = 800) {
+function setup(width = 1000, height = 800, coarsePointer = false) {
   let now = 0, serial = 0;
   const timers = new Map(), captures = new Set(), videos = [];
   function element(rect = {}) {
@@ -32,6 +32,7 @@ function setup(width = 1000, height = 800) {
   const pad = element({left: width / 2 - 100, top: height / 2 - 120, width: 200, height: 240});
   const light = element();
   const context = vm.createContext({console, Math, stage: 'forest', fireTimer: 0, idleTimer: 0,
+    matchMedia: query => ({matches: query === '(pointer: coarse)' && coarsePointer}),
     cameraActive: false, hand: {}, reducedMotion: {matches: true}, finaleIdleMs: 180000,
     emberPlayfield: field, emberLight: light, firePad: pad, fireFlare: element(), fireHandCursors: Array.from({length:4}, () => element()),
     fireGuide: element(), fireProgress: element(), fireCamera: element(), fireHome: element(),
@@ -95,7 +96,22 @@ test('four corners appear in order and each completed drag grows the fire once',
   qa.advance(1); assert.deepEqual(qa.videos, [2], 'only the fourth delivery continues the existing second video');
 });
 
-test('each glass hand announces its corner and only shows copy during a drag or on completion', () => {
+test('campfire drag cues use the primary pointing device until actual pointer input takes over', () => {
+  const desktop = setup(), tablet = setup(820, 1180, true);
+  assert.equal(desktop.field.dataset.dragPointer, 'mouse');
+  assert.equal(tablet.field.dataset.dragPointer, 'touch');
+  tablet.pointer('pointermove', 50, 50, 1, 'mouse');
+  assert.equal(tablet.field.dataset.dragPointer, 'mouse', 'a mouse hover switches before pressing');
+  tablet.pointer('pointerdown', 50, 50, 2, 'pen');
+  assert.equal(tablet.field.dataset.dragPointer, 'touch');
+  tablet.api.rememberFirePointer({isPrimary: false, pointerType: 'mouse'});
+  assert.equal(tablet.field.dataset.dragPointer, 'touch', 'a secondary contact leaves the guide alone');
+  desktop.api.rememberFirePointer({isPrimary: true, pointerType: 'touch'});
+  desktop.api.beginFire();
+  assert.equal(desktop.field.dataset.dragPointer, 'touch', 'the touch that navigated into the stage is remembered');
+});
+
+test('each glass button announces its corner and only shows copy during a drag or on completion', () => {
   const qa = setup();
   for (const [index, name] of ['왼쪽 위','오른쪽 위','오른쪽 아래','왼쪽 아래'].entries()) {
     const origin = qa.api.fireOrigin();

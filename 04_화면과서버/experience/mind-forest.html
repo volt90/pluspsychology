@@ -129,11 +129,13 @@ button { -webkit-tap-highlight-color: transparent; }
 .fire-content { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; align-items: center; padding-top: clamp(12px,5svh,56px); padding-bottom: clamp(96px,16svh,148px); }
 .fire-content h2 { margin: max(2px,env(safe-area-inset-top)) 0 8px; font-size: clamp(30px,5.5vw,66px); line-height: 1.15; }
 .fire-content p { font-size: clamp(28px,3.2vw,38px); line-height: 1.4; word-break: keep-all; text-wrap: balance; }
-.fire-content #finale-fire-guide, .fire-content .fire-keyboard { position: absolute; bottom: max(69px,10svh); width: 100%; margin: 0; font-size: clamp(16px,2vw,28px); }
+.fire-content .fire-keyboard { position: absolute; bottom: max(69px,10svh); width: 100%; margin: 0; font-size: clamp(16px,2vw,28px); }
 .fire-content #finale-fire-progress { margin: 5px 0; color: #f5d99e; font-family: "Black Han Sans","Anemone Air"; font-size: clamp(26px,2.8vw,34px); }
 .fire-content .fire-keyboard { display: none; color: #cbd6cc; }
 .fire-content:has(:is(.fire-pad,.ember-light):focus-visible):has(#finale-fire-guide:empty) .fire-keyboard { display: block; }
-.campfire-area { position: relative; flex: 1; width: 100%; min-height: 0; }
+.campfire-area { --flare-base: 18%; --flare-height: calc(82px * var(--fire-scale)); position: relative; flex: 1; width: 100%; min-height: 0; display: grid; grid-template: minmax(2em,1fr) auto minmax(0,1fr) / 100%; justify-items: center; row-gap: clamp(8px,1.5svh,16px); }
+.fire-content #finale-fire-guide { grid-area: 2 / 1; align-self: end; position: relative; z-index: 4; bottom: max(65%,calc(var(--flare-base) + var(--flare-height) * var(--fire-growth))); max-width: 100%; margin: 0 0 clamp(8px,1.5svh,16px); color: #fff3d5; font-size: clamp(16px,2vw,28px); line-height: 1.35; text-shadow: 0 2px 5px #0a1518; pointer-events: none; }
+.fire-content #finale-fire-guide:not(:empty) { padding: .15em .6em; border-radius: .6em; background: #102022d9; }
 .finale .ember-light { --ember-size: clamp(60px,7vw,84px); padding: 0; border: 0; min-height: 0; position: fixed; z-index: 2; top: 0; left: 0; width: var(--ember-size); height: var(--ember-size); margin: calc(var(--ember-size) * -.5) 0 0 calc(var(--ember-size) * -.5); border-radius: 50%; background: radial-gradient(circle,#fffee3 22%,#ffeb8d 61%,#ffb942 100%); box-shadow: 0 0 var(--ember-size) calc(var(--ember-size) * .32) #ffdc715e,0 0 calc(var(--ember-size) * 2.2) calc(var(--ember-size) * .5) #ffc55335; pointer-events: none; }
 .finale .ember-light.is-waiting {
   pointer-events: auto; cursor: grab; color: #fff9df;
@@ -152,6 +154,9 @@ button { -webkit-tap-highlight-color: transparent; }
 @keyframes cue-open { 0%,38%,100% { opacity: 1; } 52%,84% { opacity: 0; } }
 @keyframes cue-pinch { 0%,38%,100% { opacity: 0; } 52%,84% { opacity: 1; } }
 [data-input-source="pointer"] .ember-light.is-waiting .gesture-arrow { display: block; position: absolute; right: 8%; bottom: 9%; width: 24%; height: 24%; fill: none; stroke: #ffedac; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(var(--drag-angle,45deg)); }
+[data-input-source="pointer"] [data-drag-pointer="mouse"] .ember-light.is-waiting .gesture-hand { display: none; }
+[data-input-source="pointer"] [data-drag-pointer="mouse"] .ember-light.is-waiting .gesture-mouse { display: block; width: 66%; height: 66%; margin: auto; fill: #29433d; stroke: #fff5d9; stroke-width: 2.2; stroke-linejoin: round; }
+.gesture-mouse .mouse-left { fill: #ffdb83; stroke: none; }
 [data-input-source="pointer"] .ember-light .hand-open { animation: none; }
 [data-input-source="pointer"] .ember-light .hand-pinched { display: none; }
 .ember-light[data-corner="2"] { --drag-angle: 135deg; }
@@ -177,12 +182,12 @@ button { -webkit-tap-highlight-color: transparent; }
   #finale-fire-home, #finale-fire-camera { padding-inline: 10px; }
 }
 #finale-fire-stage.is-kindled .ember-light { opacity: 0; }
-.finale .fire-pad { position: absolute; top: 50%; left: 50%; width: min(100%,calc(clamp(128px,24vw,220px) * var(--fire-scale))); height: calc(155px * var(--fire-scale)); margin: 0; padding: 0; border: 0; border-radius: 50%; transform: translate(-50%,-50%); background: radial-gradient(ellipse 50% 23% at 50% 84%,#f9984933,transparent); }
+.finale .fire-pad { position: relative; grid-area: 2 / 1; width: min(100%,calc(clamp(128px,24vw,220px) * var(--fire-scale))); height: calc(155px * var(--fire-scale)); margin: 0; padding: 0; border: 0; border-radius: 50%; background: radial-gradient(ellipse 50% 23% at 50% 84%,#f9984933,transparent); }
 .finale .fire-pad:disabled { opacity: 1; }
 .fire-pad:focus-visible { outline: 1px dashed #ffe6a5; outline-offset: 5px; }
 .fire-pad::before, .fire-pad::after { content: ''; position: absolute; bottom: 13%; left: 50%; translate: -50% 0; z-index: 1; width: calc(82px * var(--fire-scale)); height: calc(13px * var(--fire-scale)); border-radius: calc(8px * var(--fire-scale)); background: linear-gradient(#6b4230,#362522); transform: rotate(12deg); pointer-events: none; }
 .fire-pad::after { transform: rotate(-12deg); background: linear-gradient(#8d5033,#402a23); }
-.fire-flare { position: absolute; bottom: 18%; left: 50%; translate: -50% 0; width: calc(56px * var(--fire-scale)); height: calc(82px * var(--fire-scale)); transform-origin: 50% 100%; transform: scale(var(--fire-growth)); transition: transform .65s ease; pointer-events: none; }
+.fire-flare { position: absolute; bottom: var(--flare-base); left: 50%; translate: -50% 0; width: calc(56px * var(--fire-scale)); height: var(--flare-height); transform-origin: 50% 100%; transform: scale(var(--fire-growth)); transition: transform .65s ease; pointer-events: none; }
 .flame { display: block; width: 100%; height: 100%; border-radius: 70% 28% 56% 44% / 78% 63% 38% 28%; transform-origin: 50% 94%; background: radial-gradient(ellipse at 49% 77%,#fff6b8 12%,#ffc263 45%,#e46d38 78%); box-shadow: 0 0 calc(36px * var(--fire-scale)) #e28a45; animation: fire-sway .8s ease-in-out infinite alternate; }
 @keyframes fire-sway { from { transform: rotate(-10deg) scale(.94,1.03); } to { transform: rotate(9deg) scale(1.03,.94); } }
 .fire-spark { position: absolute; top: 45%; left: 50%; width: calc(var(--size) * var(--fire-scale)); height: calc(var(--size) * var(--fire-scale)); border-radius: 50%; background: #ffe29a; box-shadow: 0 0 calc(9px * var(--fire-scale)) #ff994e; pointer-events: none; }
@@ -215,7 +220,7 @@ button { -webkit-tap-highlight-color: transparent; }
   .fire-content { padding: 2px 0 56px; }
   .fire-content h2 { margin: 0 0 3px; font-size: 27px; }
   .fire-content #finale-fire-progress { margin: 0; font-size: 18px; }
-  .fire-content #finale-fire-guide, .fire-content .fire-keyboard {
+  .fire-content .fire-keyboard {
     bottom: 2px; width: calc(100% - 208px); font-size: 15px; line-height: 1.3;
   }
   #finale-fire-home, #finale-fire-camera { bottom: 8px; width: auto; min-height: 44px; padding: 6px 12px; font-size: 17px; }
@@ -330,7 +335,7 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
       <div class="opening-content">
         <svg class="opening-light" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3Q18 18 3 20Q18 22 20 37Q22 22 37 20Q22 18 20 3Z"/></svg>
         <p class="opening-world">체험전시 · 서로의 빛을 느낀다는 것</p>
-        <h2 id="opening-title"><span>여러분도 누군가의 밤에</span> <span>작은 빛이 되어 줄 수 있어요.</span></h2>
+        <h2 id="opening-title"><span>당신도 누군가의 밤에</span> <span>작은 빛이 되어 줄 수 있어요.</span></h2>
         <button id="opening-next" class="opening-next" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2-6 8h3l-5 7h16l-5-7h3zM12 17v5"/></svg>숲으로 가기</button>
       </div>
       <div id="opening-footprints" class="opening-footprints" aria-hidden="true" hidden></div>
@@ -417,9 +422,9 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
       <section id="finale-fire-stage" aria-labelledby="finale-fire-title" hidden>
         <div class="fire-content">
           <h2 id="finale-fire-title" tabindex="-1">모닥불 함께 쬐기</h2>
-          <p id="finale-fire-guide" aria-live="polite"></p>
           <p id="finale-fire-progress" role="status">함께 모은 빛 0 / 4</p>
           <div class="campfire-area">
+            <p id="finale-fire-guide" aria-live="polite"></p>
             <button id="ember-light" class="ember-light is-waiting" type="button" aria-label="왼쪽 위 빛 모으기" aria-describedby="fire-keyboard">
               <svg class="gesture-hand" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
                 <g class="hand-open">
@@ -432,6 +437,11 @@ nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wi
                   <path d="M19 37Q18 33 21 29" class="hand-detail" opacity=".34"/>
                 </g>
                 <path class="hand-cuff" d="M26 54H52L50 61H28Z"/>
+              </svg>
+              <svg class="gesture-mouse" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="11" y="4" width="26" height="40" rx="13"/>
+                <path class="mouse-left" d="M23 5.3a12 12 0 0 0-11 12v3.5h11Z"/>
+                <path d="M24 4v17M11 21h26" fill="none"/>
               </svg>
               <svg class="gesture-arrow" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h12m-5-5 5 5-5 5"/></svg>
             </button>
@@ -3179,6 +3189,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     cancelFireInteraction();
     fireDelivered = 0;
     firePad.disabled = false;
+    emberPlayfield.dataset.dragPointer ??= matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse';
     emberPlayfield.dataset.delivered = '0';
     emberPlayfield.style.setProperty('--fire-growth', fireGrowth[0]);
     firePad.querySelectorAll('.fire-spark').forEach(spark => spark.remove());
@@ -3330,8 +3341,14 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
     }, duration);
     updateFireGuide();
   }
+  function rememberFirePointer(event) {
+    if (!event.isPrimary || !['mouse', 'touch', 'pen'].includes(event.pointerType)) return;
+    const pointer = event.pointerType === 'mouse' ? 'mouse' : 'touch';
+    if (emberPlayfield.dataset.dragPointer !== pointer) emberPlayfield.dataset.dragPointer = pointer;
+  }
   function moveEmber(event) {
     if (stage !== 'fire' || !help.hidden || fireTimer || fireStepTimer || firePinchTimer || fireTracksHand || fireDelivered >= 4 || !event.isPrimary) return;
+    if (!firePickup) rememberFirePointer(event);
     if (fireHome.contains(event.target) || fireCamera.contains(event.target)) return;
     const {clientX: x, clientY: y} = event;
     if (!firePickup) {
@@ -4046,6 +4063,7 @@ window.resolveForestAsset = path => (window.FOREST_EMBEDDED_ASSETS || {})[path] 
   fireCamera.addEventListener('click', () => {
     if (stage === 'fire' && !fireTimer && !cameraActive) toggleCamera();
   });
+  experience.addEventListener('pointerdown', rememberFirePointer);
   emberPlayfield.addEventListener('pointerdown', moveEmber);
   emberPlayfield.addEventListener('pointermove', moveEmber);
   emberPlayfield.addEventListener('pointerup', moveEmber);
