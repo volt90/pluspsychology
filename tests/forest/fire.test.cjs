@@ -168,6 +168,49 @@ test('the wider pickup area accepts near misses and still requires a fresh pinch
   }
 });
 
+test('the same filtered fingertip curl collects all four lights, including the bottom right', () => {
+  const width = 1366, height = 768, qa = setup(width, height);
+  for (let corner = 0; corner < 4; corner++) {
+    const tracker = handTracker(), origin = qa.api.fireOrigin();
+    const startX = origin.x + Math.sign(origin.x - qa.center.x) * 42;
+    const startY = origin.y + Math.sign(origin.y - qa.center.y) * 42;
+    for (let frame = 0; frame < 24; frame++) {
+      // Start 59 px from each light. Closing the fingers moves the index diagonally.
+      const curl = Math.min(1, Math.max(0, (frame - 10) / 6));
+      const x = (startX + curl * 32) / width, y = (startY + curl * 32) / height;
+      const points = tracker.push([{x:.02 + .96*x, y:.02 + .96*y,
+        wristX:startX/width, wristY:startY/height, pinchRatio:.6 - curl*.45}], frame * 50);
+      qa.feed(points.map(p => ({...p, x:p.x * width, y:p.y * height})));
+      if (frame === 8) assert.equal(qa.light.classList.contains('is-reachable'), true);
+      if (points[0]?.pinch) {
+        if (corner === 2) assert.ok(Math.hypot(points[0].x*width-origin.x, points[0].y*height-origin.y) > 70);
+        break;
+      }
+    }
+    assert.equal(qa.state.pickup?.kind, 'pinch', 'corner ' + (corner + 1));
+    qa.advance(900);
+  }
+  assert.equal(qa.state.delivered, 4);
+});
+
+test('pinch drift allowance needs a recent, uninterrupted aim by the same hand', () => {
+  for (const reason of ['never aimed','expired','too far','left the area','other hand','lost hand','cooldown']) {
+    const qa = setup();
+    if (reason === 'cooldown') qa.api.liftEmbers(true);
+    const origin = qa.api.fireOrigin();
+    const point = (offset, time, closed = false, id = 0) => pinchPoint(id,
+      {x:origin.x + offset, y:origin.y}, closed, closed ? 1 : 0, {observedAt:time});
+    qa.feed([point(reason === 'never aimed' ? 80 : 65, 500)]);
+    if (reason === 'other hand') qa.feed([point(65,550),point(80,550,false,1)]);
+    if (reason === 'left the area') qa.feed([point(105,550)]);
+    if (reason === 'lost hand') { qa.feed([]); qa.feed([point(80,550)]); }
+    if (reason === 'cooldown') qa.advance(700);
+    qa.feed([point(reason === 'too far' ? 100 : 80, reason === 'expired' ? 800 : 600, true, reason === 'other hand' ? 1 : 0)]);
+    assert.equal(qa.state.pickup, null, reason);
+    assert.equal(qa.light.classList.contains('is-reachable'), false, reason);
+  }
+});
+
 test('a fresh pinch at the corner flies to the fire without dragging', () => {
   const qa = setup(), origin = qa.api.fireOrigin();
   qa.feed([pinchPoint(2, origin, true, 4)]);
@@ -297,6 +340,25 @@ test('corner pickup zones remain inside narrow portrait screens and above footer
       assert.ok(origin.x >= 44 && origin.x <= width - 44);
       assert.ok(origin.y >= 130 && origin.y <= height - 110);
       qa.api.liftEmbers(true); if (i < 3) qa.advance(700);
+    }
+  }
+});
+
+test('both lower lights keep an extended hand in frame on phones and exhibition displays', () => {
+  for (const [width,height] of [[568,320],[390,844],[1366,768],[1920,1080],[3840,2160]]) {
+    const qa=setup(width,height), upperY=qa.api.fireOrigin().y;
+    for (let index=0;index<4;index++) {
+      const {x,y}=qa.api.fireOrigin();
+      if (index>=2) {
+        // Invert the tracking map. An upright hand in the 0.20-scale tracking
+        // fixture extends 1.4 palm lengths from its pointing finger to the wrist.
+        const cameraTipY=.02+.96*y/height, cameraWristY=cameraTipY+1.4*.20;
+        assert.ok(cameraWristY<1, 'wrist clipped at '+width+'×'+height);
+        assert.ok(y>height/2 && y-upperY>=60 && height-y>=100);
+        assert.equal(x>width/2,index===2);
+      }
+      qa.api.liftEmbers(true);
+      if (index<3) qa.advance(700);
     }
   }
 });

@@ -73,7 +73,7 @@ function photoSetup() {
     photoObjectURL: 'blob:previous-photo', document: {hidden: false}, help: {hidden: true},
     photoResult: element(), photoPrepare: element({hidden: true}),
     photoTake: element({disabled: true}), photoMessage: element(),
-    photoCountdown: element({textContent: '찰칵!'}), photoReturn: element({textContent: '2초 후에 처음으로 돌아갑니다.'}),
+    photoCountdown: element({textContent: '찰칵!'}), photoReturn: element({textContent: '2초 후에 홈으로 돌아갑니다.'}),
     photoReturnNotice: element(), capturedPhoto: element({src: 'blob:previous-photo'}), photoCanvas: element({hidden: true}),
     photoShareData: {files: ['previous photo']}, photoSharePending: false, photoSave: element(),
     photoDownload: element({href: 'blob:previous-photo', download: '단체사진.jpg'}), photoDownloadLabel: element(), photoQr: element({src: 'data:image/old-qr'}),
@@ -217,6 +217,6 @@ test('mobile results stay available while using native save and desktop keeps th
   api.mobilePhotoLayout.matches = false;
   api.updatePhotoReturnTimer();
   assert.equal(api.photoReturnNotice.hidden, false);
-  assert.match(api.photoReturn.textContent, /^30초/);
+  assert.equal(api.photoReturn.textContent, '30초 후에 홈으로 돌아갑니다.');
   assert.ok(timers.has(api.returnTimer));
 });
