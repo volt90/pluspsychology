@@ -646,6 +646,9 @@
     var form   = document.getElementById('contactForm');
     var cbtn   = document.getElementById('cbtn');
     var cmsgEl = document.getElementById('cmsg');
+    if (new URLSearchParams(location.search).get('type') === 'bulk' && !form.elements.type.value) {
+      form.elements.type.value = 'bulk';
+    }
 
     function showMsg(text, kind){
       cmsgEl.textContent = text;

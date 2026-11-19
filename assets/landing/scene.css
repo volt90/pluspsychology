@@ -1,0 +1,187 @@
+/* A single responsive drawing surface keeps its props and dialogue together. */
+.scene {
+  --ink: #35404a;
+  --wall: #e0eef5;
+  --desk: #f0cd85;
+  --motif: #bad8e9;
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  width: 100%;
+  aspect-ratio: 1.43;
+  margin: 0;
+  overflow: hidden;
+  border: 1.5px solid #35404a;
+  border-radius: 1.25rem;
+  background: var(--wall);
+}
+.scene *, .scene *::before, .scene *::after { box-sizing: border-box; }
+.scene .scene-art { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.scene .art-wallmark {
+  position: absolute; width: 46%; height: 73%; top: 14%; right: 8%;
+  border-radius: 58% 43% 40% 55%; background: var(--motif); transform: rotate(17deg);
+}
+.scene .art-table {
+  position: absolute; inset: 72% -3% -5%;
+  background: var(--desk); border-top: .48cqw solid var(--ink);
+  transform: rotate(-3deg);
+}
+.scene .art-friend {
+  position: absolute; display: block; object-fit: contain; object-position: center bottom;
+  width: 31%; height: 58%; left: 7%; bottom: 9%; max-width: none;
+}
+.scene .art-quote {
+  position: absolute; left: 7%; top: 8%; margin: 0;
+  max-width: 87%; padding: 2.3% 5%;
+  border: .5cqw solid var(--ink); border-radius: 2.5cqw 4.5cqw 3cqw 4cqw;
+  background: #fffcf1; color: #313941; font: 400 5.2cqw/1.2 'Jua','Noto Sans KR',sans-serif;
+  word-break: keep-all; letter-spacing: -.055em; transform: rotate(-2deg);
+}
+.scene .art-quote::after {
+  content: ''; position: absolute; left: 15%; bottom: -1.82cqw; width: 2.85cqw; height: 2.85cqw;
+  background: inherit; border-bottom: .5cqw solid var(--ink); border-right: .5cqw solid var(--ink);
+  transform: rotate(49deg) skew(12deg,12deg);
+}
+.scene .art-sheet { background: #fffbee; border: .55cqw solid var(--ink); }
+.scene .art-exam {
+  position: absolute; top: 31%; left: 46%; width: 38%; height: 56%; padding: 4.3%;
+  border-radius: 1.1cqw; transform: rotate(11deg);
+}
+.scene .art-exam b, .scene .art-clipnote b, .scene .journal-right b {
+  display: block; color: var(--ink); font: 700 2.7cqw/1.2 'Noto Sans KR',sans-serif;
+}
+.scene .art-tape {
+  position: absolute; width: 35%; height: 10%; left: 32.5%; top: -4.5%; background: #f4c251;
+  border-left: .35cqw dashed #ad812d; border-right: .35cqw dashed #ad812d; transform: rotate(-5deg);
+}
+.scene .exam-row, .scene .note-row { display: flex; align-items: center; height: 16%; gap: 8%; }
+.scene .exam-row:first-of-type { margin-top: 5%; }
+.scene .exam-row i { flex: 0 0 13%; display: inline-block; }
+.scene .exam-circle { aspect-ratio: 1; border: .5cqw solid #59846c; border-radius: 50%; }
+.scene .exam-check { font: bold 4.4cqw/1 Georgia,serif; color: #c55240; }
+.scene .exam-row span, .scene .note-row em {
+  display: block; flex: 1; height: .55cqw; background: #9fa9a2; border-radius: 10px;
+}
+.scene .art-triangle {
+  position: absolute; width: 23%; height: 14%; right: 12%; bottom: 9%;
+  border: .42cqw solid #6b8ba1; border-top: 0; border-right: 0;
+}
+.scene .art-triangle::before {
+  content: ''; position: absolute; inset: 0; background: #6b8ba1;
+  clip-path: polygon(0 0, 100% 100%, 89% 100%, 0 12%);
+}
+.scene .art-pencil {
+  position: absolute; top: 85%; left: 58%; width: 28%; height: 3%;
+  background: #f3bd54; border: .36cqw solid var(--ink); transform: rotate(-18deg);
+}
+.scene .art-pencil::before {
+  content: ''; position: absolute; top: -.36cqw; bottom: -.36cqw; left: -9%; width: 10%;
+  background: var(--ink); clip-path: polygon(0 50%,100% 0,100% 100%);
+}
+.scene .art-pencil::after {
+  content: ''; position: absolute; inset: -.36cqw -2% -.36cqw 90%;
+  border: .36cqw solid var(--ink); border-radius: 0 30% 30% 0; background: #df8272;
+}
+
+/* The notebook and a tea cup bring the remembered dinner conversation home. */
+.scene.scene-center { --wall: #d7ebe2; --motif: #b5d7c9; --desk: #e4c19a; }
+.scene-center .art-friend { left: 5%; bottom: 15%; width: 31%; height: 40%; }
+.scene-center .art-quote { top: 9%; }
+.scene .art-journal {
+  position: absolute; width: 49%; height: 40%; left: 40%; top: 42%; transform: rotate(8deg) skewX(-6deg);
+  display: flex; background: #649589; border: .55cqw solid var(--ink); border-radius: 1.6cqw;
+  padding: .75cqw .75cqw 1.4cqw;
+}
+.scene .journal-left, .scene .journal-right {
+  position: relative; flex: 1; min-width: 0; padding: 9% 5% 5%; background: #fff9e7;
+  border: .3cqw solid var(--ink); border-radius: .7cqw 14% 6% .7cqw;
+}
+.scene .journal-right { border-left: 0; border-radius: 12% .7cqw .7cqw 5%; }
+.scene .journal-right b { font-size: 2.25cqw; white-space: nowrap; }
+.scene .art-date { display: block; width: 45%; height: 1.5cqw; background: #dda784; }
+.scene .art-lines {
+  display: block; width: 100%; height: 55%; margin-top: 12%;
+  background: repeating-linear-gradient(to bottom, transparent 0 1.9cqw,#a2afa1 1.9cqw 2.2cqw);
+}
+.scene .journal-ribbon {
+  position: absolute; top: -1%; right: 17%; width: 5%; height: 26%; background: #d77c6a;
+  clip-path: polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);
+}
+.scene .art-mug {
+  position: absolute; right: 6%; bottom: 12%; width: 12%; height: 14%;
+  border: .52cqw solid var(--ink); background: #d6a76a; border-radius: 12% 14% 35% 33%;
+  transform: rotate(4deg);
+}
+.scene .art-mug::before {
+  content: ''; position: absolute; left: 94%; top: 11%; width: 35%; height: 57%;
+  border: .68cqw solid var(--ink); border-left: 0; border-radius: 0 80% 80% 0;
+}
+.scene .art-mug i {
+  position: absolute; left: -.5cqw; right: -.5cqw; height: 29%; top: -7%; border-radius: 50%;
+  background: #8f6248; border: .45cqw solid var(--ink);
+}
+
+.scene.scene-boardgame { --wall: #ffdf9f; --motif: #f5c574; --desk: #abc7bb; }
+.scene-boardgame .art-friend { left: 5%; height: 52%; width: 34%; bottom: 11%; }
+.scene .art-gameboard {
+  position: absolute; width: 43%; height: 35%; left: 43%; top: 53%; padding: 1.5%;
+  border: .55cqw solid var(--ink); border-radius: 1.3cqw; background: #f1dbab;
+  transform: rotate(7deg) skewX(-10deg);
+}
+.scene .game-squares { display: grid; width: 100%; height: 100%; grid-template-columns: repeat(4,1fr); }
+.scene .game-squares i { background: #fff4cd; border: .21cqw solid #50605b; }
+.scene .game-squares i:nth-child(3n+1) { background: #82b6ad; }
+.scene .game-squares i:nth-child(4n+2) { background: #df9379; }
+.scene .art-card {
+  position: absolute; width: 13%; height: 24%; border: .5cqw solid var(--ink); border-radius: 1.4cqw;
+}
+.scene .card-back { left: 56%; top: 34%; transform: rotate(-14deg); background: #6b9daf; }
+.scene .card-front { left: 63%; top: 35%; transform: rotate(12deg); background: #fff3d1; }
+.scene .card-front i {
+  position: absolute; width: 43%; height: 36%; left: 28%; top: 30%; background: #ca725b;
+  clip-path: polygon(50% 0,100% 50%,50% 100%,0 50%);
+}
+.scene .art-die {
+  position: absolute; left: 39%; top: 75%; display: grid; width: 9%; aspect-ratio: 1; padding: 1%;
+  grid-template-columns: 1fr 1fr; place-items: center; transform: rotate(-15deg);
+  border: .5cqw solid var(--ink); border-radius: 1.6cqw; background: #fff8e4;
+}
+.scene .art-die i { width: 54%; aspect-ratio: 1; background: var(--ink); border-radius: 50%; }
+.scene .art-pawn {
+  position: absolute; left: 77%; top: 57%; width: 8%; height: 13%; background: var(--ink);
+  clip-path: polygon(36% 0,64% 0,76% 15%,74% 31%,61% 46%,88% 70%,100% 100%,0 100%,12% 70%,39% 46%,26% 31%,24% 15%);
+}
+.scene .art-pawn::after { content: ''; position: absolute; inset: 6% 7%; clip-path: inherit; background: #eab845; }
+
+.scene.scene-teens { --wall: #dadff4; --motif: #bec6e4; --desk: #b4a9d2; }
+.scene-teens .art-friend { left: 5%; bottom: 9%; width: 37%; height: 55%; }
+.scene .art-phone {
+  position: absolute; width: 28%; height: 60%; left: 55%; top: 29%;
+  border: .58cqw solid var(--ink); border-radius: 3cqw; background: #fffaf0;
+  outline: .75cqw solid #7b8fad; transform: rotate(10deg);
+}
+.scene .phone-speaker { position: absolute; top: 3%; left: 35%; width: 30%; height: 3%; border-radius: 2cqw; background: var(--ink); }
+.scene .phone-chat { display: flex; align-items: center; position: absolute; top: 12%; left: 7%; right: 7%; gap: 9%; padding-bottom: 7%; border-bottom: .34cqw solid #9aa5b5; }
+.scene .phone-contact { display: block; width: 22%; aspect-ratio: 1; border-radius: 50%; background: #a9c6d9; }
+.scene .phone-chat i { display: block; width: 32%; height: .65cqw; border-radius: .35cqw; background: #737d90; }
+.scene .phone-msg { position: absolute; top: 41%; right: 7%; padding: 5% 7%; border-radius: 1.3cqw 1.3cqw 0 1.3cqw; background: #f6d379; color: #343942; font: 700 2.3cqw/1.15 'Noto Sans KR',sans-serif; }
+.scene .phone-ghost { position: absolute; height: 7%; left: 7%; right: 7%; bottom: 12%; border: .32cqw solid #bfc4cf; border-radius: 2cqw; }
+.scene .phone-home { position: absolute; bottom: 3%; left: 36%; width: 28%; height: 2%; border-radius: 2cqw; background: var(--ink); }
+.scene .art-star { position: absolute; color: #fff8d5; font: 400 7cqw/1 Georgia,serif; }
+.scene .star-a { left: 45%; top: 38%; }
+.scene .star-b { left: 83%; top: 23%; font-size: 9cqw; }
+.scene .star-c { left: 43%; top: 52%; font-size: 3.8cqw; }
+
+.scene.scene-twenties { --wall: #dee7ec; --motif: #bdcfd9; --desk: #ddb4a4; }
+.scene-twenties .art-friend { left: 6%; }
+.scene .art-folder { position: absolute; width: 39%; height: 41%; left: 44%; top: 43%; border: .5cqw solid var(--ink); transform: rotate(-9deg); border-radius: .7cqw; background: #d09872; }
+.scene .art-folder::before { content: ''; position: absolute; width: 40%; height: 12%; bottom: 100%; left: -.5cqw; background: inherit; border: .5cqw solid var(--ink); border-bottom: 0; border-radius: .6cqw .6cqw 0 0; }
+.scene .art-clipnote { position: absolute; width: 35%; height: 51%; left: 50%; top: 33%; padding: 5.7% 3% 2%; transform: rotate(10deg); border-radius: .65cqw; }
+.scene .art-clip { position: absolute; left: 29%; top: -4%; width: 42%; height: 13%; background: #acbfc5; border: .48cqw solid var(--ink); border-radius: 1cqw; }
+.scene .art-clipnote b { margin-bottom: 7%; }
+.scene .note-row { height: 20%; }
+.scene .note-row i { line-height: 1.05; font-size: 3.4cqw; font-style: normal; color: #638572; }
+.scene .art-pass { position: absolute; width: 19%; height: 17%; left: 36%; top: 72%; padding: 2.1% 2%; border: .45cqw solid var(--ink); background: #e7eff2; transform: rotate(-10deg); border-radius: 1cqw; }
+.scene .art-pass small { display: block; font: 700 2cqw/1.2 'Noto Sans KR',sans-serif; color: #34434e; }
+.scene .art-pass span { display: block; width: 80%; height: .55cqw; background: #91aaba; margin-top: .7cqw; }
+.scene-twenties .art-pencil { left: 66%; top: 85%; width: 23%; transform: rotate(-32deg); background: #659a91; }
