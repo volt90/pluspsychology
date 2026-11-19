@@ -89,37 +89,96 @@ test('G shows the first question, then the sunlight example and its recommended 
   assert.doesNotMatch(app.html, /class="sc-feedback"/);
 });
 
-test('the dedicated demo opens the sunlight result and repeats the postcard by touch', () => {
+test('the pitch starts at the activity chooser and needs one real answer before the sunlight example', () => {
+  const standard = harness();
+  standard.click('action', 'check');
+  const firstQuestion = standard.html.match(/<h2>(.*?)<\/h2>/)[1];
   for (const pathname of ['/demo/mind-care', '/demo/mind-care/']) {
-    const app = harness(pathname);
-    assert.equal(app.historyLength, 1);
-    for (let run = 0; run < 2; run++) {
+    for (let answer = 0; answer < 5; answer++) {
+      const app = harness(pathname);
+      assert.equal(app.screen, 'home');
+      assert.match(app.html, /data-action="check"/);
+      assert.match(app.html, /data-action="quiz"/);
+      app.click('action', 'check');
+      assert.equal(app.screen, 'check');
+      assert.equal(app.position.index, 0);
+      assert.ok(app.html.includes(firstQuestion));
+      assert.equal((app.html.match(/data-answer="\d" aria-pressed="false"/g) || []).length, 5);
+      assert.match(app.html, /data-action="next" disabled/);
+      app.click('action', 'next');
+      assert.equal(app.screen, 'check');
+      app.click('answer', answer);
+      app.click('action', 'next');
       assert.equal(app.screen, 'result');
       assert.match(app.html, /시연용 예시 응답/);
       assert.match(app.html, /aria-label="햇빛 응답 1 \/ 4"/);
+      assert.equal((app.html.match(/class="sc-more"/g) || []).length, 1);
+      assert.match(app.html, /data-area="2"[^>]*><span class="sc-more">살펴볼 곳</);
       assert.equal(app.position.selected, 2);
-      assert.doesNotMatch(app.html, /data-action="(?:quiz|check)"/);
       app.click('action', 'postcard');
       assert.equal(app.screen, 'postcard');
       assert.match(app.html, /03-sunlight\.png/);
       assert.match(app.html, /밝은 공간에 잠깐 머무르기/);
-      assert.doesNotMatch(app.html, /data-action="(?:quiz|check)"/);
       app.click('action', 'back-result');
+      assert.equal(app.screen, 'result');
+      app.back();
+      assert.equal(app.screen, 'check');
+      assert.ok(app.html.includes(`data-answer="${answer}" aria-pressed="true"`));
+      app.forward();
+      assert.equal(app.screen, 'result');
+      assert.match(app.html, /시연용 예시 응답/);
+      app.forward();
+      assert.equal(app.screen, 'postcard');
     }
-    assert.equal(app.screen, 'result');
   }
 });
 
-test('restoring old postcard history after a demo reload starts at the sample result', () => {
+test('a new pitch visit opens the chooser even when old postcard history is restored', () => {
   const firstVisit = harness('/demo/mind-care');
+  firstVisit.click('action', 'check');
+  firstVisit.click('answer', 2);
+  firstVisit.click('action', 'next');
   firstVisit.click('action', 'postcard');
   const reloaded = harness('/demo/mind-care');
+  assert.equal(reloaded.screen, 'home');
   reloaded.restore(firstVisit.position);
-  assert.equal(reloaded.screen, 'result');
+  assert.equal(reloaded.screen, 'home');
   assert.notEqual(reloaded.position.visit, firstVisit.position.visit);
-  assert.equal(reloaded.position.selected, 2);
-  reloaded.click('action', 'postcard');
-  assert.match(reloaded.html, /03-sunlight\.png/);
+  reloaded.click('action', 'check');
+  assert.match(reloaded.html, /data-action="next" disabled/);
+});
+
+test('returning to the chooser from a pitch result or postcard lets the next audience answer afresh', () => {
+  const app = harness('/demo/mind-care');
+  for (const finishAt of ['result', 'postcard']) {
+    app.click('action', 'check');
+    app.click('answer', 0);
+    app.click('action', 'next');
+    if (finishAt === 'postcard') app.click('action', 'postcard');
+    assert.equal(app.screen, finishAt);
+    app.click('action', 'home');
+    assert.equal(app.screen, 'home');
+    app.click('action', 'check');
+    assert.match(app.html, /data-action="next" disabled/);
+    assert.doesNotMatch(app.html, /data-answer="\d" aria-pressed="true"/);
+    app.click('action', 'home');
+  }
+});
+
+test('the pitch quiz can be answered from its own home button through all eight feedback screens', () => {
+  const app = harness('/demo/mind-care');
+  app.click('action', 'quiz');
+  for (let i = 0; i < 8; i++) {
+    assert.equal(app.screen, 'quiz');
+    assert.equal(app.position.quizIndex, i);
+    assert.doesNotMatch(app.html, /data-action="quiz-next"/);
+    app.click('ox', i % 2 === 0);
+    assert.match(app.html, /class="sc-feedback"/);
+    app.click('action', 'quiz-next');
+  }
+  assert.equal(app.screen, 'complete');
+  app.click('action', 'home');
+  assert.equal(app.screen, 'home');
 });
 
 test('the demo never writes example scores into an actual survey', () => {

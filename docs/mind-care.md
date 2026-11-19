@@ -2,7 +2,7 @@
 
 주소: `https://www.pluspsychology.ai/experience/mind-care`
 
-모바일 피칭용 `https://www.pluspsychology.ai/demo/mind-care`는 햇빛만 낮은 예시 결과에서 시작한다. 햇빛 하트나 ‘햇빛 포스트카드 보기’를 누르면 엽서와 활동이 열린다. 결과로 돌아오면 같은 예시를 다시 보여줄 수 있다. 일반 체험의 설문이나 OX 퀴즈는 이 경로에 포함하지 않는다.
+모바일 피칭용 `https://www.pluspsychology.ai/demo/mind-care`도 일반 체험과 같은 두 선택지에서 시작한다. ‘내 마음에 필요한 것 찾기’에서 첫 질문에 답하고 ‘다음으로’를 누르면 햇빛만 낮은 8문항 예시 결과가 열린다. 이어서 햇빛 엽서와 추천 활동을 보여줄 수 있다. 예시 점수는 첫 질문에서 고른 답과 별도로 제공한다. ‘처음으로’를 누르면 다시 시연하거나 ‘마음에 관한 OX 퀴즈’를 선택해 진행할 수 있다.
 
 사용자가 승인한 v13 화면을 기존 정적 사이트에 추가했다. Vercel의 기존
 `cleanUrls` 설정으로 `experience/mind-care.html`이 위 주소에서 열린다.

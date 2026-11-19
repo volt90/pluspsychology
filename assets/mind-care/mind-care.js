@@ -33,7 +33,9 @@
     {a:7,q:'상담은 정신질환을 진단받은 사람만 이용할 수 있어요.',answer:false,head:'진단이 없어도 상담받을 수 있어요.',ex:'오래 지속되는 스트레스나 관계의 어려움 등 여러 이유로 상담을 받을 수 있어요. 힘들다는 사실만으로도 도움을 고려할 수 있어요.',source:'NIMH · 심리치료',url:'https://www.nimh.nih.gov/health/topics/psychotherapies'}
   ];
   const demoAnswers = [4, 3, 1, 3, 4, 3, 4, 3];
-  const quizLink = pitchMode ? '' : '<button type="button" class="sc-secondary" data-action="quiz">마음에 관한 OX 퀴즈도 해보기 →</button>';
+  const followUpButton = pitchMode
+    ? '<button type="button" class="sc-secondary" data-action="home">처음으로</button>'
+    : '<button type="button" class="sc-secondary" data-action="quiz">마음에 관한 OX 퀴즈도 해보기 →</button>';
   const state = {screen:'home',index:0,answers:Array(8).fill(null),current:null,selected:0,demoResult:false,quizIndex:0,quizAnswer:null,quizAnswers:Array(8).fill(null)};
   const design = {chart:'hearts',paper:'cream',radius:24};
   const art = () => `<div class="sc-avatar"><img src="${seruPortrait}" alt="세루"></div>`;
@@ -46,7 +48,7 @@
     </div>
     <div class="sc-welcome-actions"><button type="button" class="sc-choice" data-action="check"><span><strong>내 마음에 필요한 것 찾기</strong><small>최근 일주일의 생활을 돌아봐요.</small></span></button><button type="button" class="sc-choice" data-action="quiz"><span><strong>마음에 관한 OX 퀴즈</strong><small>알쏭달쏭한 마음 상식, 함께 알아보기</small></span></button></div>
   </div>`;}
-  function check(){const a=areas[state.index];return `${step('퀴즈',state.index,a)}
+  function check(){const a=areas[state.index];return `${step('질문',state.index,a)}
     <div class="sc-spread">
       <div class="sc-question"><p class="sc-kicker">최근 7일을 떠올려 주세요</p><h2>${a.q}</h2></div>
       <div class="sc-response"><div class="sc-answers">${labels.map((label,i)=>`<button type="button" class="sc-answer" data-answer="${i}" aria-pressed="${state.current===i}"><span>${label}</span><span class="sc-radio" aria-hidden="true">${state.current===i?'✓':''}</span></button>`).join('')}</div><button type="button" class="sc-primary" data-action="next" ${state.current===null?'disabled':''}>${state.index===7?'엽서 추천받기':'다음으로'} →</button><div class="sc-step"><button type="button" class="sc-text-button" data-action="previous" ${state.index===0?'disabled':''}>이전 질문</button></div></div>
@@ -54,13 +56,13 @@
   function heart(a,i,v,low){const id=`sc-heart-clip-${i}`;return `<button type="button" class="sc-heart-button" data-area="${i}" data-selected="${state.selected===i}" aria-label="${a.name}: ${v===null?'아직 돌아보지 않았어요':labels[v]}. ${a.name} 포스트카드 보기">${low.includes(i)?'<span class="sc-more">살펴볼 곳</span>':''}<svg viewBox="0 0 100 90" role="img" aria-label="${a.name} 응답 ${v===null?'없음':v+' / 4'}"><defs><clipPath id="${id}"><path d="M50 87C43 80 3 52 3 27C3 0 35 -5 50 18C65 -5 97 0 97 27C97 52 57 80 50 87Z"/></clipPath></defs><path d="M50 87C43 80 3 52 3 27C3 0 35 -5 50 18C65 -5 97 0 97 27C97 52 57 80 50 87Z" fill="${a.color}" opacity=".22"/>${v!==null?`<rect x="0" y="${87-(v/4)*87}" width="100" height="${(v/4)*87}" fill="${a.color}" clip-path="url(#${id})"/>`:''}</svg><strong>${a.name}</strong><small>${v===null?'아직 답하지 않았어요':shortLabels[v]}</small></button>`;}
   function result(){const values=state.demoResult?demoAnswers:state.answers;const valid=values.filter(v=>v!==null);const min=valid.length?Math.min(...valid):null;const low=min!==null&&min<3?values.flatMap((v,i)=>v===min?[i]:[]):[];let title=valid.length===0?'오늘 돌보고 싶은 곳을<br>자유롭게 골라보세요.':low.length>2?'여러 곳에 작은 돌봄이<br>필요했을 수 있어요.':low.length?`${low.map(i=>areas[i].name).join(' · ')}부터<br>살펴볼까요?`:'요즘 나를 지지해 준 것들,<br>계속 챙겨볼까요?';const a=areas[state.selected];return `<div class="sc-spread sc-results">
     <div class="sc-summary"><p class="sc-kicker">${state.demoResult?'시연용 예시 응답':'나의 8가지 돌봄'}</p><h2>${title}</h2><p class="sc-lead">${state.demoResult?'햇빛을 접할 기회가 적었던 한 주의 예시예요.':'최근 답변을 바탕으로 돌아본 모습이에요.'}<br>아래에서 돌보고 싶은 곳을 눌러보세요.</p>${design.chart==='hearts'?`<div class="sc-hearts">${areas.map((a,i)=>heart(a,i,values[i],low)).join('')}</div>`:`<div class="sc-bar-list">${areas.map((a,i)=>`<button type="button" class="sc-bar-row" data-area="${i}" data-selected="${state.selected===i}" aria-label="${a.name}: ${values[i]===null?'아직 돌아보지 않았어요':labels[values[i]]}. ${a.name} 포스트카드 보기"><strong>${a.name}</strong><span class="sc-bar-track">${[0,1,2,3].map(n=>`<i style="${values[i]!==null&&n<values[i]?'background:'+a.color:''}"></i>`).join('')}</span><small>${values[i]===null?'아직 답하지 않았어요':shortLabels[values[i]]}</small></button>`).join('')}</div>`}</div>
-    <div class="sc-recommendation"><div class="sc-friend">${art()}${pitchMode ? '<p><strong>세루의 추천</strong>이번 주에는 햇빛 점수가 가장 낮았어요.<br>햇빛 엽서에서 오늘 해볼 활동을 만나보세요.</p>' : '<p><strong>세루와 함께</strong>오늘은 하나만 골라도 괜찮아요.<br>지금 가능한 작은 것부터 살펴봐요.</p>'}</div><button type="button" class="sc-primary" data-action="postcard">${a.name} 포스트카드 보기</button>${quizLink}</div>
+    <div class="sc-recommendation"><div class="sc-friend">${art()}${pitchMode ? '<p><strong>세루의 추천</strong>이번 주에는 햇빛 점수가 가장 낮았어요.<br>햇빛 엽서에서 오늘 해볼 활동을 만나보세요.</p>' : '<p><strong>세루와 함께</strong>오늘은 하나만 골라도 괜찮아요.<br>지금 가능한 작은 것부터 살펴봐요.</p>'}</div><button type="button" class="sc-primary" data-action="postcard">${a.name} 포스트카드 보기</button>${followUpButton}</div>
   </div>`;}
   const postcardCaptions = ['긴장을 풀고 마음에 여유를 줘요.','마음을 안정시키고 회복할 힘을 줘요.','아침 햇빛은 수면 리듬과 기분 조절을 도와요.','마음을 표현하면 내 감정을 이해하기 쉬워져요.','규칙적인 식사는 기분과 집중력 유지에 도움이 돼요.','규칙적인 수면은 기분 안정과 감정조절을 도와요.','스트레스를 줄이고 기분 전환을 도와요.','필요한 지지와 도움을 받는 첫걸음이에요.'];
   function postcardView(){const a=areas[state.selected];return `<div class="sc-step"><button type="button" class="sc-text-button" data-action="back-result">← 결과로 돌아가기</button></div>
     <div class="sc-spread sc-postcard-layout">
       <figure class="sc-postcard" aria-label="${a.name} 포스트카드"><img src="${postcards[state.selected]}" width="1205" height="1772" alt="${a.name}. ${postcardCaptions[state.selected]}"></figure>
-      <div class="sc-recommendation"><section class="sc-result-card" aria-label="${a.name} 추천 활동"><span class="sc-tag"><span style="color:${a.color}" aria-hidden="true">♥</span>오늘의 작은 돌봄</span><h3>${a.action}</h3><p>${a.tip}</p></section>${quizLink}</div>
+      <div class="sc-recommendation"><section class="sc-result-card" aria-label="${a.name} 추천 활동"><span class="sc-tag"><span style="color:${a.color}" aria-hidden="true">♥</span>오늘의 작은 돌봄</span><h3>${a.action}</h3><p>${a.tip}</p></section>${followUpButton}</div>
     </div>`;}
   function quizView(){const q=quiz[state.quizIndex],a=areas[q.a],done=state.quizAnswer!==null;return `${step('퀴즈',state.quizIndex,a)}
     <div class="sc-spread">
@@ -105,6 +107,7 @@
   function begin(screen) {
     if (screen === 'check') {
       state.index = 0;
+      if (pitchMode) state.answers[0] = null;
       state.current = state.answers[0];
     } else if (screen === 'quiz') {
       state.quizIndex = 0;
@@ -114,16 +117,20 @@
     navigate(screen);
   }
 
-  function showResult(demo = false, replace = false) {
+  function showResult(demo = false) {
     state.demoResult = demo;
     const answers = demo ? demoAnswers : state.answers;
     state.selected = answers.indexOf(Math.min(...answers));
-    navigate('result', replace);
+    navigate('result');
   }
 
   function advance() {
     if (state.current === null) return;
     state.answers[state.index] = state.current;
+    if (pitchMode) {
+      showResult(true);
+      return;
+    }
     if (state.index < 7) {
       state.index++;
       state.current = state.answers[state.index];
@@ -158,11 +165,6 @@
     if (target && (target.isContentEditable || target.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])'))) return;
     if (state.screen === 'complete') return;
     event.preventDefault();
-    if (pitchMode) {
-      if (state.screen === 'postcard') history.back();
-      else navigate('postcard');
-      return;
-    }
     if (state.screen === 'home') begin('check');
     else if (state.screen === 'check') showResult(true);
     else if (state.screen === 'result') navigate('postcard');
@@ -219,10 +221,6 @@
     if (!position || !position.mindCare) return;
     // A reload deliberately discards answers. Older history must not skip questions.
     if (position.visit !== visitId) {
-      if (pitchMode) {
-        showResult(true, true);
-        return;
-      }
       state.screen = 'home';
       state.demoResult = false;
       state.index = 0;
@@ -248,9 +246,6 @@
     render(true);
   });
 
-  if (pitchMode) showResult(true, true);
-  else {
-    history.replaceState(historyPosition(), '');
-    render();
-  }
+  history.replaceState(historyPosition(), '');
+  render();
 })();
