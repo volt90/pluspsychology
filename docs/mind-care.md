@@ -2,6 +2,8 @@
 
 주소: `https://www.pluspsychology.ai/experience/mind-care`
 
+모바일 피칭용 `https://www.pluspsychology.ai/demo/mind-care`는 햇빛만 낮은 예시 결과에서 시작한다. 햇빛 하트나 ‘햇빛 포스트카드 보기’를 누르면 엽서와 활동이 열린다. 결과로 돌아오면 같은 예시를 다시 보여줄 수 있다. 일반 체험의 설문이나 OX 퀴즈는 이 경로에 포함하지 않는다.
+
 사용자가 승인한 v13 화면을 기존 정적 사이트에 추가했다. Vercel의 기존
 `cleanUrls` 설정으로 `experience/mind-care.html`이 위 주소에서 열린다.
 메인 메뉴와 sitemap에는 추가하지 않으며, 페이지에 `noindex,nofollow`를 둔다.
@@ -10,7 +12,7 @@
 ## 파일
 
 - `experience/mind-care.html`: 전용 헤더, 웹폰트, 메타 정보, 공통 음악 연결
-- `assets/mind-care/mind-care.css`: 승인된 모바일 화면 스타일
+- `assets/mind-care/mind-care.css`: 모바일 세로 배치와 데스크톱 두 열 배치
 - `assets/mind-care/mind-care.js`: 8문항 체크인, 하트 결과, 엽서와 추천 활동, OX 퀴즈
 - `assets/mind-care/01-rest.png` ~ `08-seeking-help.png`: 1205×1772px 원본 엽서
 - `assets/mind-care/friends.webp`: 투명 캐릭터 일러스트
@@ -25,7 +27,7 @@
 - 응답값 0~4는 각 하트의 채움에 대응한다. 최솟값이 3 미만이면 그 최솟값을
   선택한 영역에만 ‘살펴볼 곳’을 표시한다. 동점인 영역은 모두 표시한다.
 - 모든 하트는 표시 유무와 관계없이 한 번 누르면 해당 엽서와 추천 활동을 연다.
-- 추천 활동은 엽서 아래에 있으며 소제목은 공통 ‘오늘의 작은 돌봄’이다.
+- 추천 활동은 모바일에서 엽서 아래에, 데스크톱에서 엽서 오른쪽에 배치한다. 소제목은 공통 ‘오늘의 작은 돌봄’이다.
 - 엽서에서 결과로 돌아갈 때 응답과 하트 채움을 유지한다.
 - 응답은 탭의 메모리에만 둔다. 서버, 분석 도구, URL, localStorage로 전송·저장하지 않는다.
 - 브라우저 history에는 화면 위치만 둔다. 새로고침으로 응답이 초기화된 뒤

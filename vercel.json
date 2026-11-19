@@ -5,6 +5,9 @@
     {"source": "/mind-forest", "destination": "/experience/mind-forest", "permanent": true},
     {"source": "/mind-care", "destination": "/experience/mind-care", "permanent": true}
   ],
+  "rewrites": [
+    {"source": "/demo/mind-care", "destination": "/experience/mind-care"}
+  ],
   "headers": [
     {
       "source": "/gallery",

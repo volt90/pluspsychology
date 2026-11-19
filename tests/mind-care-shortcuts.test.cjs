@@ -6,7 +6,7 @@ const vm = require('node:vm');
 
 const source = fs.readFileSync(path.join(__dirname, '../assets/mind-care/mind-care.js'), 'utf8');
 
-function harness() {
+function harness(pathname = '/experience/mind-care') {
   const listeners = new Map();
   const clicks = new Map();
   const focusable = { setAttribute() {}, focus() {} };
@@ -24,7 +24,7 @@ function harness() {
   };
   vm.runInNewContext(source, {
     document: { getElementById: id => id === 'simri-care' ? root : content },
-    window: { addEventListener(type, handler) { listeners.set(type, handler); }, scrollTo() {} },
+    window: { location: { pathname }, addEventListener(type, handler) { listeners.set(type, handler); }, scrollTo() {} },
     history
   });
   return {
@@ -87,6 +87,39 @@ test('G shows the first question, then the sunlight example and its recommended 
   app.back();
   assert.equal(app.screen, 'quiz');
   assert.doesNotMatch(app.html, /class="sc-feedback"/);
+});
+
+test('the dedicated demo opens the sunlight result and repeats the postcard by touch', () => {
+  for (const pathname of ['/demo/mind-care', '/demo/mind-care/']) {
+    const app = harness(pathname);
+    assert.equal(app.historyLength, 1);
+    for (let run = 0; run < 2; run++) {
+      assert.equal(app.screen, 'result');
+      assert.match(app.html, /시연용 예시 응답/);
+      assert.match(app.html, /aria-label="햇빛 응답 1 \/ 4"/);
+      assert.equal(app.position.selected, 2);
+      assert.doesNotMatch(app.html, /data-action="(?:quiz|check)"/);
+      app.click('action', 'postcard');
+      assert.equal(app.screen, 'postcard');
+      assert.match(app.html, /03-sunlight\.png/);
+      assert.match(app.html, /밝은 공간에 잠깐 머무르기/);
+      assert.doesNotMatch(app.html, /data-action="(?:quiz|check)"/);
+      app.click('action', 'back-result');
+    }
+    assert.equal(app.screen, 'result');
+  }
+});
+
+test('restoring old postcard history after a demo reload starts at the sample result', () => {
+  const firstVisit = harness('/demo/mind-care');
+  firstVisit.click('action', 'postcard');
+  const reloaded = harness('/demo/mind-care');
+  reloaded.restore(firstVisit.position);
+  assert.equal(reloaded.screen, 'result');
+  assert.notEqual(reloaded.position.visit, firstVisit.position.visit);
+  assert.equal(reloaded.position.selected, 2);
+  reloaded.click('action', 'postcard');
+  assert.match(reloaded.html, /03-sunlight\.png/);
 });
 
 test('the demo never writes example scores into an actual survey', () => {
@@ -183,9 +216,13 @@ test('physical G, lowercase and uppercase work while repeats, modifiers and edit
 test('OX answers and normal feedback remain available when mixing clicks with G', () => {
   const app = harness();
   app.click('action', 'quiz');
+  assert.match(app.html, /눈을 감고 어깨의 힘을 푸는 것도 휴식/);
   assert.doesNotMatch(app.html, /data-action="quiz-next"/);
-  app.click('ox', 'false');
+  app.click('ox', 'true');
+  assert.match(app.html, /data-ox="true" aria-pressed="true" disabled/);
   assert.match(app.html, /class="sc-feedback"/);
+  assert.match(app.html, /정답 O/);
+  assert.match(app.html, /화면에서 눈을 떼거나 가볍게 기지개를/);
   app.click('action', 'quiz-next');
   app.key(); // Skip the second question.
   app.back();
@@ -193,6 +230,6 @@ test('OX answers and normal feedback remain available when mixing clicks with G'
   assert.doesNotMatch(app.html, /class="sc-feedback"/);
   app.back();
   assert.equal(app.position.quizIndex, 0);
-  assert.match(app.html, /data-ox="false" aria-pressed="true" disabled/);
+  assert.match(app.html, /data-ox="true" aria-pressed="true" disabled/);
   assert.match(app.html, /class="sc-feedback"/);
 });

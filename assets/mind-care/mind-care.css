@@ -5,7 +5,7 @@
 #simri-care button:focus-visible{outline:3px solid #4C8CCB;outline-offset:3px}
 #simri-care button:disabled{cursor:default;opacity:.42}
 #simri-care button:active:not(:disabled){transform:scale(.96)}
-#simri-care .sc-phone{width:100%;max-width:390px;margin:0 auto;background:var(--sc-paper);overflow:hidden;min-height:100svh}
+#simri-care .sc-phone{width:100%;margin:0 auto;background:var(--sc-paper);min-height:100svh}
 #simri-care .sc-top{display:flex;align-items:center;justify-content:space-between;padding:15px 22px 10px;border-bottom:1px solid var(--sc-line);gap:10px}
 #simri-care .sc-brand{display:block;flex:0 0 118px;width:118px;line-height:0}
 #simri-care .sc-brand img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
@@ -40,7 +40,7 @@
 #simri-care .sc-question h2{font-family:'Noto Sans KR',sans-serif;font-size:23px;font-weight:700;line-height:1.55;letter-spacing:-.7px;text-wrap:pretty}
 #simri-care .sc-quiz-question{min-height:0;margin:16px 0 0}
 #simri-care .sc-quiz-question h2{margin:0}
-#simri-care .sc-quiz-question+.sc-ox{margin-top:39px}
+#simri-care .sc-quiz-question + .sc-response .sc-ox{margin-top:39px}
 #simri-care .sc-answers{display:grid;gap:8px}
 #simri-care .sc-answer{display:flex;align-items:center;justify-content:space-between;text-align:left;border:1px solid var(--sc-line);background:var(--sc-white);border-radius:14px;min-height:48px;padding:10px 15px;font-size:14px}
 #simri-care .sc-answer[aria-pressed=true]{background:#E9F2FB;border:2px solid #4C8CCB;padding:9px 14px}
@@ -95,3 +95,108 @@ body{margin:0}
 #simri-care [data-screen-heading]:focus{outline:none}
 @media(max-width:350px){#simri-care .sc-content{padding:19px 17px max(20px,env(safe-area-inset-bottom))}#simri-care h1{font-size:29px}#simri-care .sc-top{padding-left:17px;padding-right:17px}}
 @media(prefers-reduced-motion:reduce){#simri-care button:active:not(:disabled){transform:none}}
+
+@media (max-width: 899px) {
+  #simri-care[data-screen="home"] .sc-welcome { display: grid; grid-template-areas: "title" "art" "actions" "ribbon"; }
+  #simri-care .sc-welcome-art { display: contents; }
+  #simri-care .sc-welcome-art .sc-ensemble { grid-area: art; width: 100%; margin-top: 6px; }
+  #simri-care .sc-welcome .sc-heart-ribbon { grid-area: ribbon; }
+  #simri-care .sc-welcome-actions { grid-area: actions; }
+  #simri-care[data-screen="home"] .sc-choice:first-child { margin-top: 0; }
+  #simri-care[data-pitch="true"] .sc-postcard { width: clamp(155px, 33svh, 290px); max-width: 100%; margin-block: 4px 16px; }
+}
+
+@media (max-width: 499px) and (max-height: 750px) {
+  #simri-care[data-pitch="true"] .sc-friend { display: none; }
+}
+
+/* Keep a comfortable reading width for a single column on tablets. */
+@media (min-width: 500px) {
+  #simri-care .sc-phone { max-width: 680px; }
+  #simri-care .sc-top, #simri-care .sc-content { padding-inline: clamp(28px, 5vw, 44px); }
+  #simri-care .sc-content { padding-block: 32px; }
+  #simri-care h1 { font-size: 42px; }
+  #simri-care .sc-ensemble { max-width: 480px; margin-inline: auto; }
+  #simri-care .sc-choice { min-width: 280px; }
+}
+
+@media (min-width: 900px) {
+  #simri-care { --sc-gutter: clamp(36px, 5vw, 80px); }
+  #simri-care .sc-phone { max-width: 1432px; }
+  #simri-care .sc-top {
+    margin-inline: var(--sc-gutter);
+    padding: 20px 0 16px;
+  }
+  #simri-care .sc-brand { width: 150px; flex-basis: 150px; }
+  #simri-care .sc-header-tools { flex-direction: row; align-items: center; gap: 24px; }
+  #simri-care .sc-top small, #simri-care .sc-music-control { font-size: 13px; }
+  #simri-care .sc-content { padding: clamp(24px, 4vh, 44px) var(--sc-gutter) 48px; }
+  #simri-care .sc-welcome, #simri-care .sc-spread {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    column-gap: clamp(36px, 6vw, 98px);
+  }
+  #simri-care .sc-welcome {
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.2fr);
+    grid-template-areas: "title art" "actions art";
+    grid-template-rows: auto auto;
+    align-content: center;
+    min-height: clamp(480px, 72svh, 800px);
+    row-gap: 20px;
+  }
+  #simri-care .sc-welcome .sc-center { grid-area: title; text-align: start; align-self: end; }
+  #simri-care .sc-welcome h1 {
+    font-size: clamp(42px, 4.4vw, 68px);
+    line-height: 1.23;
+    word-break: keep-all;
+    margin: 15px 0 0;
+  }
+  #simri-care .sc-yellow { padding-inline: .08em; border-radius: .13em; }
+  #simri-care .sc-welcome-actions { grid-area: actions; max-width: 420px; }
+  #simri-care .sc-welcome-art, #simri-care[data-screen="complete"] .sc-ensemble {
+    grid-area: art;
+    align-self: center;
+  }
+  #simri-care .sc-welcome .sc-ensemble {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+  #simri-care .sc-heart-ribbon { gap: 14px; font-size: 22px; margin: 24px 0 0; }
+  #simri-care .sc-choice { width: 100%; padding: 15px 24px; border-width: 2px; border-radius: 19px; }
+  #simri-care .sc-choice strong { font-size: clamp(19px, 1.6vw, 24px); }
+  #simri-care .sc-choice small { font-size: 14px; }
+  #simri-care .sc-kicker { font-size: 14px; }
+  #simri-care .sc-step, #simri-care .sc-text-button, #simri-care .sc-tag { font-size: 14px; }
+  #simri-care .sc-track { margin-bottom: clamp(28px, 5vh, 58px); }
+  #simri-care .sc-question { margin: 0; min-height: 0; }
+  #simri-care .sc-question h2 {
+    font-size: clamp(30px, 3vw, 46px);
+    line-height: 1.45;
+    letter-spacing: -.035em;
+  }
+  #simri-care .sc-response { width: 100%; max-width: 540px; justify-self: end; }
+  #simri-care .sc-answers { gap: 10px; }
+  #simri-care .sc-answer { min-height: 54px; padding-inline: 20px; font-size: 16px; }
+  #simri-care .sc-answer[aria-pressed="true"] { padding-inline: 19px; }
+  #simri-care .sc-primary, #simri-care .sc-secondary { min-height: 52px; font-size: 16px; }
+  #simri-care .sc-quiz-question + .sc-response .sc-ox { margin: 0; }
+  #simri-care .sc-ox button { min-height: clamp(208px, 27vh, 280px); }
+  #simri-care .sc-ox button span { font-size: 64px; }
+  #simri-care .sc-ox button small { font-size: 15px; }
+  #simri-care .sc-ox-art { width: clamp(108px, 14vh, 148px); height: clamp(108px, 14vh, 148px); }
+  #simri-care .sc-feedback, #simri-care .sc-result-card { padding: clamp(18px, 2vw, 30px); }
+  #simri-care .sc-feedback p, #simri-care .sc-result-card p, #simri-care .sc-lead, #simri-care .sc-friend p { font-size: 16px; }
+  #simri-care .sc-result-card h3 { font-size: clamp(20px, 2vw, 28px); word-break: keep-all; }
+  #simri-care .sc-result-card .sc-tag, #simri-care .sc-friend strong { font-size: 14px; }
+  #simri-care .sc-results, #simri-care .sc-postcard-layout { align-items: center; }
+  #simri-care .sc-results { min-height: clamp(460px, 67svh, 720px); }
+  #simri-care .sc-summary h2 { font-size: clamp(38px, 3.7vw, 56px); }
+  #simri-care .sc-hearts { gap: 14px 8px; margin-bottom: 0; }
+  #simri-care .sc-heart-button { padding: 8px 2px; }
+  #simri-care .sc-heart-button svg { width: 72px; height: auto; }
+  #simri-care .sc-heart-button strong { font-size: 15px; }
+  #simri-care .sc-heart-button small, #simri-care .sc-heart-button .sc-more { font-size: 12px; }
+  #simri-care .sc-recommendation { width: 100%; max-width: 470px; justify-self: center; }
+  #simri-care .sc-postcard { width: clamp(255px, 42svh, 440px); max-width: 100%; margin: 0; justify-self: center; }
+}
