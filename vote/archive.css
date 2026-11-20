@@ -242,3 +242,52 @@
     margin-top: 16px;
   }
 }
+
+/* A compact index lets participants choose between concurrent polls. */
+.archive-many {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.archive-many .archive-card {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  gap: 0;
+  padding: 12px;
+}
+
+.archive-many .archive-card-copy {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  align-items: flex-start;
+  padding: 17px 8px 10px;
+}
+
+.archive-many .archive-question {
+  margin-top: 8px;
+  font-size: clamp(20px, 2.4vw, 25px);
+}
+
+.archive-many .archive-prompt { margin-bottom: 14px; }
+.archive-many .archive-action { margin-top: auto; }
+
+@media (max-width: 620px) {
+  .archive-many { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .archive-many .archive-card {
+    grid-template-columns: minmax(75px, 31%) minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+  }
+  .archive-many .archive-card-copy { align-self: center; padding: 0; }
+  .archive-many .archive-question { font-size: 17px; margin-top: 5px; }
+  .archive-many .archive-prompt { display: none; }
+  .archive-many .archive-action {
+    margin-top: 8px;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--archive-blue);
+  }
+}

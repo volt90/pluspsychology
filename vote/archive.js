@@ -7,7 +7,7 @@ const translations = {
     vote: '투표 참여하기',
     results: '결과 보기',
     past: '지난 투표',
-    noPast: '투표가 끝나면 이곳에서 모두의 답을 다시 볼 수 있어요.',
+    noPast: '투표가 끝나면 이곳에서 우리가 고른 답을 다시 볼 수 있어요.',
     noOpen: '지금은 진행 중인 투표가 없어요.'
   },
   en: {
@@ -30,13 +30,17 @@ function element(tag, className, text) {
   return node;
 }
 
-function makeCover() {
+function makeCover(options) {
   const frame = element('span', 'archive-art');
   frame.setAttribute('aria-hidden', 'true');
   const board = element('span', 'vote-cover');
-  for (let index = 0; index < 5; index++) {
-    const note = element('span', 'vote-cover__note');
-    note.append(element('span', 'vote-cover__doodle'));
+  for (const option of options) {
+    const note = element('span', 'vote-cover__note paper-' + option.color);
+    const drawing = element('img', 'vote-cover__drawing');
+    drawing.src = '/vote/assets/' + encodeURIComponent(option.art) + '.png';
+    drawing.alt = '';
+    drawing.loading = 'lazy';
+    note.append(drawing);
     board.append(note);
   }
   const mascot = element('img', 'vote-cover__mascot');
@@ -67,7 +71,7 @@ function makePollCard(poll, language) {
   arrow.setAttribute('aria-hidden', 'true');
   action.append(arrow);
   content.append(action);
-  link.append(makeCover(), content);
+  link.append(makeCover(poll.options), content);
   return link;
 }
 
@@ -85,6 +89,7 @@ export function renderArchive(container, polls, lang = 'ko') {
     const group = poll.open ? current : previousCards;
     group.append(makePollCard(poll, language));
   }
+  current.classList.toggle('archive-many', current.childElementCount > 1);
   if (!current.childElementCount) current.append(element('p', 'archive-empty', labels.noOpen));
   if (previousCards.childElementCount) {
     previous.append(previousCards);

@@ -6,12 +6,67 @@
     "titleEn": "When did you feel a little stronger?",
     "prompt": "지나온 날들을 떠올리며, 나에게 힘이 되어준 경험 한 가지를 골라 주세요.",
     "promptEn": "Think back on your day and pick one experience that gave you strength.",
+    "shareImage": "share.png",
+    "resultsIntro": "한 장 한 장, 우리가 붙인 포스트잇을 모았어요.",
+    "resultsIntroEn": "A board of the moments we picked, one note at a time.",
+    "resultsDescription": "다섯 가지 경험 중 어떤 순간이 힘이 되었을까요? 모두가 붙인 포스트잇과 투표 결과를 확인하세요.",
     "options": [
       {"id":"listen","label":"누군가 내 이야기를 들어줬을 때","labelEn":"Someone listened to me","short":"다정한 경청","shortEn":"Being heard","color":"rose","art":"listen"},
       {"id":"rest","label":"푹 쉬고 숨을 돌렸을 때","labelEn":"I rested and caught my breath","short":"충분한 쉼","shortEn":"Taking a break","color":"butter","art":"rest"},
       {"id":"finish","label":"작은 일을 끝까지 해냈을 때","labelEn":"I finished one small thing","short":"작은 성취","shortEn":"A small win","color":"mint","art":"finish"},
       {"id":"flow","label":"좋아하는 일에 푹 빠졌을 때","labelEn":"I got lost in something I love","short":"즐거운 몰입","shortEn":"Finding flow","color":"sky","art":"flow"},
       {"id":"laugh","label":"누군가와 함께 웃었을 때","labelEn":"I shared a laugh with someone","short":"함께한 웃음","shortEn":"Laughing together","color":"lilac","art":"laugh"}
+    ]
+  },
+  {
+    "slug": "weather",
+    "open": true,
+    "title": "오늘 내 마음을 날씨로 표현한다면?",
+    "titleEn": "If your mood were the weather today, what would it be?",
+    "prompt": "지금 내 마음과 가장 닮은 날씨 하나를 골라 주세요.",
+    "promptEn": "Pick the weather that feels closest to your mood right now.",
+    "resultsIntro": "오늘 각자의 마음에는 어떤 날씨가 찾아왔을까요? 모두가 고른 마음 날씨를 모았어요.",
+    "resultsIntroEn": "What’s the weather like in everyone’s world today? Here are the moods we shared.",
+    "options": [
+      {"id":"sun","label":"쨍한 햇살","labelEn":"Bright sunshine","short":"쨍한 햇살","shortEn":"Sunshine","color":"butter","art":"weather-sun"},
+      {"id":"cloud","label":"포근한 구름","labelEn":"Soft, fluffy clouds","short":"포근한 구름","shortEn":"Soft clouds","color":"rose","art":"weather-cloud"},
+      {"id":"fog","label":"뿌연 안개","labelEn":"Hazy fog","short":"뿌연 안개","shortEn":"Hazy fog","color":"lilac","art":"weather-fog"},
+      {"id":"drizzle","label":"잔잔한 비","labelEn":"Gentle rain","short":"잔잔한 비","shortEn":"Gentle rain","color":"sky","art":"weather-drizzle"},
+      {"id":"wind","label":"세찬 바람","labelEn":"Strong winds","short":"세찬 바람","shortEn":"Strong winds","color":"mint","art":"weather-wind"}
+    ]
+  },
+  {
+    "slug": "support",
+    "open": true,
+    "title": "내가 속마음을 꺼냈을 때, 어떤 반응이 가장 반가운가요?",
+    "titleEn": "When you open up, what response do you most welcome?",
+    "prompt": "누군가에게 마음을 털어놓는 순간을 떠올리며, 가장 반가운 반응을 골라 주세요.",
+    "promptEn": "Think of a time you opened up to someone. Which response would feel best?",
+    "resultsIntro": "속마음을 털어놓을 때, 사람들은 어떤 반응을 반가워했을까요? 각자가 고른 답을 모았어요.",
+    "resultsIntroEn": "How do people like to be met when they open up? Here are the responses everyone chose.",
+    "options": [
+      {"id":"listening","label":"끝까지 들어주기","labelEn":"Listen until I’m finished","short":"끝까지 듣기","shortEn":"Listening fully","color":"mint","art":"support-listening"},
+      {"id":"empathy","label":"“그랬구나” 하고 마음 알아주기","labelEn":"Acknowledge how I felt and say “I hear you”","short":"마음 알아주기","shortEn":"Understanding","color":"rose","art":"support-empathy"},
+      {"id":"story","label":"비슷한 경험 들려주기","labelEn":"Share a similar experience","short":"경험 나누기","shortEn":"Sharing a story","color":"butter","art":"support-story"},
+      {"id":"solve","label":"방법을 함께 찾아주기","labelEn":"Help me find a way forward","short":"함께 방법 찾기","shortEn":"Finding a way","color":"sky","art":"support-solve"},
+      {"id":"checkin","label":"다음 날 다시 안부 물어주기","labelEn":"Check in with me the next day","short":"다시 안부 묻기","shortEn":"Checking in","color":"lilac","art":"support-checkin"}
+    ]
+  },
+  {
+    "slug": "ten-minutes",
+    "open": true,
+    "title": "오늘 나만의 시간이 딱 10분 생긴다면?",
+    "titleEn": "If you had ten minutes all to yourself today, what would you do?",
+    "prompt": "오늘 하루에 생긴 작은 틈, 가장 하고 싶은 일 하나를 골라 주세요.",
+    "promptEn": "Imagine a little break in your day. Pick the one thing you’d most like to do.",
+    "resultsIntro": "나만의 10분을 어떻게 보내고 싶었을까요? 각자가 고른 답을 포스트잇에 모았어요.",
+    "resultsIntroEn": "How would everyone spend ten minutes of their own? Each note shows someone’s choice.",
+    "options": [
+      {"id":"walk","label":"동네 한 바퀴 걷기","labelEn":"Take a walk around the neighborhood","short":"동네 산책","shortEn":"Taking a walk","color":"mint","art":"ten-minutes-walk"},
+      {"id":"music","label":"좋아하는 노래 듣기","labelEn":"Listen to a favorite song","short":"노래 듣기","shortEn":"Playing a song","color":"lilac","art":"ten-minutes-music"},
+      {"id":"message","label":"보고 싶은 사람에게 연락하기","labelEn":"Get in touch with someone I miss","short":"연락하기","shortEn":"Reaching out","color":"rose","art":"ten-minutes-message"},
+      {"id":"doodle","label":"종이에 끄적이기","labelEn":"Doodle on a sheet of paper","short":"끄적이기","shortEn":"Doodling","color":"butter","art":"ten-minutes-doodle"},
+      {"id":"pause","label":"아무것도 안 하고 쉬기","labelEn":"Rest and do nothing at all","short":"가만히 쉬기","shortEn":"Just resting","color":"sky","art":"ten-minutes-pause"}
     ]
   }
 ]

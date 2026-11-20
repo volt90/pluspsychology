@@ -29,7 +29,8 @@ function page(poll, results = false) {
   const name = poll ? poll.title + (results ? ' · 투표 결과' : '') : archiveTitle;
   const nameEn = poll ? poll.titleEn + (results ? ' · Results' : '') : 'Heart notes';
   const title = name + ' | 김심리월드';
-  const desc = results ? '다섯 가지 경험 중 어떤 순간이 힘이 되었을까요? 모두가 붙인 포스트잇과 투표 결과를 확인하세요.' : poll?.prompt || archiveDesc;
+  const desc = results ? poll.resultsDescription || poll.resultsIntro : poll?.prompt || archiveDesc;
+  const shareImage = poll ? poll.shareImage || `share-${slug}.png` : 'share-archive.png';
   const crumbs = [['Home', '/', 'Home'], [archiveTitle, '/vote', 'Heart notes']];
   if (poll) crumbs.push([poll.title, '/vote/' + slug, poll.titleEn]);
   if (results) crumbs.push(['투표 결과', url, 'Results']);
@@ -40,7 +41,7 @@ function page(poll, results = false) {
   const main = poll ? `<section class="intro" aria-labelledby="question">
       <div class="intro-copy"><div class="poll-status ${poll.open ? '' : 'closed'}">${status}</div>
         <h1 id="question">${translated(poll.title, poll.titleEn)}</h1>
-        <p>${results ? translated('한 장 한 장, 우리가 붙인 포스트잇을 모았어요.', 'A board of the moments we picked, one note at a time.') : translated(poll.prompt,poll.promptEn)}</p>
+        <p>${results ? translated(poll.resultsIntro, poll.resultsIntroEn) : translated(poll.prompt,poll.promptEn)}</p>
       </div>
       <div class="friends-art" aria-hidden="true"><i></i><img class="simri" src="/vote/assets/simri.png" alt=""><img class="aru" src="/vote/assets/aru.png" alt=""><b>✦</b></div>
     </section>
@@ -53,8 +54,8 @@ function page(poll, results = false) {
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escape(title)}</title><meta name="description" content="${escape(desc)}"><meta name="theme-color" content="#FBF6EA">
 <link rel="canonical" href="${base+url}"><meta property="og:type" content="website"><meta property="og:site_name" content="김심리월드"><meta property="og:locale" content="ko_KR">
-<meta property="og:url" content="${base+url}"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(desc)}"><meta property="og:image" content="${base}/vote/assets/share.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escape(title)}"><meta name="twitter:description" content="${escape(desc)}"><meta name="twitter:image" content="${base}/vote/assets/share.png">
+<meta property="og:url" content="${base+url}"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(desc)}"><meta property="og:image" content="${base}/vote/assets/${shareImage}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escape(title)}"><meta name="twitter:description" content="${escape(desc)}"><meta name="twitter:image" content="${base}/vote/assets/${shareImage}">
 ${fonts}
 <link rel="stylesheet" href="/vote/chrome.css"><link rel="stylesheet" href="/vote/board.css">${poll ? '' : '<link rel="stylesheet" href="/vote/art.css"><link rel="stylesheet" href="/vote/archive.css">'}
 <link rel="stylesheet" href="/assets/bgm/bgm.css"><script type="application/ld+json">${JSON.stringify(schema).replace(/</g,'\\u003c')}</script>

@@ -248,6 +248,7 @@
      알약·그리드와 같은 왼쪽 끝에서 시작하게 둡니다.
      읽기 폭(--read) 자체는 그대로라 긴 문장이 화면 끝까지 늘어나지는 않습니다. */
   section > h1.head, section > h2.head, section > .glead{margin-left:0;margin-right:auto}
+  section > h1.head:first-child{margin-top:0}
 
   /* ---------- 워크북 구매 상자 ----------
      Store에서 결제로 이어지는 유일한 자리입니다. */
@@ -282,11 +283,8 @@
   .soonchar{flex:0 0 auto;width:78px;height:auto;display:block;
             filter:drop-shadow(0 6px 6px rgba(43,38,32,.14))}
   .soontxt{min-width:0;flex:1 1 auto}   /* 남는 자리를 글이 차지해 캐릭터가 오른쪽 끝에 섭니다 */
-  .soonpill{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-weight:700;
-            font-size:11.5px;letter-spacing:.02em;color:#9A6E0B;background:var(--gold-soft);
-            border-radius:999px;padding:5px 11px}
   .soonh{font-family:var(--display);font-weight:400;font-size:clamp(17px,4.4vw,20px);
-         color:var(--ink);margin-top:9px;line-height:1.45}
+         color:var(--ink);line-height:1.45}
   .soonp{font-size:13px;color:var(--ink-soft);margin-top:7px;line-height:1.75}
   /* 휴대폰에서는 캐릭터를 글 위로 올립니다 — 옆에 두면 글줄이 너무 좁아집니다 */
   @media(max-width:520px){
@@ -395,7 +393,6 @@
     숨김끝 -->
 
     <section>
-      <span class="eyebrow rv" data-en="Things we made">만든 것들</span>
       <h1 class="head rv" data-en="Goods">굿즈</h1>
       <p class="glead rv" data-en="Meet the Kim Simri World friends as goods.">김심리월드 친구들을 굿즈로 만나보세요.</p>
       <div>
@@ -468,7 +465,6 @@
       <!-- 판매처 안내 — 스마트스토어가 열리면 이 상자를 스토어 링크로 바꾸세요 -->
       <div class="soonbox panel rv">
         <div class="soontxt">
-          <span class="soonpill" data-en="Coming soon">준비중</span>
           <p class="soonh" data-en="Our Naver Smart Store is being set up.">네이버 스마트스토어 준비중입니다.</p>
           <p class="soonp" data-en="You&rsquo;ll be able to buy the goods once the store opens.">굿즈는 스토어가 열리는 대로 만나보실 수 있어요.</p>
         </div>
