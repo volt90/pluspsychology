@@ -149,7 +149,7 @@ function drawVote() {
 }
 function drawResults() {
   const meta = snapshot ? t('포스트잇 ' + number(snapshot.total) + '장',number(snapshot.total) + (snapshot.total === 1 ? ' note' : ' notes')) : '…';
-  const panel = makeBoard(t('모두의 포스트잇','Everyone’s notes'),meta);
+  const panel = makeBoard(t('우리들의 포스트잇','Everyone’s notes'),meta);
   if (snapshot) {
     const notes = el('div','result-notes');
     const unit = Math.max(1,Math.ceil(Math.max(...Object.values(snapshot.counts))/12));
