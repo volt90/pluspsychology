@@ -1,6 +1,8 @@
 [
   {
     "slug": "strength",
+    "scene": "scene-strength.webp",
+    "coverColor": "mint",
     "open": true,
     "title": "나에게 힘이 되었던 순간은?",
     "titleEn": "When did you feel a little stronger?",
@@ -20,6 +22,8 @@
   },
   {
     "slug": "weather",
+    "scene": "scene-weather.webp",
+    "coverColor": "sky",
     "open": true,
     "title": "오늘 내 마음을 날씨로 표현한다면?",
     "titleEn": "If your mood were the weather today, what would it be?",
@@ -37,6 +41,8 @@
   },
   {
     "slug": "support",
+    "scene": "scene-support.webp",
+    "coverColor": "rose",
     "open": true,
     "title": "내가 속마음을 꺼냈을 때, 어떤 반응이 가장 반가운가요?",
     "titleEn": "When you open up, what response do you most welcome?",
@@ -54,6 +60,8 @@
   },
   {
     "slug": "ten-minutes",
+    "scene": "scene-ten-minutes.webp",
+    "coverColor": "butter",
     "open": true,
     "title": "오늘 나만의 시간이 딱 10분 생긴다면?",
     "titleEn": "If you had ten minutes all to yourself today, what would you do?",

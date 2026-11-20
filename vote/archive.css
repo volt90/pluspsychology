@@ -89,8 +89,8 @@
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  color: #2d664e;
-  background: #dfefe3;
+  color: #505050;
+  background: #eaeaea;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 700;
@@ -106,7 +106,7 @@
 }
 
 .archive-question {
-  margin: 13px 0 0;
+  margin: 0;
   color: #2b2620;
   font-family: var(--sans, 'Noto Sans KR', sans-serif);
   font-size: clamp(23px, 2.75vw, 31px);
@@ -212,11 +212,6 @@
   padding: 17px 19px 20px;
 }
 
-.archive-card--closed .archive-status {
-  background: #eaeaea;
-  color: #505050;
-}
-
 .archive-card--closed .archive-question {
   margin-top: 8px;
   font-size: 19px;
@@ -264,7 +259,6 @@
 }
 
 .archive-many .archive-question {
-  margin-top: 8px;
   font-size: clamp(20px, 2.4vw, 25px);
 }
 

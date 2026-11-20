@@ -194,9 +194,15 @@ function render() {
     renderArchive(archive,polls,lang);
     if (lang === 'en') archive.querySelectorAll('.archive-card').forEach(a => {a.href = localPath(a.pathname);});
   } else if (poll) {
-    const status = document.querySelector('.poll-status');
-    status.classList.toggle('closed', !poll.open);
-    status.textContent = poll.open ? t('진행중', 'Open') : t('종료', 'Closed');
+    const copy = document.querySelector('.intro-copy');
+    const status = copy.querySelector('.poll-status');
+    if (poll.open) {
+      status?.remove();
+    } else {
+      const closedStatus = status || el('div', 'poll-status closed');
+      closedStatus.textContent = t('종료', 'Closed');
+      if (!status) copy.prepend(closedStatus);
+    }
     board.replaceChildren(view === 'results' ? drawResults() : drawVote());
   }
 }

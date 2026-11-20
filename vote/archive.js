@@ -2,7 +2,6 @@ const translations = {
   ko: {
     title: '마음 투표',
     intro: '마음에 닿는 답을 골라 포스트잇 한 장을 붙여보세요.',
-    open: '진행중',
     closed: '종료',
     vote: '투표 참여하기',
     results: '결과 보기',
@@ -13,7 +12,6 @@ const translations = {
   en: {
     title: 'Heart notes',
     intro: 'Pick the answer that feels right to you and add a sticky note to the board.',
-    open: 'Open',
     closed: 'Closed',
     vote: 'Join the poll',
     results: 'View results',
@@ -30,25 +28,22 @@ function element(tag, className, text) {
   return node;
 }
 
-function makeCover(options) {
+function makeCover(poll) {
   const frame = element('span', 'archive-art');
   frame.setAttribute('aria-hidden', 'true');
-  const board = element('span', 'vote-cover');
-  for (const option of options) {
+  const board = element('span', 'vote-cover paper-' + (poll.coverColor || poll.options[0].color));
+  const scene = element('img', 'vote-cover__scene');
+  scene.src = '/vote/assets/' + encodeURIComponent(poll.scene || poll.options[0].art + '.png');
+  scene.alt = '';
+  board.append(scene);
+  for (const option of [poll.options[0], poll.options[poll.options.length - 1]]) {
     const note = element('span', 'vote-cover__note paper-' + option.color);
-    const drawing = element('img', 'vote-cover__drawing');
+    const drawing = element('img');
     drawing.src = '/vote/assets/' + encodeURIComponent(option.art) + '.png';
     drawing.alt = '';
-    drawing.loading = 'lazy';
     note.append(drawing);
     board.append(note);
   }
-  const mascot = element('img', 'vote-cover__mascot');
-  mascot.src = '/vote/assets/seru.png';
-  mascot.alt = '';
-  mascot.width = 287;
-  mascot.height = 383;
-  board.append(mascot);
   frame.append(board);
   return frame;
 }
@@ -62,16 +57,16 @@ function makePollCard(poll, language) {
   link.href = poll.open ? path : path + '/results';
 
   const content = element('div', 'archive-card-copy');
-  const status = element('span', 'archive-status', poll.open ? labels.open : labels.closed);
+  if (!poll.open) content.append(element('span', 'archive-status', labels.closed));
   const heading = element(poll.open ? 'h2' : 'h3', 'archive-question', title);
-  content.append(status, heading);
+  content.append(heading);
   if (poll.open && prompt) content.append(element('p', 'archive-prompt', prompt));
   const action = element('span', 'archive-action', poll.open ? labels.vote : labels.results);
   const arrow = element('span', 'archive-arrow');
   arrow.setAttribute('aria-hidden', 'true');
   action.append(arrow);
   content.append(action);
-  link.append(makeCover(poll.options), content);
+  link.append(makeCover(poll), content);
   return link;
 }
 

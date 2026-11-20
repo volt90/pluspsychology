@@ -1,138 +1,59 @@
-/* A paper-board cover. All measurements follow the board, including when
-   it is rendered into the small archive thumbnail. */
+/* The same piece of illustrated stationery scales down to a mobile thumbnail. */
 .vote-cover {
   position: relative;
-  display: block;
-  isolation: isolate;
-  overflow: hidden;
-  inline-size: 100%;
-  aspect-ratio: 1.83;
-  container-type: inline-size;
-  background-color: #f8f1dc;
-  background-image:
-    linear-gradient(90deg, #acaf991f 1px, transparent 1px),
-    linear-gradient(#acaf991f 1px, transparent 1px);
-  background-position: center;
-  background-size: 3.35% 6.13%;
-  border-radius: inherit;
-  user-select: none;
-}
-
-.vote-cover::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(96deg, #ffe9b01a, transparent 26% 73%, #b4a27915),
-    radial-gradient(ellipse at 13% 4%, #fffdf4a6, transparent 47%);
-}
-
-/* The imperfection in each edge comes from a little folded corner, an
-   asymmetric lift shadow and ripped pieces of semitransparent paper tape. */
-.vote-cover__note {
-  --fold-size: 17%;
-  --paper: var(--vote-note-1, #ffe39a);
-  --corner: #e3bc6a;
-  --tape-angle: -6deg;
-  --drawing: #815638;
-  position: absolute;
-  box-sizing: border-box;
   display: grid;
   place-items: center;
-  width: 22%;
-  aspect-ratio: 1.15;
-  color: var(--drawing);
-  filter: drop-shadow(.32cqi .8cqi .44cqi #67523538);
-  transform: rotate(var(--angle));
+  width: 100%;
+  aspect-ratio: 1.95;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: inherit;
+  background-color: #f7f1e2;
+  background-color: color-mix(in srgb, var(--sheet, #eee2c7) 30%, #fffdf7);
+  background-image:
+    linear-gradient(#9e947714 1px, transparent 1px),
+    linear-gradient(90deg, #9e947714 1px, transparent 1px);
+  background-size: 18px 18px;
 }
+
+.vote-cover__scene {
+  display: block;
+  width: 77%;
+  height: 100%;
+  min-height: 0;
+  padding: 3% 0 2%;
+  object-fit: contain;
+}
+
+.vote-cover__note {
+  position: absolute;
+  width: 14%;
+  aspect-ratio: 1.04;
+  display: grid;
+  place-items: center;
+  background: var(--sheet, #f7dfa2);
+  border-radius: 1px 2px 6px 1px;
+  box-shadow: 1px 2px 3px #6c5c3c29;
+}
+
+.vote-cover__note:first-of-type { left: 6%; top: 20%; transform: rotate(-10deg); }
+.vote-cover__note:last-of-type { right: 6%; bottom: 17%; transform: rotate(8deg); }
 
 .vote-cover__note::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to bottom right, #fff5, var(--fold, var(--corner)) 50%, transparent 51%) right bottom / var(--fold-size) var(--fold-size) no-repeat,
-    linear-gradient(172deg, #fff2, transparent 45%, #a8864712),
-    var(--sheet, var(--paper));
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--fold-size)), calc(100% - var(--fold-size)) 100%, 0 99%);
-}
-
-.vote-cover__note::after {
-  content: "";
-  position: absolute;
-  top: -9%;
+  top: -7%;
   left: 32%;
-  width: 38%;
+  width: 36%;
   height: 18%;
-  background-color: #f6e5bcdb;
-  background-image: repeating-linear-gradient(108deg, transparent 0 6%, #fff7 6.4% 8%);
-  box-shadow: 0 .18cqi .16cqi #574a3126;
-  clip-path: polygon(3% 0, 100% 2%, 97% 22%, 100% 40%, 97% 58%, 100% 77%, 97% 100%, 0 97%, 2% 74%, 0 57%, 3% 39%, 0 17%);
-  transform: rotate(var(--tape-angle));
+  background: #efdfb6c9;
+  transform: rotate(-4deg);
 }
 
-.vote-cover__note:nth-child(1) {
-  --angle: -10deg;
-  left: 8.5%;
-  top: 11%;
-}
+.vote-cover__note img { width: 80%; height: 78%; object-fit: contain; }
 
-.vote-cover__note:nth-child(2) {
-  --angle: 5deg;
-  --tape-angle: 3deg;
-  --paper: var(--vote-note-2, #f5bbaf);
-  --corner: #d79380;
-  --drawing: #9c534a;
-  left: 37.5%;
-  top: 10%;
-}
-
-.vote-cover__note:nth-child(3) {
-  --angle: -4deg;
-  --tape-angle: -8deg;
-  --paper: var(--vote-note-3, #d1e6c4);
-  --corner: #a9c89d;
-  --drawing: #567e5b;
-  left: 66%;
-  top: 16%;
-}
-
-.vote-cover__note:nth-child(4) {
-  --angle: 4deg;
-  --tape-angle: 5deg;
-  --paper: var(--vote-note-4, #bfddea);
-  --corner: #92b8cf;
-  --drawing: #527b93;
-  left: 19%;
-  top: 56%;
-}
-
-.vote-cover__note:nth-child(5) {
-  --angle: -7deg;
-  --tape-angle: -1deg;
-  --paper: var(--vote-note-5, #dcd2ec);
-  --corner: #b8a9cf;
-  --drawing: #79668d;
-  left: 48%;
-  top: 54%;
-}
-
-.vote-cover__drawing {
-  position: relative;
-  display: block;
-  width: 76%;
-  height: 77%;
-  object-fit: contain;
-}
-
-.vote-cover__mascot {
-  position: absolute;
-  right: 3%;
-  bottom: -9%;
-  width: 24%;
-  height: 56%;
-  object-fit: contain;
-  object-position: bottom center;
-  transform: rotate(7deg);
-  pointer-events: none;
+@media (max-width: 620px) {
+  .archive-many .vote-cover { aspect-ratio: 1.1; background-size: 12px 12px; }
+  .archive-many .vote-cover__scene { width: 100%; padding: 5%; }
+  .archive-many .vote-cover__note { display: none; }
 }
