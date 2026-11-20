@@ -1,0 +1,221 @@
+/* A paper-board cover. All measurements follow the board, including when
+   it is rendered into the small archive thumbnail. */
+.vote-cover {
+  position: relative;
+  display: block;
+  isolation: isolate;
+  overflow: hidden;
+  inline-size: 100%;
+  aspect-ratio: 1.83;
+  container-type: inline-size;
+  background-color: #f8f1dc;
+  background-image:
+    linear-gradient(90deg, #acaf991f 1px, transparent 1px),
+    linear-gradient(#acaf991f 1px, transparent 1px);
+  background-position: center;
+  background-size: 3.35% 6.13%;
+  border-radius: inherit;
+  user-select: none;
+}
+
+.vote-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(96deg, #ffe9b01a, transparent 26% 73%, #b4a27915),
+    radial-gradient(ellipse at 13% 4%, #fffdf4a6, transparent 47%);
+}
+
+/* The imperfection in each edge comes from a little folded corner, an
+   asymmetric lift shadow and ripped pieces of semitransparent paper tape. */
+.vote-cover__note {
+  --fold: 17%;
+  --paper: var(--vote-note-1, #ffe39a);
+  --corner: #e3bc6a;
+  --tape-angle: -6deg;
+  --drawing: #815638;
+  position: absolute;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 22%;
+  aspect-ratio: 1.15;
+  color: var(--drawing);
+  filter: drop-shadow(.32cqi .8cqi .44cqi #67523538);
+  transform: rotate(var(--angle));
+}
+
+.vote-cover__note::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom right, #fff5, var(--corner) 50%, transparent 51%) right bottom / var(--fold) var(--fold) no-repeat,
+    linear-gradient(172deg, #fff2, transparent 45%, #a8864712),
+    var(--paper);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--fold)), calc(100% - var(--fold)) 100%, 0 99%);
+}
+
+.vote-cover__note::after {
+  content: "";
+  position: absolute;
+  top: -9%;
+  left: 32%;
+  width: 38%;
+  height: 18%;
+  background-color: #f6e5bcdb;
+  background-image: repeating-linear-gradient(108deg, transparent 0 6%, #fff7 6.4% 8%);
+  box-shadow: 0 .18cqi .16cqi #574a3126;
+  clip-path: polygon(3% 0, 100% 2%, 97% 22%, 100% 40%, 97% 58%, 100% 77%, 97% 100%, 0 97%, 2% 74%, 0 57%, 3% 39%, 0 17%);
+  transform: rotate(var(--tape-angle));
+}
+
+.vote-cover__note:nth-child(1) {
+  --angle: -10deg;
+  left: 8.5%;
+  top: 11%;
+}
+
+.vote-cover__note:nth-child(2) {
+  --angle: 5deg;
+  --tape-angle: 3deg;
+  --paper: var(--vote-note-2, #f5bbaf);
+  --corner: #d79380;
+  --drawing: #9c534a;
+  left: 37.5%;
+  top: 10%;
+}
+
+.vote-cover__note:nth-child(3) {
+  --angle: -4deg;
+  --tape-angle: -8deg;
+  --paper: var(--vote-note-3, #d1e6c4);
+  --corner: #a9c89d;
+  --drawing: #567e5b;
+  left: 66%;
+  top: 16%;
+}
+
+.vote-cover__note:nth-child(4) {
+  --angle: 4deg;
+  --tape-angle: 5deg;
+  --paper: var(--vote-note-4, #bfddea);
+  --corner: #92b8cf;
+  --drawing: #527b93;
+  left: 19%;
+  top: 56%;
+}
+
+.vote-cover__note:nth-child(5) {
+  --angle: -7deg;
+  --tape-angle: -1deg;
+  --paper: var(--vote-note-5, #dcd2ec);
+  --corner: #b8a9cf;
+  --drawing: #79668d;
+  left: 48%;
+  top: 54%;
+}
+
+.vote-cover__doodle {
+  position: relative;
+  display: block;
+  width: 38%;
+  aspect-ratio: 1;
+  border: 0;
+  box-sizing: border-box;
+}
+
+.vote-cover__doodle::before,
+.vote-cover__doodle::after {
+  content: "";
+  position: absolute;
+  box-sizing: border-box;
+}
+
+/* Pencil sun, a heart, two leaves, a letter and a twinkle. */
+.vote-cover__note:nth-child(1) .vote-cover__doodle {
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 3deg, currentColor 0 5deg, transparent 6deg 43deg);
+  -webkit-mask: radial-gradient(circle, #000 0 38%, transparent 40% 51%, #000 53%);
+  mask: radial-gradient(circle, #000 0 38%, transparent 40% 51%, #000 53%);
+}
+
+.vote-cover__note:nth-child(1) .vote-cover__doodle::before {
+  inset: 23%;
+  background: currentColor;
+  border-radius: 46% 52% 48% 54%;
+}
+
+.vote-cover__note:nth-child(2) .vote-cover__doodle::before,
+.vote-cover__note:nth-child(2) .vote-cover__doodle::after {
+  left: 48%;
+  top: 13%;
+  width: 43%;
+  height: 70%;
+  background: currentColor;
+  border-radius: 50% 50% 0 0;
+  transform-origin: 0 100%;
+  transform: rotate(-44deg);
+}
+
+.vote-cover__note:nth-child(2) .vote-cover__doodle::after {
+  left: 5%;
+  transform-origin: 100% 100%;
+  transform: rotate(44deg);
+}
+
+.vote-cover__note:nth-child(3) .vote-cover__doodle {
+  background: linear-gradient(81deg, transparent 44%, currentColor 45% 57%, transparent 59%) 52% 95% / 25% 55% no-repeat;
+}
+
+.vote-cover__note:nth-child(3) .vote-cover__doodle::before,
+.vote-cover__note:nth-child(3) .vote-cover__doodle::after {
+  width: 50%;
+  height: 37%;
+  background: currentColor;
+  border-radius: 0 82% 0 84%;
+  top: 33%;
+  left: 3%;
+  transform: rotate(4deg);
+}
+
+.vote-cover__note:nth-child(3) .vote-cover__doodle::after {
+  top: 17%;
+  left: 47%;
+  transform: scaleX(-1) rotate(13deg);
+}
+
+.vote-cover__note:nth-child(4) .vote-cover__doodle {
+  width: 41%;
+  aspect-ratio: 1.46;
+  border: max(1px, .46cqi) solid currentColor;
+  border-radius: 8% 5% 9% 6%;
+  transform: rotate(-5deg);
+  background:
+    linear-gradient(34deg, transparent 47%, currentColor 49% 53%, transparent 55%) left top / 52% 70% no-repeat,
+    linear-gradient(-34deg, transparent 47%, currentColor 49% 53%, transparent 55%) right top / 52% 70% no-repeat;
+}
+
+.vote-cover__note:nth-child(5) .vote-cover__doodle::before,
+.vote-cover__note:nth-child(5) .vote-cover__doodle::after {
+  inset: 0 20% 15% 0;
+  background: currentColor;
+  clip-path: polygon(50% 0, 64% 35%, 100% 47%, 66% 60%, 49% 100%, 36% 62%, 0 49%, 36% 35%);
+}
+
+.vote-cover__note:nth-child(5) .vote-cover__doodle::after {
+  inset: 60% 0 0 65%;
+}
+
+.vote-cover__mascot {
+  position: absolute;
+  right: 3%;
+  bottom: -9%;
+  width: 24%;
+  height: 56%;
+  object-fit: contain;
+  object-position: bottom center;
+  transform: rotate(7deg);
+  pointer-events: none;
+}

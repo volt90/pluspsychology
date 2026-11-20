@@ -286,6 +286,16 @@
   .exgo{margin-top:auto;padding-top:8px;font-size:12.5px;font-weight:700;color:var(--blue-deep)}
   .exyear{font-family:var(--display);font-size:24px;font-weight:400;margin:32px 0 0}
 
+  .poll-invite{display:flex;align-items:center;gap:16px;margin-top:26px;padding:14px 20px;
+    background:var(--paper-2);color:var(--ink);text-decoration:none}
+  .poll-invite:hover{border-color:var(--blue)}
+  .poll-invite:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+  .poll-invite img{width:42px;height:50px;object-fit:contain}
+  .poll-invite strong,.poll-invite small{display:block}
+  .poll-invite strong{font-size:16px}
+  .poll-invite small{font-size:13px;color:var(--ink-soft);margin-top:2px}
+  .poll-invite .arrow{margin-left:auto;color:var(--blue-deep);font-size:20px}
+
   @media (prefers-reduced-motion: reduce){
     *{scroll-behavior:auto!important}
     .rv{opacity:1!important;transform:none!important;transition:none!important}
@@ -359,6 +369,15 @@
       <span class="sep" aria-hidden="true">/</span>
       <span aria-current="page">Projects</span>
     </nav>
+
+    <a class="panel poll-invite" href="/vote">
+      <img src="/vote/assets/seru.png" width="42" height="50" alt="">
+      <span>
+        <strong data-en="Heart notes">마음 투표</strong>
+        <small data-en="Explore the sticky-note boards and see how others answered.">포스트잇 보드에서 사람들이 어떤 답을 골랐는지 살펴보세요.</small>
+      </span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
 
     <!-- 전시 -->
     <section>

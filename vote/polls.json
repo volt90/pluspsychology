@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "strength",
+    "open": true,
+    "title": "나에게 힘이 되었던 순간은?",
+    "titleEn": "When did you feel a little stronger?",
+    "prompt": "지나온 날들을 떠올리며, 나에게 힘이 되어준 경험 한 가지를 골라 주세요.",
+    "promptEn": "Think back on your day and pick one experience that gave you strength.",
+    "options": [
+      {"id":"listen","label":"누군가 내 이야기를 들어줬을 때","labelEn":"Someone listened to me","short":"다정한 경청","shortEn":"Being heard","color":"rose","art":"listen"},
+      {"id":"rest","label":"푹 쉬고 숨을 돌렸을 때","labelEn":"I rested and caught my breath","short":"충분한 쉼","shortEn":"Taking a break","color":"butter","art":"rest"},
+      {"id":"finish","label":"작은 일을 끝까지 해냈을 때","labelEn":"I finished one small thing","short":"작은 성취","shortEn":"A small win","color":"mint","art":"finish"},
+      {"id":"flow","label":"좋아하는 일에 푹 빠졌을 때","labelEn":"I got lost in something I love","short":"즐거운 몰입","shortEn":"Finding flow","color":"sky","art":"flow"},
+      {"id":"laugh","label":"누군가와 함께 웃었을 때","labelEn":"I shared a laugh with someone","short":"함께한 웃음","shortEn":"Laughing together","color":"lilac","art":"laugh"}
+    ]
+  }
+]
